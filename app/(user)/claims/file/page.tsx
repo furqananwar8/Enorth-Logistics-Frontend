@@ -8,12 +8,37 @@ import {
   BookUser,
   Info,
 } from "lucide-react";
+import { useRef, useState } from "react";
 import ClaimFileContactInformation from "./ClaimFileContactInformation";
 import ClaimDetailsAndDocuments from "./ClaimsDetailAndDocuments";
 import SendClaimRequest from "./ClaimsSendRequest";
 import { Button } from "@/components/ui/button";
 
 export default function FileNewClaim() {
+  const contactInfoRef = useRef<any>(null);
+  const claimDetailsRef = useRef<any>(null);
+
+  const [contactData, setContactData] = useState<any>({});
+  const [claimDetailsData, setClaimDetailsData] = useState<any>({});
+
+  const handleSubmit = async () => {
+    try {
+      // Validate contact information form
+      const isContactValid = await contactInfoRef.current?.trigger();
+      // Validate claim details and documents form
+      const isClaimDetailsValid = await claimDetailsRef.current?.trigger();
+
+      if (isContactValid && isClaimDetailsValid) {
+        console.log("All forms are valid");
+        // You can add your submission logic here
+      } else {
+        console.log("Please fill in all required fields");
+      }
+    } catch (error) {
+      console.error("Validation error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen p-4">
       <div className="mx-auto max-w-6xl rounded border bg-white dark:bg-card shadow-sm">
@@ -96,8 +121,14 @@ export default function FileNewClaim() {
           </div>
 
           {/* Contact Information */}
-          <ClaimFileContactInformation />
-          <ClaimDetailsAndDocuments />
+          <ClaimFileContactInformation 
+            ref={contactInfoRef}
+            onChange={setContactData}
+          />
+          <ClaimDetailsAndDocuments 
+            ref={claimDetailsRef}
+            onChange={setClaimDetailsData}
+          />
           <SendClaimRequest
             shipmentDetails={{
               trackingBol: "2009773252",
@@ -108,15 +139,15 @@ export default function FileNewClaim() {
               insuranceType: "None",
             }}
             contactInformation={{
-              fullName: "test",
-              phone: "+1 226 759 5359",
-              email: "test@gmail.com",
-              claimName: "Test",
+              fullName: contactData.contactFullName || "",
+              phone: contactData.contactPhoneNumber || "",
+              email: contactData.contactEmailAddress || "",
+              claimName: contactData.claimName || "",
             }}
             claimDetails={{
-              claimType: "Missing",
-              claimedValue: "$0.01 CAD",
-              description: "test",
+              claimType: claimDetailsData.shipmentStatus || "",
+              claimedValue: claimDetailsData.totalMissingGoodsValue ? `$${claimDetailsData.totalMissingGoodsValue} ${claimDetailsData.currency || ""}` : "",
+              description: claimDetailsData.freightDescription || "",
               invoiceName: "tforce.png",
             }}
           />
@@ -131,7 +162,7 @@ export default function FileNewClaim() {
 
                 <Button
                   variant="default"
-                  // onClick={onSubmit}
+                  onClick={handleSubmit}
                   // className="px-6 py-2 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
                 >
                   Submit Claim

@@ -79,7 +79,7 @@ export function PayInvoiceModal({
                             </div>
                             <div className="flex-1">
                                 <div className="flex justify-between items-center">
-                                    <h4 className="font-bold text-slate-800">ULS Wallet Balance</h4>
+                                    <h4 className="font-bold text-slate-800">Enorth Wallet Balance</h4>
                                     {canPayWithBalance && <CheckCircle2 className="w-4 h-4 text-green-500" />}
                                 </div>
                                 <p className="text-sm text-slate-500 mt-1">

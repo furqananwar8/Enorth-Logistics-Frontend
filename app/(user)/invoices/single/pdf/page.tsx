@@ -246,7 +246,7 @@ export default function InvoicePdfPage() {
             <div className="flex justify-between items-center mb-10">
                 <img
                     src="https://live.ulsfreight.ca/enorth-logo.svg"
-                    alt="ULS Logo"
+                    alt="Enorth Logo"
                     style={{
                         width: 200,
                         height: 200,

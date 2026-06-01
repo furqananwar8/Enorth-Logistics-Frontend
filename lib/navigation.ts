@@ -39,7 +39,7 @@ export const navItems = [
         title: "Claims",
         items: [
             { title: "Claims Dashboard", href: "/claims" },
-            { title: "Submit New Claim", href: "/claims/new" },
+            { title: "Submit New Claim", href: "/claims/file" },
         ],
     },
 ]

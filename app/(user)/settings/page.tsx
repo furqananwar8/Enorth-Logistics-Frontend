@@ -244,7 +244,7 @@ export default function Settings() {
                 <TabsList className="h-max w-full gap-4 bg-transparent">
                   {[
                     {
-                      title: "ULS Wallet",
+                      title: "Enorth Wallet",
                       value: "wallet-settings",
                       icon: <Wallet />,
                     },

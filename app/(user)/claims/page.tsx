@@ -44,6 +44,10 @@ export default function ClaimsDashboardPage() {
     const [shipmentDetail, setShipmentDetail] = useState("")
     const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])
     const [selectedBookedBy, setSelectedBookedBy] = useState<string>("")
+    const [selectedUsername, setSelectedUsername] = useState<string>("")
+    const [selectedOrderSource, setSelectedOrderSource] = useState<string>("")
+    const [originPostal, setOriginPostal] = useState<string>("")
+    const [destinationPostal, setDestinationPostal] = useState<string>("")
 
     const [showFilters, setShowFilters] = useState(true)
 
@@ -213,19 +217,19 @@ export default function ClaimsDashboardPage() {
                 </TabsList>
 
                 <TabsContent value="all">
-                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging }} claimCategory="all" />
+                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy, selectedUsername, selectedOrderSource, originPostal, destinationPostal }} claimCategory="all" />
                 </TabsContent>
                 <TabsContent value="pending">
-                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging }} claimCategory="pending" />
+                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal, selectedBookedBy }} claimCategory="pending" />
                 </TabsContent>
                 <TabsContent value="approved">
-                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging }} claimCategory="approved" />
+                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal, selectedBookedBy }} claimCategory="approved" />
                 </TabsContent>
                 <TabsContent value="denied">
-                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging }} claimCategory="denied" />
+                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal, selectedBookedBy }} claimCategory="denied" />
                 </TabsContent>
                 <TabsContent value="paid">
-                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging }} claimCategory="paid" />
+                    <DynamicClaimsTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, selectedUsername, selectedOrderSource, originPostal, destinationPostal, selectedBookedBy }} claimCategory="paid" />
                 </TabsContent>
             </Tabs>
         </div>

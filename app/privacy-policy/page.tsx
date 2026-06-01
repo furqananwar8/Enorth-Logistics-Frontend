@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
               This Privacy Policy (the "Policy") addresses the appropriate collection, use and disclosure of Personal Information, the individual's right to limit access to his/her record, and the secure disposal of the data when it is no longer required.
             </p>
             <p>
-              In this Policy, we explain how we collect, use and disclose your Personal Information that we obtain when you use our services, visit or use our website https://www.ulsfreight.com and its subdomains or such other website as we may from time to time notify (our "Website"), or otherwise interact with us, and the steps we take to protect your Personal Information. The purpose of this Policy is to inform you of our privacy practices including:
+              In this Policy, we explain how we collect, use and disclose your Personal Information that we obtain when you use our services, visit or use our website https://enorthlogistics.com/ and its subdomains or such other website as we may from time to time notify (our "Website"), or otherwise interact with us, and the steps we take to protect your Personal Information. The purpose of this Policy is to inform you of our privacy practices including:
             </p>
             <ul className="list-disc pl-8 space-y-2">
               <li>a description of the types and categories of Personal Information we collect, or may collect about you;</li>

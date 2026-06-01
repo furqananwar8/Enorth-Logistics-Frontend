@@ -17,6 +17,15 @@ interface Props {
         dateRange: any
         search: string
         selectedPackaging: string[]
+        selectedCarrier?: string
+        selectedService?: string
+        selectedStatus?: string
+        shipmentDetail?: string
+        selectedBookedBy?: string
+        selectedUsername?: string
+        selectedOrderSource?: string
+        originPostal?: string
+        destinationPostal?: string
     }
     claimCategory: any
 }
@@ -27,7 +36,7 @@ export default function DynamicClaimsTable({ filters, claimCategory }: Props) {
     const debouncedSearch = useDebounce(filters.search, 500)
 
     const { data: claims, isLoading, isPending, isError } = useQuery({
-        queryKey: ["claims", claimCategory, debouncedSearch],
+        queryKey: ["claims", claimCategory, debouncedSearch, filters],
         queryFn: () => getAllClaims(filters),
         retry: 1,
         enabled: true
@@ -76,7 +85,7 @@ export default function DynamicClaimsTable({ filters, claimCategory }: Props) {
                 title="No Claims Found"
                 description="You have no claims matching these filters."
                 action={
-                    <Link href="/claims/new">
+                    <Link href="/claims/file">
                         <Button variant="outline" className="text-muted-foreground border-border">
                             Submit New Claim
                         </Button>

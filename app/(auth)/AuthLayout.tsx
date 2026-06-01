@@ -19,7 +19,7 @@ export const AuthLayout = ({
     children,
     title,
     subtitle,
-    leftImage = "/login-bg.png",
+    leftImage = "/login-bg-new.webp",
     logoSrc = "/enorth-logo.svg",
     footerText,
 }: AuthLayoutProps) => {

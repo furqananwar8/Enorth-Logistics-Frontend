@@ -73,17 +73,17 @@ export const columns: ColumnDef<any>[] = [
       );
     },
   },
-  {
-    accessorKey: "transactionId",
-    header: "Transaction #",
-    cell: ({ row }) => {
-      return (
-        <span className="text-primary font-medium whitespace-nowrap">
-          {row.original.transactionId}
-        </span>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "transactionId",
+  //   header: "Transaction #",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span className="text-primary font-medium whitespace-nowrap">
+  //         {row.original.transactionId}
+  //       </span>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "trackingNumber",
     header: "Tracking #/BOL #",

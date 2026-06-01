@@ -11,6 +11,6 @@ export const getAllClaims = async (filters: any = {}) => {
     if (filters.service) query.append("service", filters.service);
     if (filters.status) query.append("status", filters.status);
 
-    const response = await apiClient.get(`/trackings?${query.toString()}`);
+    const response = await apiClient.get(`/claims?${query.toString()}`);
     return response.data;
 };

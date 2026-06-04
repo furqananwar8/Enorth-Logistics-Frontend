@@ -1,12 +1,6 @@
 "use client"
-import FormField from "@/components/common/form/fields/FormField"
-import FormRadio from "@/components/common/form/fields/FormRadio"
 import { GlobalForm } from "@/components/common/form/GlobalForm"
-import { FormPhone } from "@/components/common/forms/FormPhone"
-// import { FormRadio } from "@/components/common/form/fields/FormRadio"
 import { useFormContext } from "react-hook-form"
-
-
 
 export default function InBond() {
     const { watch } = useFormContext()

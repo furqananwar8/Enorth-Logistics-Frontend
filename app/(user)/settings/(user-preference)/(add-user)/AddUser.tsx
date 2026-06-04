@@ -48,7 +48,6 @@ import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
 import { Loader } from "@/components/common/Loader";
 import { User } from "../UserTable";
-import { FormFieldWrapper } from "@/components/common/forms/FormFieldWrapper";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { useAuth } from "@/context/auth.context";
 import { LoaderCircle } from "lucide-react";

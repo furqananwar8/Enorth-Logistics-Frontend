@@ -606,7 +606,7 @@ export const ShippingAddressSection = forwardRef(
     // console.log("ADDRESS ERRORS", methods.formState.errors);
     return (
       <>
-        <div className="flex justify-between items-center">
+        <div id={`shippingAddressSection${type}`} className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">{title}</h2>
           <div className="flex gap-2">
             <Button

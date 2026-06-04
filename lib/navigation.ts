@@ -39,7 +39,7 @@ export const navItems = [
         title: "Claims",
         items: [
             { title: "Claims Dashboard", href: "/claims" },
-            { title: "Submit New Claim", href: "/claims/file" },
+            { title: "Submit New Claim", href: "/claims/dashboard" },
         ],
     },
 ]
@@ -47,4 +47,5 @@ export const navItems = [
 export const superAdminNavItems = [
     { title: "Add Surcharges", href: "/track" },
     { title: "Claims", href: "/claims" },
+    { title: "Users", href: "/users" },
 ]

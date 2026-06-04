@@ -31,7 +31,7 @@ export const removeFromFavorite = async (id: string) => {
 
 
 // get single quote
-export const getSingleQuote = async (id: string) => {
+export const getSingleQuote = async (id: string | number) => {
     const response = await apiClient.get(`/quotes/${id}`);
     return response.data;
 };

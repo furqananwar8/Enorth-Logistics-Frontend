@@ -62,7 +62,7 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
           ) : (
             <>
               <CheckCircle2 className="w-6 h-6 fill-primary text-white" />
-              <span>{quote.shipment.currentStatus.replace("_", " ")}</span>
+              <span>{quote.shipment.currentStatus.replaceAll("_", " ")}</span>
             </>
           )}
         </div>

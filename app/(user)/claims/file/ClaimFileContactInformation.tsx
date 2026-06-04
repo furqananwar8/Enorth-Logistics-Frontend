@@ -18,20 +18,31 @@ import { SelectAddressBookModal } from "@/components/shared/Shipping/SelectAddre
 import { Button } from "@/components/ui/button";
 import { useMarkContactAsRecent } from "@/app/(user)/quote/hooks";
 import { ContactType } from "@/app/(user)/settings/(address-book)/types/addContact.types";
+import { useAuth } from "@/context/auth.context";
 
 const contactInfoSchema = z.object({
   contactFullName: z.string().min(1, "Contact Name is required"),
   contactPhoneNumber: z.string().min(1, "Phone Number is required"),
   contactEmailAddress: z.email("Invalid email address"),
-  claimName: z.string().optional(),
+  claimName: z.string().min(1, "Claim Name is required"),
 });
 
 const ContactInformation = forwardRef(
-  ({ onChange }: { onChange?: (data: any) => void }, ref: any) => {
+  (
+    {
+      onChange,
+      initialValues,
+    }: {
+      onChange?: (data: any) => void;
+      initialValues?: any;
+    },
+    ref: any,
+  ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isAddressLocked, setIsAddressLocked] = useState(false);
     const markContactAsRecent = useMarkContactAsRecent();
-    
+    const { isAdmin } = useAuth();
+
     const form = useForm({
       resolver: zodResolver(contactInfoSchema),
       defaultValues: {
@@ -79,6 +90,12 @@ const ContactInformation = forwardRef(
       return () => subscription.unsubscribe();
     }, [form, onChange]);
 
+    useEffect(() => {
+      if (initialValues) {
+        form.reset(initialValues);
+      }
+    }, [initialValues, form]);
+
     useImperativeHandle(ref, () => ({
       getValues: form.getValues,
       trigger: form.trigger,
@@ -95,9 +112,9 @@ const ContactInformation = forwardRef(
             <SelectAddressBookModal
               onSelect={handleAddressSelect}
               triggerButton={
-                <Button 
-                  variant="outline" 
-                  type="button" 
+                <Button
+                  variant="outline"
+                  type="button"
                   className="text-sm flex items-center gap-2 hover:underline"
                 >
                   <BookUser className="w-4 h-4" />
@@ -129,6 +146,7 @@ const ContactInformation = forwardRef(
                   type: "text",
                   placeholder: "Contact Name",
                   wrapperClassName: "col-span-1",
+                  disabled:isAdmin
                 },
                 {
                   name: "contactPhoneNumber",
@@ -136,6 +154,8 @@ const ContactInformation = forwardRef(
                   type: "phone",
                   placeholder: "Phone Number",
                   wrapperClassName: "col-span-1",
+                  flagClassName: "border-none!",
+                  disabled:isAdmin
 
                 },
                 {
@@ -144,15 +164,16 @@ const ContactInformation = forwardRef(
                   type: "email",
                   placeholder: "Email Address",
                   wrapperClassName: "col-span-1",
+                  disabled:isAdmin
 
                 },
                 {
                   name: "claimName",
-                  label: "Claim Name",
+                  label: "Claim Name *",
                   type: "text",
                   placeholder: "Claim Name",
                   wrapperClassName: "col-span-1",
-
+                  disabled:isAdmin
                 },
               ]}
             />

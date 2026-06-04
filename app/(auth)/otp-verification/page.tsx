@@ -97,7 +97,7 @@ export default function OTPVerificationPage() {
         <AuthLayout
             title="OTP Verification"
             subtitle="Enter the OTP sent to your email to continue."
-            leftImage="/login-bg.png"
+            
             footerText={
                 <div className="text-sm text-center">
                     Didn't receive the OTP?{" "}

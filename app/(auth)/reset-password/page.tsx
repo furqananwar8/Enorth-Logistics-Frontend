@@ -80,7 +80,6 @@ export default function ResetPasswordPage() {
         <AuthLayout
             title="Reset your password"
             subtitle="Enter a new password for your account."
-            leftImage="/login-bg.png"
             footerText={
                 <>
                     Don't have an account?{" "}

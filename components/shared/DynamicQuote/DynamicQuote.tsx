@@ -1,23 +1,9 @@
 "use client";
-
-import {
-  createContext,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-  useCallback,
-} from "react";
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { createContext, useEffect, useState, useRef, useCallback } from "react";
 import { SideBar } from "../SideBar";
 import z from "zod";
-import {
-  createQuote,
-  getSingleQuote,
-  updateQuote,
-} from "@/api/services/quotes.api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { getSingleQuote } from "@/api/services/quotes.api";
+import { useQuery } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -30,22 +16,10 @@ import AdditionalServices from "../AdditionalService/AdditionalServices";
 import AdditionalInsurance from "../AdditionalInsurance/AdditionalInsurance";
 import SignaturePreference from "../SignaturePreference/SignaturePreference";
 import { Button } from "@/components/ui/button";
-import {
-  quoteUnionSchema,
-  spotShipmentSchema,
-  standardShipmentSchema,
-} from "@/lib/validations/quote/standard-quote-schema";
-import {
-  bookShipment,
-  createShipment,
-  updateShipment,
-} from "@/api/services/shipment.api";
 import { useRouter } from "next/navigation";
-import { Loader, LoaderCircle } from "lucide-react";
-import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper";
+import { LoaderCircle } from "lucide-react";
 import ShippingRates from "../ShippingRates/ShippingRates";
 import SendRequest from "../SendRequest/SendRequest";
-import { userAgent } from "next/server";
 import { useAuth } from "@/context/auth.context";
 import AddFundsModal from "@/components/common/AddFundsModal";
 import { useDynamicQuote } from "./DynamicQuote.hooks";
@@ -151,75 +125,20 @@ export default function DynamicQuote({
     setRealTimeData(getMergedPayload());
   }, []);
 
-  // const getMergedPayload = () => {
-  //   const fromAddress = fromAddressRef.current?.getValues() || {};
-  //   const toAddress = toAddressRef.current?.getValues() || {};
-  //   const dimensions = dimensionsRef.current?.getValues() || {};
-  //   // these are optional only include if they have some values
-  //   const services = servicesRef.current?.getValues() || {};
-  //   const insurance = insuranceRef.current?.getValues() || {};
-  //   const signature = signatureRef.current?.getValues() || {};
-  //   const equipment = equipmentRef.current?.getValues() || {};
-  //   const spotContact = contactRef.current?.getValues() || {};
-  //   let completePayload = {
-  //     addresses: [fromAddress, toAddress],
-  //     ...dimensions,
-  //   };
+  const scrollToSection = (id: string, offset = 100) => {
+    console.log(id)
+    const element = document.getElementById(id);
 
-  //   const addresses = [];
-  //   if (Object.keys(fromAddress).length > 0) addresses.push(fromAddress);
-  //   if (Object.keys(toAddress).length > 0) addresses.push(toAddress);
+    if (!element) return;
 
-  //   if (insurance?.insurance?.amount > 0) {
-  //     completePayload = { ...completePayload, ...insurance };
-  //   }
-  //   if (Object.keys(services).length > 0) {
-  //     completePayload = { ...services, ...completePayload };
-  //   }
-  //   // equipment
-  //   if (Object.keys(equipment).length > 0) {
-  //     completePayload = {
-  //       ...completePayload,
-  //       services: { ...equipment.services },
-  //       spotDetails: {
-  //         spotEquipment: equipment.spotEquipment,
-  //         spotType:
-  //           spotShipmentType[
-  //             shipmentType as ShipmentOptions[keyof ShipmentOptions]
-  //           ],
-  //       },
-  //     };
-  //   }
-  //   if (Object.keys(signature).length > 0) {
-  //     completePayload = { ...completePayload, ...signature };
-  //   }
-  //   // spotContact
-  //   if (Object.keys(spotContact).length > 0) {
-  //     completePayload = {
-  //       ...completePayload,
-  //       spotDetails: { ...completePayload.spotDetails, ...spotContact },
-  //     };
-  //   }
+    const top =
+      element.getBoundingClientRect().top + window.pageYOffset - offset;
 
-  //   const sendRequestData = sendRequestRef.current?.getValues() || {};
-  //   if (Object.keys(sendRequestData).length > 0) {
-  //     completePayload = { ...completePayload, ...sendRequestData };
-  //   }
-  //   if (quoteType === "SPOT") {
-  //     completePayload = {
-  //       ...completePayload,
-  //       spotDetails: {
-  //         ...equipment,
-  //         ...spotContact,
-  //         spotType:
-  //           spotShipmentType[
-  //             shipmentType as ShipmentOptions[keyof ShipmentOptions]
-  //           ],
-  //       },
-  //     };
-  //   }
-  //   return completePayload;
-  // };
+    window.scrollTo({
+      top,
+      behavior: "smooth",
+    });
+  };
   const validateAllForms = async () => {
     const fromValid = await fromAddressRef.current?.trigger();
     const toValid = await toAddressRef.current?.trigger();
@@ -240,16 +159,19 @@ export default function DynamicQuote({
 
     if (!valid) {
       toast.error("Please fill in all required fields correctly.");
+      if (!dimValid) {
+        scrollToSection(`dimensions`);
+      }
+      if (!fromValid || !toValid) {
+        scrollToSection(`shippingAddressSectionFROM`);
+      }
+      
+
       return false;
     }
 
     return valid;
   };
-  // const buildPayloads = () => {
-  //   const mergedData = getMergedPayload();
-
-  //   return payloadTransformer(mergedData);
-  // };
 
   const onSubmit = async () => {
     const valid = await validateAllForms();
@@ -276,132 +198,6 @@ export default function DynamicQuote({
     }
   };
 
-  // const payloadTransformer = (data: any) => {
-  //   // console.log("THIS IS ADDRESS!!!!", data);
-  //   const formattedAddresses = data.addresses?.map(
-  //     (address: any, index: number) => {
-  //       if (address.addressBookId && !isConversion) {
-  //         return {
-  //           addressBookId: address.addressBookId,
-  //           type: address.type,
-  //         };
-  //       }
-
-  //       const palletShippingReadyTime = formatTime12h(
-  //         address.readyTimeHour,
-  //         address.readyTimeMinute,
-  //         address.readyTimeAmPm,
-  //       );
-
-  //       const palletShippingCloseTime = formatTime12h(
-  //         address.closeTimeHour,
-  //         address.closeTimeMinute,
-  //         address.closeTimeAmPm,
-  //       );
-
-  //       return {
-  //         palletShippingReadyTime,
-  //         palletShippingCloseTime,
-  //         contactName: address.contactName,
-  //         phoneNumber: address.phoneNumber,
-  //         email: address.email,
-  //         locationType: address.address.locationTypeId,
-  //         companyName: address.companyName,
-  //         signatureId: address.signatureId,
-  //         defaultInstruction: address.defaultInstruction,
-  //         type: index === 0 ? "FROM" : "TO",
-  //         ...address.address,
-  //       };
-  //     },
-  //   );
-
-  //   // -----------------------------
-  //   // BASE PAYLOAD
-  //   // -----------------------------
-  //   const basePayload = {
-  //     ...data,
-  //     addresses: formattedAddresses,
-  //     quoteType,
-  //     shipmentType,
-
-  //     ...(!isEditing &&
-  //       quoteStatus !== singleQuote?.quote.status && {
-  //         status: quoteStatus,
-  //       }),
-
-  //     ...(shipmentType === "STANDARD_FTL" && {
-  //       ...(data.includeStraps && {
-  //         includeStraps: data.includeStraps,
-  //       }),
-
-  //       ...(data.appointmentDelivery && {
-  //         appointmentDelivery: data.appointmentDelivery,
-  //       }),
-  //     }),
-  //   };
-
-  //   // -----------------------------
-  //   // ADDRESS TRANSFORMATION
-  //   // -----------------------------
-  //   const transformedAddresses = basePayload.addresses.map((addr: any) => {
-  //     if (addr.addressBookId) {
-  //       return {
-  //         type: addr.type,
-  //         addressBookId: addr.addressBookId,
-  //       };
-  //     }
-
-  //     return addr;
-  //   });
-
-  //   const payloadTransformed = {
-  //     ...basePayload,
-  //     addresses: transformedAddresses,
-  //   };
-
-  //   // -----------------------------
-  //   // FTL TRANSFORMATION
-  //   // -----------------------------
-  //   let finalQuotePayload = payloadTransformed;
-
-  //   if (shipmentType === "STANDARD_FTL") {
-  //     const firstUnit = payloadTransformed?.lineItem?.units?.[0];
-
-  //     const selectedService = firstUnit?.name;
-
-  //     const ftlPayload = {
-  //       ...payloadTransformed,
-
-  //       services: {
-  //         [selectedService]: {
-  //           totalWeight: firstUnit?.weight,
-  //           measurementUnit: payloadTransformed?.lineItem?.measurementUnit,
-  //           totalCount: firstUnit?.count,
-  //         },
-  //       },
-  //     };
-
-  //     // remove lineItem from FTL payload
-  //     const { lineItem, ...rest } = ftlPayload;
-
-  //     finalQuotePayload = rest;
-  //   }
-
-  //   // -----------------------------
-  //   // SHIPMENT PAYLOAD
-  //   // -----------------------------
-  //   const shipmentPayload = {
-  //     shipDate: data.addresses[0].shipDate,
-  //     mode: "SHIPMENT",
-  //     shipmentType,
-  //     quote: { ...finalQuotePayload, status: singleQuote?.quote?.status },
-  //   };
-
-  //   return {
-  //     finalQuotePayload,
-  //     shipmentPayload,
-  //   };
-  // };
   const handleGetRates = async () => {
     const valid = await validateAllForms();
 

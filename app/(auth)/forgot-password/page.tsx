@@ -52,7 +52,7 @@ export default function ForgotPasswordPage() {
         <AuthLayout
             title="Forgot your password?"
             subtitle="Enter your email and we will send you a password reset link."
-            leftImage="/login-bg.png"
+            
             footerText={
                 <>
                     Don't have an account?{" "}

@@ -55,7 +55,7 @@ export default function LoginPage() {
   return (
     <AuthLayout
       title="To access your ENorth Logistics account, sign in below."
-      leftImage="/login-bg.png"
+      // leftImage="/login-bg-new.webp"
       footerText={
         <>
           Don't have an account?{" "}

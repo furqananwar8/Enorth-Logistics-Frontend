@@ -20,7 +20,7 @@ export const registerSchema = z.object({
       .min(8, "Password must be atleast 8 characters"),
     firstName: z.string().min(1, "First name required"),
     lastName: z.string().min(1, "Last name required"),
-    username: z.string().nonempty("Username required"),
+    // username: z.string().nonempty("Username required"),
     signUpCode: z.string().optional(),
     termsAndConditionAccepted: z
       .boolean("You must accept the Terms and Conditions"),
@@ -42,7 +42,7 @@ export const registerSchema = z.object({
     address1: z.string().nonempty("Address is required"),
     address2: z.string().optional(),
     city: z.string().nonempty("City is required"),
-    unit: z.string().nonempty("Unit is required"),
+    unit: z.string().optional(),
     state: z.string().nonempty("State is required"),
     country: z.string().nonempty("Country is required"),
     postalCode: z.string().min(5, "Postal code must be at least 5 characters").max(10, "Postal code must be at most 10 characters").nonempty("Postal code is required")

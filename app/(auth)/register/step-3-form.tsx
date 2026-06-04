@@ -34,12 +34,12 @@ export function Step3Form({ onBack, isPending }: Step3FormProps) {
           <GlobalForm
             formWrapperClassName="flex flex-col gap-2 space-y-2"
             fields={[
-              {
-                name: "user.username",
-                label: "Create a Username*",
-                placeholder: "Enter your username",
-                type: "text",
-              },
+              // {
+              //   name: "user.username",
+              //   label: "Create a Username*",
+              //   placeholder: "Enter your username",
+              //   type: "text",
+              // },
               // password
               {
                 name: "user.password",

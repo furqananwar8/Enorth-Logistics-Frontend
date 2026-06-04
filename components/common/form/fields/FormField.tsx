@@ -112,6 +112,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
             id={config.name}
             placeholder={config.placeholder}
             {...field}
+            disabled={config.disabled}
             value={field.value ?? ""}
             className={`${config.className} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500" : ""} border border-primary/10`}
           />

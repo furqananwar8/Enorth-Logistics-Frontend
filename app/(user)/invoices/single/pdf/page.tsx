@@ -134,7 +134,7 @@
 //                 <div>
 //                     <div>Email for General Inquiries</div>
 //                     <div>Courriel pour les questions généraux</div>
-//                     <div className="font-medium text-gray-700">accounting@ulsfreight.com</div>
+//                     <div className="font-medium text-gray-700">info@enorthlogtistics.com</div>
 //                 </div>
 //                 <div>
 //                     <div>Canadian Phone Number</div>

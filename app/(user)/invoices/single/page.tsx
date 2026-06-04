@@ -62,7 +62,7 @@
 //         }
 //     },
 //     contact: {
-//         email: "accounting@ulsfreight.com",
+//         email: "info@enorthlogtistics.com",
 //         phoneCA: "(289) 371-1005",
 //         phoneUS: "(718) 535-3358",
 //         tollFree: "(877) 335-8740"

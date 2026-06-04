@@ -64,7 +64,7 @@ const Dimensions = forwardRef(({ shipmentType, onChange, quoteType }: { shipment
 
   return (
     <FormProvider {...methods} key={shipmentType}>
-      <form className="space-y-6">
+      <form id="dimensions" className="space-y-6">
         <Accordion type="single" collapsible value={isOpen ? "dimensions" : ""} onValueChange={(val) => setIsOpen(!!val)}
           className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
           <AccordionItem value="dimensions" className="border-none">

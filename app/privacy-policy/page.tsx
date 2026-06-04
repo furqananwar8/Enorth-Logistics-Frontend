@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function PrivacyPolicyPage() {
   return (
     <div className="container mx-auto px-4 py-12">
@@ -59,7 +57,7 @@ export default function PrivacyPolicyPage() {
               <li>shares your Personal Information with our authorized employees, agents, service providers and legal representatives, and may also share this information with third parties engaged to provide products and services on our behalf ("Third Parties"), such as the extension of credit, or the provision of shipping information to third party carriers. When connecting to a Third-Party website within our website, such use is governed and controlled by the terms and conditions for those Third Parties. ENorth Logistics does not control the terms of Third Party websites. We may however, share your Personal Information with these Third Parties in order to fulfill the services you have requested through the use of our Website;</li>
               <li>will not share your Personal Information with Third Parties without your consent, except as set out in (3), unless you have (i) authorized us to do so; (ii) as required by law; or (iii) as disclosed to you when the Personal Information is collected;</li>
               <li>may collect and use your Personal Information to comply with applicable laws and regulations, to administer our Website, to protect you and us from fraud or other illegal activities, to contact you regarding your inquiries, and to communicate with you (provided you have opted to receive such information);</li>
-              <li>allows you to withdraw your consent to the collection, storage, use, disclosure and retention of your Personal Information at any time by contacting us at legal@ulsfreight.com;</li>
+              <li>allows you to withdraw your consent to the collection, storage, use, disclosure and retention of your Personal Information at any time by contacting us at info@enorthlogtistics.com;</li>
               <li>will mitigate the risk and impact of potential harms involved in the disclosure of Personal Information through the adoption of reasonable physical, technical and organizational procedures appropriate to the sensitivity of the data in an effort to safeguard the Personal Information you provide to us.</li>
             </ul>
             <p>
@@ -68,7 +66,7 @@ export default function PrivacyPolicyPage() {
 
             <h3 className="text-xl font-semibold text-foreground mt-6 mb-2">Privacy Principles</h3>
             <ul className="list-disc pl-8 space-y-2">
-              <li><strong>Accountability:</strong> we are responsible for the collection, use and disclosure of Personal Information in our custody or control. our privacy contact person is accountable for compliance with our Privacy Policy and can be reached by email at legal@ulsfreight.com or telephone at +1 (289) 371-1005.</li>
+              <li><strong>Accountability:</strong> we are responsible for the collection, use and disclosure of Personal Information in our custody or control. our privacy contact person is accountable for compliance with our Privacy Policy and can be reached by email at info@enorthlogtistics.com or telephone at +1 (289) 371-1005.</li>
               <li><strong>Identifying purposes for collecting Personal Information:</strong> we will identify the purposes for which Personal Information is collected at or before the time the information is collected.</li>
               <li><strong>Consent for collection, use, and disclosure of Personal Information:</strong> Your knowledge and consent are required for the collection, use or disclosure of Personal Information, except where otherwise permitted or required by law.</li>
               <li><strong>Limiting collection of Personal Information:</strong> we will limit the collection of Personal Information to that which is necessary for the authorized purposes identified. Information will be collected by fair and lawful means.</li>
@@ -77,7 +75,7 @@ export default function PrivacyPolicyPage() {
               <li><strong>Ensuring safeguards for Personal Information:</strong> Personal information will be protected by security safeguards appropriate to the nature and format of the information being stored.</li>
               <li><strong>Openness about Policy:</strong> we will provide you with specific information about our policies and practices relating to how we manage your Personal Information.</li>
               <li><strong>Individual access to Personal Information:</strong> Upon your written request, we will inform you of the existence, use and disclosure of your Personal Information and will give you access to that information, with limited exceptions. you may challenge the accuracy and completeness of the information and may request to have it amended.</li>
-              <li><strong>Challenging compliance with the Policy:</strong> you may address a challenge or complaint concerning compliance with the above principles to our Privacy Officer at legal@ulsfreight.com or to the relevant regulatory oversight body.</li>
+              <li><strong>Challenging compliance with the Policy:</strong> you may address a challenge or complaint concerning compliance with the above principles to our Privacy Officer at info@enorthlogtistics.com or to the relevant regulatory oversight body.</li>
             </ul>
           </div>
         </section>
@@ -217,7 +215,7 @@ export default function PrivacyPolicyPage() {
               Under some circumstances, we may anonymize your Personal Information so that it can no longer be associated with you. We reserve the right to use such anonymous and de-identified data for any legitimate business purpose without further notice to you or your consent.
             </p>
             <p>
-              You may request to have all your Personal Information deleted entirely by emailing legal@ulsfreight.com. Unless otherwise required by our vendors' policies or applicable law, please note that if you request the erasure of your Personal Information:
+              You may request to have all your Personal Information deleted entirely by emailing info@enorthlogtistics.com. Unless otherwise required by our vendors' policies or applicable law, please note that if you request the erasure of your Personal Information:
             </p>
             <ul className="list-disc pl-8 space-y-2">
               <li>We may retain some of your Personal Information for a limited period of time only as necessary for our legitimate business interests (i.e., to ensure that any pending claims or invoices are dealt with before completing the data deletion request).</li>
@@ -263,7 +261,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-2xl font-semibold text-foreground mb-3">9. Children Under the Age of 13</h2>
           <div className="space-y-4">
             <p>
-              Our Website is not intended for children under 13 years of age. No one under age 13 may provide any information to or on the Website. We do not knowingly collect Personal Information from children under 13. If you are under 13, do not use or provide any information on this Website or on or through any of its features/register on the Website, make any purchases through the Website, use any of the interactive or public comment features of this Website, or provide any information about yourself to us, including your name, address, telephone number, email address, or any screen name or username you may use. If we learn we have collected or received Personal Information from a child under 13 without verification of parental consent, we will delete that information. If you believe we might have any information from or about a child under 13, please contact us at legal@ulsfreight.com.
+              Our Website is not intended for children under 13 years of age. No one under age 13 may provide any information to or on the Website. We do not knowingly collect Personal Information from children under 13. If you are under 13, do not use or provide any information on this Website or on or through any of its features/register on the Website, make any purchases through the Website, use any of the interactive or public comment features of this Website, or provide any information about yourself to us, including your name, address, telephone number, email address, or any screen name or username you may use. If we learn we have collected or received Personal Information from a child under 13 without verification of parental consent, we will delete that information. If you believe we might have any information from or about a child under 13, please contact us at info@enorthlogtistics.com.
             </p>
           </div>
         </section>
@@ -287,7 +285,7 @@ export default function PrivacyPolicyPage() {
               You can review and change your Personal Information by logging into the Website and visiting your account profile page.
             </p>
             <p>
-              If you want to review, verify, correct, or withdraw consent to the use of your Personal Information you may also send us an email at legal@ulsfreight.com to request access to, correct, or delete any Personal Information that you have provided to us. If you have a user account with us, please note that we cannot delete your Personal Information except by also deleting your user account. We may not accommodate a request to change information if we believe the change would violate any law or legal requirement or cause the information to be incorrect.
+              If you want to review, verify, correct, or withdraw consent to the use of your Personal Information you may also send us an email at info@enorthlogtistics.com to request access to, correct, or delete any Personal Information that you have provided to us. If you have a user account with us, please note that we cannot delete your Personal Information except by also deleting your user account. We may not accommodate a request to change information if we believe the change would violate any law or legal requirement or cause the information to be incorrect.
             </p>
             <p>
               We may request specific information from you to help us confirm your identity and your right to access, and to provide you with the Personal Information that we hold about you or make your requested changes. Applicable law may allow or require us to refuse to provide you with access to some or all of the Personal Information that we hold about you, or we may have destroyed, erased, or made your Personal Information anonymous in accordance with our record retention obligations and practices. If we cannot provide you with access to your Personal Information, we will inform you of the reasons why, subject to any legal or regulatory restrictions.
@@ -308,7 +306,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-2xl font-semibold text-foreground mb-3">12. Withdrawing Your Consent</h2>
           <div className="space-y-4">
             <p>
-              Where you have provided your consent to the collection, use, and transfer of your Personal Information, you may have the legal right to withdraw your consent under certain circumstances. To withdraw your consent, if applicable, contact us at marketing@ulsfreight.com. Please note that if you withdraw your consent we may not be able to provide you with a particular product or service. We will explain the impact to you at the time to help you with your decision.
+              Where you have provided your consent to the collection, use, and transfer of your Personal Information, you may have the legal right to withdraw your consent under certain circumstances. To withdraw your consent, if applicable, contact us at info@enorthlogtistics.com. Please note that if you withdraw your consent we may not be able to provide you with a particular product or service. We will explain the impact to you at the time to help you with your decision.
             </p>
           </div>
         </section>
@@ -345,7 +343,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <p>
               <strong>Privacy Officer</strong><br />
-              legal@ulsfreight.com<br />
+              info@enorthlogtistics.com<br />
               +1 (289) 371-1005
             </p>
             <p>

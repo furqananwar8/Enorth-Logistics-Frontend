@@ -296,10 +296,10 @@ export default function TermsOfUsePage() {
               (a) This website is operated by ENorth Logistics.
             </p>
             <p>
-              (b) Should you become aware of misuse of the website including libelous or defamatory conduct, you must report it to ENorth Logistics at legal@ulsfreight.com.
+              (b) Should you become aware of misuse of the website including libelous or defamatory conduct, you must report it to ENorth Logistics at info@enorthlogtistics.com.
             </p>
             <p>
-              (c) All other feedback, comments, requests for technical support, and other communications relating to the Website should be directed to techsupport@ulsfreight.com.
+              (c) All other feedback, comments, requests for technical support, and other communications relating to the Website should be directed to info@enorthlogtistics.com.
             </p>
           </div>
         </section>

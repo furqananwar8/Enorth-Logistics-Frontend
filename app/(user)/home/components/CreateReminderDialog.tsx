@@ -144,7 +144,7 @@ export function CreateReminderDialog({ children }: Props) {
                                                 methods.setValue("recipients", current.filter((item) => item !== member.id))
                                             }
                                         }}
-                                        className="border-border cursor-pointer"
+                                        className="border-primary cursor-pointer"
                                     />
                                     <Label htmlFor={member.id} className="cursor-pointer">
                                         {user?.user?.id === member.id ? "Myself" : member.firstName + " " + member.lastName}

@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Checkbox } from "@/components/ui/checkbox"
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Eye, MoreVertical, Calendar } from "lucide-react"
-import Link from "next/link"
+} from "@/components/ui/dropdown-menu";
+import { Download, Eye, Mail, MoreVertical } from "lucide-react";
+import Link from "next/link";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -31,106 +31,146 @@ export const columns: ColumnDef<any>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
+  // CLAIM ID
   {
-    accessorKey: "claimNumber",
+    accessorKey: "claimId",
     header: "Claim #",
+    cell: ({ row }) => (
+      <span className="text-primary font-medium whitespace-nowrap">
+        {row.original.claimId}
+      </span>
+    ),
+  },
+
+  // TRACKING
+  {
+    id: "trackingNumber",
+    header: "Tracking / BOL #",
     cell: ({ row }) => {
-      // Use trackingNumber or fallback
-      const claimNumber = row.original.claimNumber || `CLM${Math.floor(Math.random() * 100000000)}`;
+      const tracking = row.original.shipment?.trackingNumber;
+      const bol = row.original.shipment?.bolNumber;
+
       return (
         <span className="text-primary font-medium whitespace-nowrap">
-          {claimNumber}
+          {tracking || bol || "-"}
         </span>
-      )
+      );
     },
   },
+
+  // DATE
   {
-    accessorKey: "trackingNumber",
-    header: "Tracking/BOL #",
-    cell: ({ row }) => {
-      const trackingNumber = row.original.trackingNumber || `TRK${Math.floor(Math.random() * 100000000)}`;
-      return (
-        <span className="text-primary font-medium whitespace-nowrap">
-          {trackingNumber}
-        </span>
-      )
-    },
-  },
-  {
-    accessorKey: "claimDate",
+    accessorKey: "createdAt",
     header: "Claim Date",
     cell: ({ row }) => {
-      const createdAt = row.original.createdAt ? new Date(row.original.createdAt) : new Date();
-      const formattedDate = createdAt.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-      return <span className="whitespace-nowrap text-muted-foreground">{formattedDate}</span>
+      const date = row.original.createdAt
+        ? new Date(row.original.createdAt)
+        : null;
+
+      return (
+        <span className="whitespace-nowrap text-muted-foreground">
+          {date
+            ? date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "-"}
+        </span>
+      );
     },
   },
+
+  // AGE (real instead of random)
   {
-    accessorKey: "claimAge",
+    id: "age",
     header: "Age",
     cell: ({ row }) => {
-      // Mocking age
-      const ageDays = Math.floor(Math.random() * 30) + 1;
-      return <span className="whitespace-nowrap">{ageDays} Days</span>
+      const createdAt = new Date(row.original.createdAt);
+      const diffDays = Math.floor(
+        (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      return <span>{diffDays} Days</span>;
     },
   },
+
+  // STATUS
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      // Mocking status
-      const statuses = ["Pending", "Approved", "Denied", "Paid"];
-      const status = row.original.status || statuses[Math.floor(Math.random() * statuses.length)];
-      
+      const status = row.original.status;
+
       let statusColor = "text-primary";
-      if (status === "Approved" || status === "Paid") statusColor = "text-green-600";
-      if (status === "Denied") statusColor = "text-red-600";
-      if (status === "Pending") statusColor = "text-orange-500";
-      
+      if (status === "APPROVED") statusColor = "text-green-600";
+      if (status === "PAID") statusColor = "text-green-600";
+      if (status === "DENIED") statusColor = "text-red-600";
+      if (status === "SUBMITTED") statusColor = "text-orange-500";
+      if (status === "PENDING") statusColor = "text-orange-500";
+
       return (
-        <div className="leading-tight whitespace-nowrap flex items-center gap-1 font-medium">
-          <span className={`${statusColor}`}>{status}</span>
+        <div className="flex items-center gap-1 font-medium whitespace-nowrap">
+          <span className={statusColor}>{status}</span>
         </div>
-      )
+      );
     },
   },
+
+  // AMOUNT
   {
-    accessorKey: "claimAmount",
+    accessorKey: "totalValueOfGoods",
     header: "Claim Amount",
     cell: ({ row }) => {
-      const amount = (Math.random() * 1500 + 100).toFixed(2);
-      const currency = Math.random() > 0.5 ? "CAD" : "USD";
-      return <span className="whitespace-nowrap font-medium">${amount} {currency}</span>
+      const amount = row.original.totalValueOfGoods;
+      const currency = row.original.currency || "USD";
+
+      return (
+        <span className="whitespace-nowrap font-medium">
+          {amount} {currency}
+        </span>
+      );
     },
   },
+
+  // ACTIONS
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2 w-max">
-          <Link className="flex gap-1 items-center text-primary hover:underline text-sm font-medium" href={`/claims/single?id=${row.original.id || 'CLM15017348'}`}>
-             <Eye size={14} /> View
-          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <MoreVertical size={16} className="cursor-pointer text-muted-foreground" />
+              <MoreVertical
+                size={16}
+                className="cursor-pointer text-muted-foreground"
+              />
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end" className="w-max">
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem>
+                <Link
+                  className="flex gap-1 items-center text-primary hover:underline text-sm font-medium"
+                  href={`/claims/file?claimId=${row.original.id}&shipmentId=${row.original.shipment.id}&action=edit`}
+                >
+                  <Eye size={14} />
+                  Edit
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="w-max cursor-pointer">
+                <Download size={14} />
                 Download PDF
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="w-max cursor-pointer">
+                <Mail size={14} />
                 Send via Email
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      )
+      );
     },
   },
-]
+];

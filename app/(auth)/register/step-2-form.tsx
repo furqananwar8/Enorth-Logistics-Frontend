@@ -72,7 +72,7 @@ export function Step2Form({ onNext, onBack }: Step2FormProps) {
           },
           {
             name: "address.unit",
-            label: "Unit/Floor # *",
+            label: "Unit/Floor # (optional)",
             placeholder: "Enter your unit/floor #",
             type: "text",
           },

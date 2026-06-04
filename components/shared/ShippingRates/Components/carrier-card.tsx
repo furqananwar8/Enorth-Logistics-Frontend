@@ -26,7 +26,7 @@ export function getCarrierImg(carrierName: string) {
     case "tst":
       return <Image src="/tst.png" width={80} height={80} alt="TST" />;
     case "tforce":
-      return <Image src="/tforce.png" width={80} height={80} alt="TForce" />;
+      return <Image src="/tforce.png" className="mix-blend-multiply" width={80} height={80} alt="TForce" />;
     default:
       return <Image src="/tst.png" width={80} height={80} alt="TST" />;
   }

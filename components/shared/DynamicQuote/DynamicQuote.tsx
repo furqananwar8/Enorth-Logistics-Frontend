@@ -156,7 +156,7 @@ export default function DynamicQuote({
       const equipmentValid = await equipmentRef.current?.trigger();
       valid = valid && contactValid && equipmentValid;
     }
-
+    
     if (!valid) {
       toast.error("Please fill in all required fields correctly.");
       if (!dimValid) {

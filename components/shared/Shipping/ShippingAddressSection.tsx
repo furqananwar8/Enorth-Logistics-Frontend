@@ -207,24 +207,30 @@ export const ShippingAddressSection = forwardRef(
     const postalCodeWatch = methods.watch("address.postalCode") || "";
 
     const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
-    const {
-      data: postalCodeData,
-      isLoading: postalCodeLoading,
-      isPending: postalCodeIsPending,
-    } = useQuery({
-      queryKey: ["postalCode", postalCodeWatch],
-      // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
-      queryFn: () => getAddressByPostalCode(postalCodeWatch),
-      // enabled: postalCodeWatch.length === 5,
-    });
 
-    useEffect(() => {
-      if (postalCodeData) {
-        methods.setValue("address.city", postalCodeData["place_name"]);
-        methods.setValue("address.state", postalCodeData["fsa_province"]);
-        methods.setValue("address.country", postalCodeData["country"]);
-      }
-    }, [postalCodeData, postalCodeWatch]);
+    // const {
+    //   data: postalCodeData,
+    //   isLoading: postalCodeLoading,
+    //   isPending: postalCodeIsPending,
+    // } = useQuery({
+    //   queryKey: ["postalCode", postalCodeWatch],
+    //   // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
+    //   queryFn: () => getAddressByPostalCode(postalCodeWatch),
+    //   // enabled: postalCodeWatch.length === 5,
+    // });
+
+    // useEffect(() => {
+    //   if (postalCodeData) {
+    //     console.log("address.city", postalCodeData["placeName"])
+    //     console.log("address.state", postalCodeData["country"])
+    //     console.log("address.country", postalCodeData["fsa_province"])
+
+    //     methods.setValue("address.city", postalCodeData["placeName"]);
+    //     // wrong mapping in DB, swapped values
+    //     methods.setValue("address.state", postalCodeData["country"]);
+    //     methods.setValue("address.country", postalCodeData["fsaProvince"]);
+    //   }
+    // }, [postalCodeData, postalCodeWatch]);
 
     // on change of ship date setshipdate state coming from parent
 

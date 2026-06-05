@@ -117,9 +117,8 @@ export default function QuotesDashboardPage() {
         <TabsList className="gap-2 w-full overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1" >
           {[
             { icon: Heart, label: "All Quotes", value: "all", count: count.all },
-            // { icon: SaveIcon, label: "Saved", value: "saved", count: count.saved },
-            { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },
-            { icon: Truck, label: "Favorite Quotes", value: "favorite", count: count.spot }
+            // { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },
+            // { icon: Truck, label: "Favorite Quotes", value: "favorite", count: count.spot }
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}

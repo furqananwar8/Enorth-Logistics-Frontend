@@ -120,9 +120,9 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
-      const address = row.original.addresses[0].addressBookEntry
-        ? row.original.addresses[0].addressBookEntry.address
-        : row.original.addresses[0].address;
+      const address = row?.original?.addresses[0]?.addressBookEntry
+        ? row?.original?.addresses[0]?.addressBookEntry?.address
+        : row?.original?.addresses[0]?.address;
       const address1 = address?.address1;
       const city = address?.city;
       const state = address?.state;

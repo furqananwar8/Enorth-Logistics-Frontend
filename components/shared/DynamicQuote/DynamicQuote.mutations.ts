@@ -7,9 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export function useDynamicQuoteMutations({shipmentId, quoteId}: {shipmentId?: string, quoteId?: string}) {
-
     const router = useRouter();
-
     const createQuoteMutation = useMutation({
     mutationFn: (data: unknown) => createQuote(data),
     onSuccess: () => {
@@ -46,7 +44,7 @@ export function useDynamicQuoteMutations({shipmentId, quoteId}: {shipmentId?: st
   const createShipmentMutation = useMutation({
     mutationFn: (data: unknown) => createShipment(data),
     onSuccess: (res) => {
-      toast.success("Shipment created successfully");
+      // toast.success("Shipment created successfully");
       return res.data;
     },
     onError: (error: AxiosError<ApiError>) => {

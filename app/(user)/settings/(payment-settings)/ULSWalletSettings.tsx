@@ -118,7 +118,7 @@ export default function ULSWalletSettings() {
   const handleTopupSubmit = (data: TopupFormValues) => {
     if (cards && cards.length > 0) {
       charge({
-        amount: data.amount * 100, // Convert to cents if needed, depends on backend
+        amount: data.amount, // Convert to cents if needed, depends on backend
         currency: data.currency.toLowerCase(),
         cardId: cards[0].id, // Using the first card as a fallback
       });
@@ -165,15 +165,9 @@ export default function ULSWalletSettings() {
   });
 
   // console.log(user.user)
-  const handleAddCard = () => {
-    if (user?.user?.stripeCustomerId) {
-      createPaymentIntent(user?.user?.stripeCustomerId);
-      setIsAddCardModalOpen(true);
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
-    }
-  };
+const handleAddCard = () => {
+  setIsAddCardModalOpen(true);
+};
   if (isPendingPaymentIntent || isLoadingCards) {
     return <Loader />;
   }

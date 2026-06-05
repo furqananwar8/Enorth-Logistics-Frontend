@@ -140,7 +140,7 @@ export default function Header() {
                     )}
                   </NavigationMenuItem>
                 ))}
-              {user?.user?.role.name === "superAdmin" &&
+              {/* {user?.user?.role.name === "superAdmin" &&
                 superAdminNavItems.map((item) => (
                   <NavigationMenuItem key={item.title}>
                     <Button
@@ -153,7 +153,7 @@ export default function Header() {
                       <ChevronDown className="size-4" />
                     </Button>
                   </NavigationMenuItem>
-                ))}
+                ))} */}
               
             </NavigationMenuList>
           </NavigationMenu>

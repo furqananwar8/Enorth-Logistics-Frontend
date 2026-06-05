@@ -126,7 +126,7 @@ export default function DynamicQuote({
   }, []);
 
   const scrollToSection = (id: string, offset = 100) => {
-    console.log(id)
+    console.log(id);
     const element = document.getElementById(id);
 
     if (!element) return;
@@ -147,9 +147,9 @@ export default function DynamicQuote({
     let valid = fromValid && toValid && dimValid;
 
     // print all valid with false value
-    // console.log("FROM VALID:", fromValid);
-    // console.log("TO VALID:", toValid);
-    // console.log("DIM VALID:", dimValid);
+    console.log("FROM VALID:", fromValid);
+    console.log("TO VALID:", toValid);
+    console.log("DIM VALID:", dimValid);
 
     if (quoteType === "SPOT") {
       const contactValid = await contactRef.current?.trigger();
@@ -165,7 +165,6 @@ export default function DynamicQuote({
       if (!fromValid || !toValid) {
         scrollToSection(`shippingAddressSectionFROM`);
       }
-      
 
       return false;
     }
@@ -211,6 +210,10 @@ export default function DynamicQuote({
     getRatesRef.current?.handleStart();
     setGetRatesLoading(true);
   };
+  function extractDays(str:string) {
+    const match = str?.match(/\d+/);
+    return match ? parseInt(match[0], 10) : null;
+  }
   const handleBookShipment = async () => {
     // if (!singleQuote?.quote?.id) {
     //     toast.error("Quote not found")
@@ -225,12 +228,6 @@ export default function DynamicQuote({
       return;
     }
 
-    // create shipment first if not created already
-    // if (!singleQuote?.quote?.shipment?.id) {
-    //     bookShipmentMutation.mutate(bookShipmentPayload)
-    // }
-    // else {
-    // }
     const { finalQuotePayload } = buildPayloads();
     const newShipmentPayload = {
       mode: "SHIPMENT",
@@ -250,14 +247,19 @@ export default function DynamicQuote({
             quoteType: quoteType,
           }),
     };
-    const res = await createShipmentMutation.mutateAsync(newShipmentPayload);
-    setNewlyCreatedQuoteId(res?.quote?.id);
-    // console.log("CREATE SHIPMENT RESPONSE:", res);
+
+    let res = null;
+    if (!singleQuote?.quote?.shipment?.id) {
+      res = await createShipmentMutation.mutateAsync(newShipmentPayload);
+      setNewlyCreatedQuoteId(res?.quote?.id);
+    }
     const bookShipmentPayload = {
       ...(singleQuote?.quote?.id
         ? {
             quoteId: singleQuote?.quote?.id,
-            shipDate: singleQuote?.quote?.shipment?.shipDate,
+            shipDate: singleQuote?.quote?.shipment?.shipDate
+              ? singleQuote?.quote?.shipment?.shipDate
+              : fromAddress?.shipDate,
           }
         : {
             quoteId: res?.quote?.id,
@@ -271,16 +273,15 @@ export default function DynamicQuote({
         currency: selectedCarrier.currency,
         ...(selectedCarrier.carrier === "TST" && {
           packagingType: selectedCarrier.packagingType || "BOX",
-          //   transitDays: selectedCarrier.estimatedDeliveryDays,
-          transitDays: 3,
+            transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
         }),
       },
     };
+    // console.log("BOOK SHIPMENT SHIPDATE ALREADY CREATED QUOTE CASE: ", singleQuote?.quote?.shipment?.shipDate)
+    // console.log("BOOK SHIPMENT SHIPDATE NEW QUOTE CASE: ", res?.quote?.shipment?.shipDate)
     // console.log("BOOK SHIPMENT PAYLOAD:", bookShipmentPayload);
-
-    if (res) {
-      bookShipmentMutation.mutate(bookShipmentPayload);
-    }
+    // console.log("SELECTED CARRIER: ", selectedCarrier);
+    bookShipmentMutation.mutate(bookShipmentPayload);
   };
 
   const handleConvertToShipment = async () => {
@@ -290,7 +291,7 @@ export default function DynamicQuote({
 
     const { finalQuotePayload } = buildPayloads();
 
-    // // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
+    // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
     createQuoteAndConvertToShipmentMutation.mutate(finalQuotePayload);
   };
   //   const selectedCarrierDetails = useMemo(() => {

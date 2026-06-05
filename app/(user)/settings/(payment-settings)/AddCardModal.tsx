@@ -158,35 +158,7 @@ export default function AddCardModal({
             Add New Credit Card
           </DialogTitle>
         </DialogHeader>
-
-        {/* <div className="px-6 py-6 border rounded-lg m-6 mt-4">
-          <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)} id="add-card-form">
-              <GlobalForm fields={fields} />
-            </form>
-          </FormProvider>
-        </div> */}
-
-        <Elements stripe={stripePromise}>
-          <AddCardForm
-            clientSecret={clientSecret}
-            onOpenChange={onOpenChange}
-          />
-        </Elements>
-
-        {/* <DialogFooter className="px-6 py-4 border-t bg-slate-50 gap-2 sm:justify-end">
-          <DialogClose asChild>
-            <Button variant="outline" className="w-24">Cancel</Button>
-          </DialogClose>
-          <Button
-            type="submit"
-            form="add-card-form"
-            className="bg-primary hover:bg-primary/90 text-white min-w-[120px]"
-          // disabled={!methods.watch("acceptTerms")}
-          >
-            Add New Card
-          </Button>
-        </DialogFooter> */}
+        <AddCardForm onOpenChange={onOpenChange} />
       </DialogContent>
     </Dialog>
   );

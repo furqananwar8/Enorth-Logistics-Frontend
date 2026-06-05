@@ -45,6 +45,7 @@ import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
 import { AccountBalanceModal } from "./AccountBalanceModal";
 import Image from "next/image";
+import { useAuth } from "@/context/auth.context";
 
 export default function UserProfile() {
   const router = useRouter();
@@ -65,6 +66,7 @@ export default function UserProfile() {
     setOpen(false);
   };
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  const { isAdmin } = useAuth();
   return (
     <>
       {isLoading ? (
@@ -75,11 +77,12 @@ export default function UserProfile() {
             <p className="text-sm font-medium">
               Welcome, {user?.user?.firstName} {user?.user?.lastName}
             </p>
-           {user?.user?.role.name !== "superAdmin" && (
-            <p className="text-xs dark:text-white text-primary">
-              Available Credit: ${user?.user?.company?.wallet?.balance}
-            </p>
-          )}</div>
+            {user?.user?.role.name !== "superAdmin" && (
+              <p className="text-xs dark:text-white text-primary">
+                Available Credit: ${user?.user?.company?.wallet?.balance}
+              </p>
+            )}
+          </div>
 
           {/* USER MENU */}
           <DropdownMenu open={open} onOpenChange={setOpen}>

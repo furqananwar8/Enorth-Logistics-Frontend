@@ -58,6 +58,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType, onChange }: { 
         resolver: zodResolver(additionalServicesSchema),
         mode: "onChange",
         defaultValues: {
+            limitedAccess: false,
             inBound: {
                 bondType: "",
                 bondCancler: "",
@@ -96,6 +97,7 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType, onChange }: { 
         if (cachedSingleQuote) {
             const services = cachedSingleQuote.quote.palletServices;
             if (services) {
+                setValue("limitedAccess", true)
                 setValue("services.limitedAccess", services.limitedAccess)
                 setValue("services.appointmentDelivery", services.appointmentDelivery)
                 setValue("services.thresholdDelivery", services.thresholdDelivery)

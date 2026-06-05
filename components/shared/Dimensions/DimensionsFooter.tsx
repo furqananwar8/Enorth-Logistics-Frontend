@@ -18,7 +18,7 @@ export function DimensionsFooter({ shipmentType, onAddPackage }: Props) {
 
     return (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-            {shipmentType === "PACKAGE" && (
+            {/* {shipmentType === "PACKAGE" && (
                 <div className="flex items-center space-x-2">
                     <Controller
                         control={control}
@@ -31,7 +31,7 @@ export function DimensionsFooter({ shipmentType, onAddPackage }: Props) {
                         Special Handling Required <Info size={14} className="text-slate-800 dark:text-white" />
                     </Label>
                 </div>
-            )}
+            )} */}
             {shipmentType !== "COURIER_PAK" && <Button type="button" variant="outline" onClick={onAddPackage}>
                 <Plus size={16} className="mr-1" /> Add Package
             </Button>}

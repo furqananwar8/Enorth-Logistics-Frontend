@@ -58,7 +58,7 @@ export default function QuotesDashboardPage() {
 
       {showFilters ? (
         <div className="bg-slate-50 dark:bg-primary/10 border border-border p-4 rounded-md mb-6 relative">
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start mb-2">
             <h2 className="text-lg font-semibold text-primary">Search Quotes</h2>
             <div className="flex gap-2">
               <Button variant="destructive" onClick={() => {
@@ -114,7 +114,7 @@ export default function QuotesDashboardPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="all">
-        <TabsList className="gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1" >
+        <TabsList className="gap-2 w-full overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1" >
           {[
             { icon: Heart, label: "All Quotes", value: "all", count: count.all },
             // { icon: SaveIcon, label: "Saved", value: "saved", count: count.saved },

@@ -207,24 +207,24 @@ export const ShippingAddressSection = forwardRef(
     const postalCodeWatch = methods.watch("address.postalCode") || "";
 
     const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
-    // const {
-    //   data: postalCodeData,
-    //   isLoading: postalCodeLoading,
-    //   isPending: postalCodeIsPending,
-    // } = useQuery({
-    //   queryKey: ["postalCode", postalCodeWatch],
-    //   // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
-    //   queryFn: () => getAddressByPostalCode(postalCodeWatch),
-    //   // enabled: postalCodeWatch.length === 5,
-    // });
+    const {
+      data: postalCodeData,
+      isLoading: postalCodeLoading,
+      isPending: postalCodeIsPending,
+    } = useQuery({
+      queryKey: ["postalCode", postalCodeWatch],
+      // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
+      queryFn: () => getAddressByPostalCode(postalCodeWatch),
+      // enabled: postalCodeWatch.length === 5,
+    });
 
-    // useEffect(() => {
-    //   if (postalCodeData) {
-    //     methods.setValue("address.city", postalCodeData["place_name"]);
-    //     methods.setValue("address.state", postalCodeData["fsa_province"]);
-    //     methods.setValue("address.country", postalCodeData["country"]);
-    //   }
-    // }, [postalCodeData, postalCodeWatch]);
+    useEffect(() => {
+      if (postalCodeData) {
+        methods.setValue("address.city", postalCodeData["place_name"]);
+        methods.setValue("address.state", postalCodeData["fsa_province"]);
+        methods.setValue("address.country", postalCodeData["country"]);
+      }
+    }, [postalCodeData, postalCodeWatch]);
 
     // on change of ship date setshipdate state coming from parent
 
@@ -276,7 +276,9 @@ export const ShippingAddressSection = forwardRef(
       );
 
       // if shipment type is STANDARD_FTL
+      console.log("shipmentType", shipmentType)
       if (shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK") {
+        console.log("contact.isResidential", contact)
         methods.setValue("isResidential", contact.isResidential || false, {
           shouldValidate: true,
           shouldDirty: true,
@@ -390,9 +392,7 @@ export const ShippingAddressSection = forwardRef(
     // show errors
 
     // console values on change
-    useEffect(() => {
-      console.log("values", methods.getValues());
-    }, [methods.getValues()]);
+
 
     useEffect(() => {
       // console.log("cachedSingleQuote", cachedSingleQuote);

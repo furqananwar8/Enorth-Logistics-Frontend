@@ -1,128 +1,204 @@
-"use client"
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
-import { FormProvider } from "react-hook-form"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Cuboid, ChevronUp, Info, PackageCheck } from "lucide-react"
-import { GlobalForm } from "@/components/common/form/GlobalForm"
-import DangerousGoodsForm from "./DangerousGoodDetails"
-import { useDimensions } from "./Dimensions.hooks"
-import { DimensionsMeasurementControls } from "./DimensionsMesurementControls"
-import { PackageRow } from "./PackageRow"
-import { DimensionsFooter } from "./DimensionsFooter"
+"use client";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { FormProvider } from "react-hook-form";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Cuboid, ChevronUp, Info, PackageCheck } from "lucide-react";
+import { GlobalForm } from "@/components/common/form/GlobalForm";
+import DangerousGoodsForm from "./DangerousGoodDetails";
+import { useDimensions } from "./Dimensions.hooks";
+import { DimensionsMeasurementControls } from "./DimensionsMesurementControls";
+import { PackageRow } from "./PackageRow";
+import { DimensionsFooter } from "./DimensionsFooter";
 // import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
-import { usePathname } from "next/navigation"
-import { FTLPackageDimensions } from "./FTLPackageDimensions"
-import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types"
+import { usePathname } from "next/navigation";
+import { FTLPackageDimensions } from "./FTLPackageDimensions";
+import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
 
-const Dimensions = forwardRef(({ shipmentType, onChange, quoteType }: { shipmentType: ShipmentOptions[keyof ShipmentOptions], onChange?: (data: any) => void, quoteType: keyof ShipmentOptions }, ref) => {
+const Dimensions = forwardRef(
+  (
+    {
+      shipmentType,
+      onChange,
+      quoteType,
+    }: {
+      shipmentType: ShipmentOptions[keyof ShipmentOptions];
+      onChange?: (data: any) => void;
+      quoteType: keyof ShipmentOptions;
+    },
+    ref,
+  ) => {
+    const {
+      methods,
+      fieldArray,
+      handleAddPackage,
+      handleClearDimensions,
+      isOpen,
+      setIsOpen,
+      cachedSingleQuote,
+    } = useDimensions(shipmentType);
+    const { watch, setValue } = methods;
 
-  const { methods, fieldArray, handleAddPackage, handleClearDimensions, isOpen, setIsOpen } = useDimensions(shipmentType)
-  const { watch, setValue } = methods
+    useEffect(() => {
+      const subscription = methods.watch((value) => {
+        if (onChange) {
+          onChange(value);
+        }
+      });
+      return () => subscription.unsubscribe();
+    }, [methods, onChange]);
+    const { fields, append, remove } = fieldArray;
 
-  useEffect(() => {
-    const subscription = methods.watch((value) => {
-      if (onChange) {
-        onChange(value);
+    const [packageDialogOpen, setPackageDialogOpen] = useState(false);
+    // isShipment
+    const pathname = usePathname();
+    const isShipment = pathname.includes("shipment");
+    useImperativeHandle(
+      ref,
+      () => ({
+        getValues: methods.getValues,
+        setValues: (vals: any) => methods.reset({ ...vals }),
+        trigger: methods.trigger,
+        open: () => setIsOpen(true),
+      }),
+      [methods],
+    );
+
+    // show error
+    const errors = methods.formState.errors;
+    // console.log("errors", errors)
+
+    // is valid
+    const isValid = methods.formState.isValid;
+
+    const handleQuantityChange = (targetCount: number) => {
+      const currentCount = fields.length;
+      setValue("lineItem.quantity", targetCount);
+      if (targetCount > currentCount) {
+        append(
+          Array(targetCount - currentCount).fill({
+            quantity: 1,
+            length: 0,
+            width: 0,
+            height: 0,
+            weight: 0,
+            description: "",
+          }),
+        );
+      } else {
+        remove(
+          Array.from(
+            { length: currentCount - targetCount },
+            (_, i) => currentCount - 1 - i,
+          ),
+        );
       }
-    });
-    return () => subscription.unsubscribe();
-  }, [methods, onChange]);
-  const { fields, append, remove } = fieldArray
+    };
 
-  const [packageDialogOpen, setPackageDialogOpen] = useState(false)
-  // isShipment
-  const pathname = usePathname()
-  const isShipment = pathname.includes("shipment")
-  useImperativeHandle(ref, () => ({
-    getValues: methods.getValues,
-    setValues: (vals: any) => methods.reset({ ...vals }),
-    trigger: methods.trigger,
-    open: () => setIsOpen(true),
-  }), [methods])
+    const isDangerousGood = watch("lineItem.dangerousGood");
 
-  // show error
-  const errors = methods.formState.errors
-  // console.log("errors", errors)
+    return (
+      <FormProvider {...methods} key={shipmentType}>
+        <form id="dimensions" className="space-y-6">
+          <Accordion
+            type="single"
+            collapsible
+            value={isOpen ? "dimensions" : ""}
+            onValueChange={(val) => setIsOpen(!!val)}
+            className="shadow-lg border border-border rounded-md bg-white dark:bg-card"
+          >
+            <AccordionItem value="dimensions" className="border-none">
+              <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
+                <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
+                  <PackageCheck />
+                  {isShipment ? " Packaging Details" : "Dimensions & Weight"}
+                  <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </h2>
+              </AccordionTrigger>
 
-  // is valid
-  const isValid = methods.formState.isValid
-
-
-
-
-  const handleQuantityChange = (targetCount: number) => {
-    const currentCount = fields.length
-    setValue("lineItem.quantity", targetCount)
-    if (targetCount > currentCount) {
-      append(Array(targetCount - currentCount).fill({ quantity: 1, length: 0, width: 0, height: 0, weight: 0, description: "" }))
-    } else {
-      remove(Array.from({ length: currentCount - targetCount }, (_, i) => currentCount - 1 - i))
-    }
-  }
-
-  const isDangerousGood = watch("lineItem.dangerousGoods")
-
-  return (
-    <FormProvider {...methods} key={shipmentType}>
-      <form id="dimensions" className="space-y-6">
-        <Accordion type="single" collapsible value={isOpen ? "dimensions" : ""} onValueChange={(val) => setIsOpen(!!val)}
-          className="shadow-lg border border-border rounded-md bg-white dark:bg-card">
-          <AccordionItem value="dimensions" className="border-none">
-            <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
-              <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
-                <PackageCheck />
-                {isShipment ? " Packaging Details" : "Dimensions & Weight"}
-                <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </h2>
-            </AccordionTrigger>
-
-            <AccordionContent className="px-6 pb-6 h-full space-y-6">
-              <DimensionsMeasurementControls shipmentType={shipmentType} fieldCount={fields.length} onQuantityChange={handleQuantityChange} />
-              {shipmentType !== "STANDARD_FTL" ? <div className="space-y-6 flex flex-col">
-                {fields.map((field, index) => (
-                  <PackageRow
-                    key={field.id}
-                    index={index}
-                    fieldId={field.id}
-                    shipmentType={shipmentType}
-                    canRemove={fields.length > 1}
-                    onRemove={remove}
-                    onClear={handleClearDimensions}
-                    open={packageDialogOpen}
-                    setOpen={setPackageDialogOpen}
-                    quoteType={quoteType}
-                  />
-                ))}
-                <DimensionsFooter shipmentType={shipmentType} onAddPackage={handleAddPackage} />
-              </div> :
-                <FTLPackageDimensions />
-              }
-
-              <div className="pt-2">
-                <GlobalForm
-                  formWrapperClassName="flex items-center gap-4"
-                  fields={[
-                    // { name: "lineItem.units.0.length", label: "Length", type: "number", defaultValue: 1, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
-                    {
-                      name: "lineItem.dangerousGoods", label: "Dangerous Goods", type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" />,
-                      show: shipmentType === "PALLET" || shipmentType === "PACKAGE"
-                    },
-                    {
-                      name: "lineItem.stackable", label: "Stackable", type: "checkbox", defaultValue: false, icon: <Info size={14} className="text-slate-800 dark:text-white" />,
-                      show: shipmentType === "PALLET"
-                    },
-                  ]}
+              <AccordionContent className="px-6 pb-6 h-full space-y-6">
+                <DimensionsMeasurementControls
+                  shipmentType={shipmentType}
+                  fieldCount={fields.length}
+                  onQuantityChange={handleQuantityChange}
                 />
-              </div>
+                {shipmentType !== "STANDARD_FTL" ? (
+                  <div className="space-y-6 flex flex-col">
+                    {fields.map((field, index) => (
+                      <PackageRow
+                        key={field.id}
+                        index={index}
+                        fieldId={field.id}
+                        shipmentType={shipmentType}
+                        canRemove={fields.length > 1}
+                        onRemove={remove}
+                        onClear={handleClearDimensions}
+                        open={packageDialogOpen}
+                        setOpen={setPackageDialogOpen}
+                        quoteType={quoteType}
+                      />
+                    ))}
+                    <DimensionsFooter
+                      shipmentType={shipmentType}
+                      onAddPackage={handleAddPackage}
+                    />
+                  </div>
+                ) : (
+                  <FTLPackageDimensions />
+                )}
 
-              {isDangerousGood && <DangerousGoodsForm />}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </form>
-    </FormProvider>
-  )
-})
+                <div className="pt-2">
+                  <GlobalForm
+                    formWrapperClassName="flex items-center gap-4"
+                    fields={[
+                      // { name: "lineItem.units.0.length", label: "Length", type: "number", defaultValue: 1, icon: <Info size={14} className="text-slate-800 dark:text-white" /> },
+                      {
+                        name: "lineItem.dangerousGood",
+                        label: "Dangerous Goods",
+                        type: "checkbox",
+                        defaultValue: false,
+                        icon: (
+                          <Info
+                            size={14}
+                            className="text-slate-800 dark:text-white"
+                          />
+                        ),
+                        show:
+                          shipmentType === "PALLET" ||
+                          shipmentType === "PACKAGE",
+                      },
+                      {
+                        name: "lineItem.stackable",
+                        label: "Stackable",
+                        type: "checkbox",
+                        defaultValue: false,
+                        icon: (
+                          <Info
+                            size={14}
+                            className="text-slate-800 dark:text-white"
+                          />
+                        ),
+                        show: shipmentType === "PALLET",
+                      },
+                    ]}
+                  />
+                </div>
 
-Dimensions.displayName = "Dimensions"
-export default Dimensions
+                {isDangerousGood && (
+                  <DangerousGoodsForm />
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </form>
+      </FormProvider>
+    );
+  },
+);
+
+Dimensions.displayName = "Dimensions";
+export default Dimensions;

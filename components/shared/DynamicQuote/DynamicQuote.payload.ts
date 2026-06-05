@@ -105,7 +105,8 @@ export function useDynamicQuotePayloads({
         },
       };
     }
-    return completePayload;
+    const { limitedAccess, ...updatedPayload } = completePayload;
+    return updatedPayload;
   };
   const buildPayloads = () => {
     const mergedData = getMergedPayload();

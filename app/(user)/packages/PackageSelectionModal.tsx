@@ -13,7 +13,7 @@ export default function PackageSelectionModal({ selectedPackage, onSelect }: { s
                     <PackageOpen /> My Packages
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl!">
+            <DialogContent className="overflow-scroll no-scrollbar sm:max-w-3xl!">
                 <DialogHeader>
                     <DialogTitle>My Packages</DialogTitle>
                     <DialogDescription>

@@ -26,7 +26,6 @@ export default function InBond() {
                             { label: "(IT) Immediate Transportation Bond", value: "IT_BOND" },
                         ],
                         wrapperClassName: "col-span-2 flex flex-col gap-4",
-
                     },
                     {
                         name: "inBound.bondCancler",
@@ -60,7 +59,6 @@ export default function InBond() {
                         wrapperClassName: "col-span-2",
                         type: "text",
                         labelClassName: "capitalize"
-
                     },
 
                 ]}

@@ -71,7 +71,7 @@ const FormField = memo(({ field: config }: { field: FormFieldTypes }) => {
               }
               placeholder={config.placeholder}
               {...field}
-              className={`${config.inputClassName} ${error ? "border-red-500 bg-red-50 placeholder:text-red-500 focus:outline-red-100" : ""} ${isPassword ? "pr-10" : ""} border-primary/10 border`}
+              className={`${config.inputClassName} ${error ? "border-red-500! bg-red-50 placeholder:text-red-500 focus:outline-red-100" : ""} ${isPassword ? "pr-10" : ""} border-primary/10 border`}
               disabled={config.disabled}
               onChange={(e) => {
                 let value;

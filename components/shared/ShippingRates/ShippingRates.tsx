@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { ShippingRatesTable } from "./ShippingRatesTable";
 import { ShippingRatesStream } from "./ShippingRatesStream";
 import { useSearchParams } from "next/navigation";
+import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
 // shipping rates table component
 export default function ShippingRates({
   quoteId,
@@ -36,6 +37,7 @@ export default function ShippingRates({
   ref,
   getRatesLoading,
   setGetRatesLoading,
+  shipmentType,
 }: {
   quoteId?: string | number;
   dimensions: any;
@@ -48,6 +50,7 @@ export default function ShippingRates({
   ref: any;
   getRatesLoading: boolean;
   setGetRatesLoading: (value: boolean) => void;
+  shipmentType: ShipmentOptions[keyof ShipmentOptions];
 }) {
   // console.log("fromAddress", fromAddress);
   // console.log("toAddress", toAddress);
@@ -84,16 +87,17 @@ export default function ShippingRates({
       return [];
     }
     return dimensions?.lineItem?.units?.map((unit: any) => {
+      console.log("UNIT:", unit)
       return {
         weightUnit:
           dimensions.lineItem.measurementUnit === "IMPERIAL" ? "LB" : "KG",
         weight: unit.weight,
         dimensionsUnit:
           dimensions.lineItem.measurementUnit === "IMPERIAL" ? "IN" : "CM",
-        length: unit.length,
-        width: unit.width,
-        height: unit.height,
-        handlingUnits: unit.unitsOnPallet ?? 1,
+        ...(unit.length > 0 ? { length: unit.length } : {}),
+        ...(unit.width > 0 ? { width: unit.width } : {}),
+        ...(unit.height > 0 ? { height: unit.height } : {}),
+        handlingUnits: shipmentType === "STANDARD_FTL" ? unit.count : (unit.unitsOnPallet ?? 1),
         //   packaging: unit.palletUnitType,
         packaging: "BOX",
       };
@@ -240,8 +244,8 @@ export default function ShippingRates({
     //   },
     // ],
     packages: dimensionsPayload(),
-    shipmentType: "PACKAGE",
-
+    shipmentType: shipmentType,
+    stackable: false,
     // shipmentType: "",
   };
   // const mutation = useMutation({

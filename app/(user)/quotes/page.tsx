@@ -114,7 +114,7 @@ export default function QuotesDashboardPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="all">
-        <TabsList className="gap-2 w-full overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1" >
+        <TabsList className="gap-2 w-max overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1" >
           {[
             { icon: Heart, label: "All Quotes", value: "all", count: count.all },
             // { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },

@@ -117,7 +117,8 @@ export default function DynamicQuote({
   const services = servicesRef.current?.getValues() || {};
   const insurance = insuranceRef.current?.getValues() || {};
   const signature = signatureRef.current?.getValues() || {};
-
+  const [isAddressValid, setIsAddressValid] = useState(false);
+  const [isDimensionsValid, setIsDimensionsValid] = useState(false);
   const [realTimeData, setRealTimeData] = useState<any>({});
   const [newlyCreatedQuoteId, setNewlyCreatedQuoteId] = useState<any>(null);
 
@@ -125,6 +126,23 @@ export default function DynamicQuote({
     setRealTimeData(getMergedPayload());
   }, []);
 
+  useEffect(() => {
+    const fromValid = fromAddressRef.current?.trigger();
+    const toValid = toAddressRef.current?.trigger();
+    const dimValid = dimensionsRef.current?.trigger();
+    if (fromValid && toValid) {
+      setIsAddressValid(true);
+    }
+    else{
+      setIsAddressValid(false)
+    }
+    if (dimensions) {
+      setIsDimensionsValid(true)
+    }
+    else{
+      setIsDimensionsValid(false)
+    }
+  }, [fromAddress, toAddress, dimensions]);
   const scrollToSection = (id: string, offset = 100) => {
     console.log(id);
     const element = document.getElementById(id);
@@ -156,7 +174,7 @@ export default function DynamicQuote({
       const equipmentValid = await equipmentRef.current?.trigger();
       valid = valid && contactValid && equipmentValid;
     }
-    
+
     if (!valid) {
       toast.error("Please fill in all required fields correctly.");
       if (!dimValid) {
@@ -210,7 +228,7 @@ export default function DynamicQuote({
     getRatesRef.current?.handleStart();
     setGetRatesLoading(true);
   };
-  function extractDays(str:string) {
+  function extractDays(str: string) {
     const match = str?.match(/\d+/);
     return match ? parseInt(match[0], 10) : null;
   }
@@ -231,6 +249,7 @@ export default function DynamicQuote({
     const { finalQuotePayload } = buildPayloads();
     const newShipmentPayload = {
       mode: "SHIPMENT",
+      // shipmentType: singleQuote?.quote?.shipmentType ? singleQuote?.quote?.shipmentType : shipmentType,
       shipmentType: singleQuote?.quote?.shipmentType,
       shipDate: fromAddress?.shipDate,
       ...(singleQuote?.quote?.id
@@ -273,7 +292,7 @@ export default function DynamicQuote({
         currency: selectedCarrier.currency,
         ...(selectedCarrier.carrier === "TST" && {
           packagingType: selectedCarrier.packagingType || "BOX",
-            transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
+          transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
         }),
       },
     };
@@ -449,6 +468,7 @@ export default function DynamicQuote({
                 fromAddress={fromAddress}
                 toAddress={toAddress}
                 quoteId={singleQuote?.quote?.id || newlyCreatedQuoteId}
+                shipmentType={shipmentType}
               />
             </div>
 
@@ -506,6 +526,8 @@ export default function DynamicQuote({
             setQuoteStatus={setQuoteStatus}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
+            isAddressValid={isAddressValid}
+            isDimensionsValid={isDimensionsValid}
           />
         </div>
       </div>

@@ -512,9 +512,10 @@ export default function SingleInvoicePage() {
                     <Button
                         className="bg-primary hover:bg-[#005999] px-8 shadow-sm"
                         onClick={() => setIsPayModalOpen(true)}
+                        disabled={invoice.paid}
                     >
-                        Pay ${totalDue.toFixed(2)}{" "}
-                        {shipment?.currency}
+                        {invoice.paid ? "Paid" : "Pay"}
+                        {invoice.paid ? "" : totalDue.toFixed(2) + " " +shipment?.currency}
                     </Button>
                 </div>
             </div>

@@ -36,7 +36,7 @@ export const getInvoiceById = async (id: number) => {
 }
 
 export const payInvoice = async (id: number) => {
-    const response = await apiClient.get(`/invoices/${id}/pay`);
+    const response = await apiClient.post(`/invoices/${id}/pay`);
     return response.data;
 }
 

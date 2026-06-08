@@ -90,28 +90,47 @@ export function useDimensions(
   useEffect(() => {
     if (!cachedSingleQuote) return;
     const units = cachedSingleQuote.quote.lineItems?.units ?? [];
+    if (shipmentType !== "STANDARD_FTL") {
+      setValue(
+        "lineItem.units",
+        units.length === 0
+          ? [
+              {
+                quantity: 1,
+                length: 0,
+                width: 0,
+                height: 0,
+                weight: 0,
+                description: "",
+              },
+            ]
+          : units,
+      );
+    } else {
+      const isLooseFreight =
+        cachedSingleQuote?.quote?.standardFTLService?.looseFreight;
+      const isPallet = cachedSingleQuote?.quote?.standardFTLService?.pallet;
 
-    setValue(
-      "lineItem.units",
-      units.length === 0
-        ? [
-            {
-              quantity: 1,
-              length: 0,
-              width: 0,
-              height: 0,
-              weight: 0,
-              description: "",
-            },
-          ]
-        : units,
-    );
-  console.log("cachedSingleQuote.lineItem?.measurementUnit", cachedSingleQuote)
+      const FTLUnits = isLooseFreight ? isLooseFreight : isPallet;
+      if(FTLUnits){
+        setValue("lineItem.units.0.name", isLooseFreight ? "looseFreight" : "pallets")
+        setValue("lineItem.units.0.count", FTLUnits.totalCount || 0)
+        setValue("lineItem.units.0.weight", FTLUnits.totalWeight || 0)
+      }
+    }
 
-    setValue(
-      "lineItem.measurementUnit",
-      cachedSingleQuote?.quote?.lineItems?.measurementUnit,
-    );
+    if (shipmentType === "STANDARD_FTL") {
+      setValue(
+        "lineItem.measurementUnit",
+        cachedSingleQuote?.quote?.standardFTLService?.looseFreight
+          ?.measurementUnit,
+      );
+    } else {
+      setValue(
+        "lineItem.measurementUnit",
+        cachedSingleQuote?.quote?.lineItems?.measurementUnit,
+      );
+    }
     setValue(
       "lineItem.dangerousGoods",
       cachedSingleQuote?.quote?.lineItems?.dangerousGoods,

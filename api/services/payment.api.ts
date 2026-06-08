@@ -17,6 +17,6 @@ export const topupWallet = async (payload: any) => {
 };
 // create surcharges
 export const createSurcharges = async (payload: ShipmentSurchargesResponse) => {
-    const response = await apiClient.post("/surcharges", payload);
+    const response = await apiClient.post(`/surcharges`, payload);
     return response.data;
 };

@@ -207,7 +207,6 @@ export function useDynamicQuotePayloads({
 
       const ftlPayload = {
         ...payloadTransformed,
-
         services: {
           [selectedService]: {
             totalWeight: firstUnit?.weight,
@@ -218,7 +217,7 @@ export function useDynamicQuotePayloads({
       };
 
       // remove lineItem from FTL payload
-      const { lineItem, ...rest } = ftlPayload;
+      let { lineItem, ...rest } = ftlPayload;
 
       finalQuotePayload = rest;
     }

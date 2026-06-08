@@ -58,7 +58,7 @@ export const columns: ColumnDef<any>[] = [
     header: "Name",
     cell: ({ row }) => {
       return (
-        <span className="text-primary font-medium whitespace-nowrap">
+        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
           {row.original.quoteId}
         </span>
       );
@@ -69,23 +69,23 @@ export const columns: ColumnDef<any>[] = [
     header: "Quote ID",
     cell: ({ row }) => {
       return (
-        <span className="text-primary font-medium whitespace-nowrap">
+        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
           {row.original.quoteId}
         </span>
       );
     },
   },
-  {
-    accessorKey: "transactionId",
-    header: "Transaction #",
-    cell: ({ row }) => {
-      return (
-        <span className="text-foreground whitespace-nowrap">
-          {row.original.transactionId}
-        </span>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "transactionId",
+  //   header: "Transaction #",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span className="text-foreground whitespace-nowrap">
+  //         {row.original.transactionId}
+  //       </span>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "dateCreated",
     header: "Date Created",
@@ -111,7 +111,7 @@ export const columns: ColumnDef<any>[] = [
         <div className="leading-tight whitespace-nowrap">
           {time}
           <br />
-          <span className="text-muted-foreground">{formattedDate}</span>
+          <span className="text-muted-foreground ">{formattedDate}</span>
         </div>
       );
     },
@@ -128,7 +128,7 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
       return (
-        <span className="text-primary font-medium whitespace-nowrap">
+        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -148,7 +148,7 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
       return (
-        <span className="text-primary font-medium whitespace-nowrap">
+        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}

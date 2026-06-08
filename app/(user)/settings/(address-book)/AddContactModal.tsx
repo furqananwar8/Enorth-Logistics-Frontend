@@ -13,6 +13,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, UserSquare2 } from "lucide-react";
+import { getErrors } from "@/utils/errorMapping.utils";
 
 export function AddContactModal() {
     const [open, setOpen] = useState(false)
@@ -26,7 +27,7 @@ export function AddContactModal() {
             queryClient.invalidateQueries({ queryKey: ["contacts"] })
         },
         onError: (error: AxiosError<ApiError>) => {
-            toast.error(error.response?.data.message)
+            toast.error(getErrors(error.response?.data.message || ""))
         }
     })
 

@@ -76,29 +76,12 @@ export function ContactForm({
     })
     useEffect(() => {
         if (defaultValues) {
-            // console.log("defaultValues", defaultValues)
             methods.reset(
                 defaultValues,
             )
         }
-        else {
-            methods.reset({
-                // readyTimeHour: 0,
-                // readyTimeMinute: 0,
-                // readyTimeAmPm: "AM",
-                // closeTimeHour: 0,
-                // closeTimeMinute: 0,
-                // closeTimeAmPm: "AM",
-
-                readyTimeHour: "00",
-                readyTimeMinute: "00",
-                readyTimeAmPm: "AM",
-                closeTimeHour: "00",
-                closeTimeMinute: "00",
-                closeTimeAmPm: "AM",
-            })
-        }
-    }, [defaultValues, methods.reset, isLoading])
+       
+    }, [defaultValues, methods.reset])
     // console.log("current values", methods.getValues())
     const handleOpenChange = (newOpen: boolean) => {
         if (!newOpen) methods.reset()

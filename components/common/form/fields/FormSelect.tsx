@@ -27,7 +27,7 @@ const FormSelect = memo(({ field: config }: { field: FormSelectTypes }) => {
                     <SelectValue placeholder={config.placeholder} />
                 </SelectTrigger>
 
-                <SelectContent>
+                <SelectContent position="popper" className="max-h-75! overflow-y-auto! relative!">
 
                     {config.options?.map((opt: any) => (
                         <SelectItem

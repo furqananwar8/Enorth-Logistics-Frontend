@@ -120,16 +120,6 @@ export default function DynamicClaimsTable({
       icon={<FileText size={80} />}
       title="No Claims Found"
       description="You have no claims matching these filters."
-      action={
-        <Link href="/claims/file">
-          <Button
-            variant="outline"
-            className="text-muted-foreground border-border"
-          >
-            Submit New Claim
-          </Button>
-        </Link>
-      }
     />
   );
 }

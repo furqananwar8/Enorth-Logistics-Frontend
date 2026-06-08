@@ -133,14 +133,14 @@ export function PayInvoiceModal({
             {canPayWithBalance && (
               <Button
                 onClick={() => payInvoiceMutation.mutate()}
-                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold h-10 shadow-md shadow-green-100"
+                className="w-full mt-4 bg-primary text-white font-bold h-10 shadow-md shadow-green-100"
               >
                 {payInvoiceMutation.isPending ? (
                   <LoaderCircle className="animate-spin mr-2" size={16} />
                 ) : (
                   ""
                 )}
-                Pay with Balance
+                Pay Now
               </Button>
             )}
           </div>

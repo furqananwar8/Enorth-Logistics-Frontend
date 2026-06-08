@@ -12,6 +12,7 @@ import {
   Upload,
   Info,
   CheckCircle2,
+  LoaderCircle,
 } from "lucide-react";
 import {
   TopupFormValues,
@@ -31,6 +32,9 @@ import {
 import { Loader } from "@/components/common/Loader";
 import { useAuth } from "@/context/auth.context";
 import TopupModal from "./TopupModal";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { ApiError } from "next/dist/server/api-utils";
 
 const MOCK_BALANCES = {
   accountLimit: 3000.0,
@@ -150,6 +154,7 @@ export default function ULSWalletSettings() {
   const {
     mutate: charge,
     isPending: isPendingCharge,
+    isSuccess: isTopupSuccess,
     data: chargeData,
   } = useMutation({
     mutationFn: (payload: any) => topupWallet(payload),
@@ -159,22 +164,25 @@ export default function ULSWalletSettings() {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       // setClientSecret()
     },
-    onError: () => {
-      console.error("Failed to create payment intent");
+    onError: (error: AxiosError<ApiError>) => {
+      toast.error(error.response?.data.message);
     },
   });
 
   // console.log(user.user)
-const handleAddCard = () => {
-  setIsAddCardModalOpen(true);
-};
+  const handleAddCard = () => {
+    setIsAddCardModalOpen(true);
+  };
   if (isPendingPaymentIntent || isLoadingCards) {
     return <Loader />;
   }
 
   // charge(chargePayload)
 
-  console.log("Last Card:", user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1]);
+  console.log(
+    "Last Card:",
+    user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1],
+  );
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-xl font-semibold mb-6">
@@ -201,7 +209,12 @@ const handleAddCard = () => {
           </div>
           <div>
             <p className="text-muted-foreground">Available Balance:</p>
-            <p className="font-bold">
+            <p className="flex font-bold">
+              {isPendingCharge ? (
+                <LoaderCircle className="animate-spin mr-2" size={16} />
+              ) : (
+                ""
+              )}
               ${user?.user?.company?.wallet?.balance || 0}
             </p>
           </div>
@@ -223,6 +236,7 @@ const handleAddCard = () => {
             onOpenChange={setIsTopupModalOpen}
             onSubmit={handleTopupSubmit}
             isPending={isPendingCharge}
+            isSuccess={isTopupSuccess}
           />
         </div>
       </section>
@@ -255,19 +269,14 @@ const handleAddCard = () => {
                 {/* <div className="font-bold text-slate-700 text-sm mb-4">ENorth Logistics CARD</div> */}
                 <div className="flex justify-between items-end">
                   <div className="text-2xl font-italic text-primary dark:text-white font-bold italic capitalize">
-                    {
-                      user?.user?.company?.savedCards[0]?.brand
-                    }
+                    {user?.user?.company?.savedCards[0]?.brand}
                   </div>
                   <div className="text-right">
                     <div className="text-[10px] text-muted-foreground uppercase">
                       Card Number
                     </div>
                     <div className="text-sm font-mono">
-                      **** **** ****{" "}
-                      {
-                        user?.user?.company?.savedCards[0]?.last4
-                      }
+                      **** **** **** {user?.user?.company?.savedCards[0]?.last4}
                     </div>
                   </div>
                 </div>
@@ -295,8 +304,10 @@ const handleAddCard = () => {
               Credit Card account
             </span>{" "}
             (and no longer use your{" "}
-            <span className="font-bold text-slate-800 dark:text-white">Account Balance</span>),
-            please select “Change Account Type”
+            <span className="font-bold text-slate-800 dark:text-white">
+              Account Balance
+            </span>
+            ), please select “Change Account Type”
           </p>
         </div>
 

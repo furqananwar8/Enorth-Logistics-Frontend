@@ -44,22 +44,20 @@ export function useUploadDocuments(
       toast.error("Failed to upload document");
     },
   });
-    const getAcceptedFileTypes = (
+  const getAcceptedFileTypes = (
     documentType?: AddDocumentationModalSchemaType["documentType"],
   ) => {
     switch (documentType) {
       case "PHOTO":
-        return "image/*";
+        return ".jpg,.jpeg,.png,.webp";
       case "COST-INVOICE":
       case "REPAIR-COST-INVOICE":
       case "SALES-INVOICE":
       case "STATEMENT-OF-NON-REPAIRABILITY":
       case "PACKING-SLIP":
       case "DESTRUCTION":
-        return ".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png";
       case "OTHER":
-        return "*";
-
+        return ".jpg,.jpeg,.png,.webp,.pdf";
       default:
         return "";
     }

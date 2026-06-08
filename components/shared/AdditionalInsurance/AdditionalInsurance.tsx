@@ -118,12 +118,12 @@ const AdditionalInsurance = forwardRef((props, ref) => {
                                     name={"insurance.type"}
                                     render={({ field }) => (
                                         <Select value={field.value || "Freightcom"} onValueChange={field.onChange}>
-                                            <SelectTrigger className="w-[200px] bg-white">
+                                            <SelectTrigger className="w-[200px] bg-white cursor-pointer">
                                                 <SelectValue placeholder="Freightcom" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="Freightcom">Freightcom</SelectItem>
-                                                <SelectItem value="ThirdParty">Third Party</SelectItem>
+                                                <SelectItem className="cursor-pointer" value="enorth">ENorth</SelectItem>
+                                                <SelectItem className="cursor-pointer" value="thirdParty">Third Party</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     )}
@@ -134,7 +134,7 @@ const AdditionalInsurance = forwardRef((props, ref) => {
                         <div className="bg-blue-50/50 p-4 rounded-md flex gap-3 items-start text-sm text-slate-600 border border-blue-100">
                             <Info size={18} className="text-slate-800 shrink-0 mt-0.5" />
                             <p>
-                                Please note that without the purchase of <span className="font-semibold text-slate-800">Freightcom Insurance</span>, the carrier's liability for any loss or damage to your Parcel
+                                Please note that without the purchase of <span className="font-semibold text-slate-800">ENorth Insurance</span>, the carrier's liability for any loss or damage to your Parcel
                                 Shipment will be limited to <span className="font-semibold text-slate-800">$2.00 per pound</span> or <span className="font-semibold text-slate-800">$100.00 per shipment</span>, whichever is applicable.
                             </p>
                         </div>

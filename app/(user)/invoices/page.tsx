@@ -50,12 +50,12 @@ export default function InvoicesDashboardPage() {
     const [currencyFilter, setCurrencyFilter] = useState("both")
 
     const [count, setCount] = useState({
-        all: 11,
-        upcoming: 6,
+        all: 0,
+        upcoming: 0,
         overdue: 0,
         urgent: 0,
-        unpaid: 6,
-        paid: 5
+        unpaid: 0,
+        paid: 0
     })
 
     const searchParams = useSearchParams()
@@ -248,23 +248,23 @@ export default function InvoicesDashboardPage() {
                 </div>
 
                 <TabsContent value="all">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="all" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="all" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="upcoming">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="upcoming" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="upcoming" currencyFilter={currencyFilter} />
                 </TabsContent>
                 {/* Other Tabs */}
                 <TabsContent value="overdue">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="overdue" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="overdue" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="urgent">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="urgent" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="urgent" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="unpaid">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="unpaid" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="unpaid" currencyFilter={currencyFilter} />
                 </TabsContent>
                 <TabsContent value="paid">
-                    <DynamicInvoicesTable filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="paid" currencyFilter={currencyFilter} />
+                    <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="paid" currencyFilter={currencyFilter} />
                 </TabsContent>
             </Tabs>
         </div>

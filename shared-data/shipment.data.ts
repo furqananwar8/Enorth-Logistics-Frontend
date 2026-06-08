@@ -1,7 +1,7 @@
 export const LIMITED_ACCESS_LOCATIONS = [
     { value: "CONSTRUCTION_SITE", label: "Construction Site" },
     { value: "INDIVIDUAL_STORAGE_UNIT", label: "Individual (Mini) Storage Unit" },
-    { value: "FAIR_AMUSEMENT_PARK", label: "Fair/Amusement Park" },
+    { value: "AMUSEMENT_PARK", label: "Fair/Amusement Park" },
     { value: "PLACE_OF_WORSHIP", label: "Place of Worship" },
     { value: "FARM_COUNTRY_CLUB_ESTATE", label: "Farm/Country Club/Estate" },
     { value: "SECURED_LOCATIONS_DELIVERY", label: "Secured Locations Delivery - prisons, military bases, airport" },

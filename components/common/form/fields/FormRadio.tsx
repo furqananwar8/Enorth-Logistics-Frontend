@@ -42,7 +42,7 @@ const FormRadio = memo(({ field: config }: { field: FormRadioTypes }) => {
                                 id={`${config.name}-${opt.value}`}
                                 className={`${error ? "border-red-500" : ""} ${isSelected ? config.selectedClassName : ""} cursor-pointer border border-primary/50`}
                             />
-                            <Label htmlFor={`${config.name}-${opt.value}`} className={`cursor-pointer ${error ? "text-red-500" : ""}`}>
+                            <Label htmlFor={`${config.name}-${opt.value}`} className={`cursor-pointer ${error ? "text-red-500" : ""} w-max`}>
                                 {opt.label}
                             </Label>
                         </div>

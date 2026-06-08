@@ -13,13 +13,14 @@ interface TopupModalProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: TopupFormValues) => void;
   isPending: boolean;
+  isSuccess:boolean;
 }
 
-export default function TopupModal({ open, onOpenChange, onSubmit, isPending }: TopupModalProps) {
+export default function TopupModal({ open, onOpenChange, onSubmit, isPending, isSuccess }: TopupModalProps) {
   const methods = useForm<TopupFormValues>({
     resolver: zodResolver(topupSchema),
     defaultValues: {
-      amount: 1,
+      amount: 50,
       currency: "usd",
     },
   });

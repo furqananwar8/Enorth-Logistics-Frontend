@@ -25,10 +25,12 @@ const Dimensions = forwardRef(
       shipmentType,
       onChange,
       quoteType,
+      setIsDimensionsValid,
     }: {
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
       onChange?: (data: any) => void;
       quoteType: keyof ShipmentOptions;
+      setIsDimensionsValid: (value: boolean) => void;
     },
     ref,
   ) => {
@@ -61,6 +63,7 @@ const Dimensions = forwardRef(
       ref,
       () => ({
         getValues: methods.getValues,
+        isValid: methods.formState.isValid,
         setValues: (vals: any) => methods.reset({ ...vals }),
         trigger: methods.trigger,
         open: () => setIsOpen(true),
@@ -74,6 +77,12 @@ const Dimensions = forwardRef(
 
     // is valid
     const isValid = methods.formState.isValid;
+
+    useEffect(() => {
+      if (isValid) {
+        setIsDimensionsValid(true);
+      }
+    }, [methods.getValues()]);
 
     const handleQuantityChange = (targetCount: number) => {
       const currentCount = fields.length;
@@ -188,9 +197,7 @@ const Dimensions = forwardRef(
                   />
                 </div>
 
-                {isDangerousGood && (
-                  <DangerousGoodsForm />
-                )}
+                {isDangerousGood && <DangerousGoodsForm />}
               </AccordionContent>
             </AccordionItem>
           </Accordion>

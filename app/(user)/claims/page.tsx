@@ -166,7 +166,7 @@ export default function ClaimsDashboardPage() {
 
                         <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Packaging Type</label>
-                            <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} className="w-full" />
+                            <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} className="w-full bg-white" />
                         </div>
 
                         <div className="space-y-1">

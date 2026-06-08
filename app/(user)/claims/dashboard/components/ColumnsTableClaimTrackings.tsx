@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Eye, FileText, MoreVertical } from "lucide-react";
+import { getCarrierImg } from "@/components/shared/ShippingRates/Components/carrier-card";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -33,16 +34,18 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "carrier",
-    header: "Carrier",
-    cell: ({ row }) => {
-      return (
-        <div className="h-24 w-24 p-2 flex justify-center items-center">
-          <div className="text-2xl">{row.original.carrier || "-"}</div>
-        </div>
-      );
+      accessorKey: "carrier",
+      header: "Carrier",
+      cell: ({ row }) => {
+        console.log("row.original.shipment.carrier", row.original.shipment?.carrier);
+        return (
+          <div className="h-24 w-24 p-2 flex justify-center items-center">
+            {/* <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" /> */}
+            {getCarrierImg(row.original.shipment.carrier)}
+          </div>
+        );
+      },
     },
-  },
   {
     accessorKey: "trackingNumber",
     header: "Tracking #/BOL #",

@@ -43,6 +43,7 @@ useEffect(() => {
     await card.attach(cardContainerRef.current);
 
     cardRef.current = card;
+
   };
 
   initializeCard();
@@ -83,7 +84,7 @@ useEffect(() => {
       }
 
       queryClient.invalidateQueries({
-        queryKey: ["user"],
+        queryKey: ["cards"],
       });
 
       onOpenChange(false);

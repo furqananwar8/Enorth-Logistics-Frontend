@@ -250,8 +250,9 @@ export const ShippingAddressSection = forwardRef(
         getValues: methods.getValues,
         setValues: (vals: any) => methods.reset({ ...vals }),
         trigger: methods.trigger,
+        isValid: methods.formState.isValid,
       }),
-      [methods],
+      [methods.formState.isValid],
     );
 
     const index = type === "FROM" ? 0 : 1;
@@ -264,7 +265,6 @@ export const ShippingAddressSection = forwardRef(
       setAddressLocked(true);
       methods.setValue("addressBookId", Number(contact.id));
       methods.setValue("type", type);
-
       methods.setValue(
         "address",
         {
@@ -282,9 +282,9 @@ export const ShippingAddressSection = forwardRef(
       );
 
       // if shipment type is STANDARD_FTL
-      console.log("shipmentType", shipmentType)
+      console.log("shipmentType", shipmentType);
       if (shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK") {
-        console.log("contact.isResidential", contact)
+        console.log("contact.isResidential", contact);
         methods.setValue("isResidential", contact.isResidential || false, {
           shouldValidate: true,
           shouldDirty: true,
@@ -399,7 +399,6 @@ export const ShippingAddressSection = forwardRef(
 
     // console values on change
 
-
     useEffect(() => {
       // console.log("cachedSingleQuote", cachedSingleQuote);
       setIsFetchedQuoteShipment(!!cachedSingleQuote?.quote?.shipment?.id);
@@ -426,6 +425,7 @@ export const ShippingAddressSection = forwardRef(
         if (isAddressFromAddressBook) {
           setAddressLocked(true);
         }
+        
         methods.reset({
           ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
           address: {
@@ -446,6 +446,7 @@ export const ShippingAddressSection = forwardRef(
               : quoteAddress?.state || "", // important
             // ...(showLocationType && { locationTypeId: quoteAddress?.locationTypeId }),
             locationTypeId: quoteAddress?.locationTypeId,
+            ...(isShipment && { unit: quoteAddress?.address?.unit ? quoteAddress?.address?.unit : quoteAddress?.unit }),
           },
           ...(isShipment && { companyName: quoteAddress.companyName }),
           ...(isShipment && { contactId: quoteAddress.contactId }),
@@ -612,7 +613,10 @@ export const ShippingAddressSection = forwardRef(
     // console.log("ADDRESS ERRORS", methods.formState.errors);
     return (
       <>
-        <div id={`shippingAddressSection${type}`} className="flex justify-between items-center">
+        <div
+          id={`shippingAddressSection${type}`}
+          className="flex justify-between items-center"
+        >
           <h2 className="text-lg font-semibold">{title}</h2>
           <div className="flex gap-2">
             <Button

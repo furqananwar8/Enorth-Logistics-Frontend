@@ -126,23 +126,21 @@ export default function DynamicQuote({
     setRealTimeData(getMergedPayload());
   }, []);
 
-  useEffect(() => {
-    const fromValid = fromAddressRef.current?.trigger();
-    const toValid = toAddressRef.current?.trigger();
-    const dimValid = dimensionsRef.current?.trigger();
-    if (fromValid && toValid) {
-      setIsAddressValid(true);
-    }
-    else{
-      setIsAddressValid(false)
-    }
-    if (dimensions) {
-      setIsDimensionsValid(true)
-    }
-    else{
-      setIsDimensionsValid(false)
-    }
-  }, [fromAddress, toAddress, dimensions]);
+  // useEffect(() => {
+  //   const fromValid = fromAddressRef.current?.isValid;
+  //   const toValid = toAddressRef.current?.isValid;
+  //   const dimValid = dimensionsRef.current?.isValid;
+  //   console.log("fromValid", fromValid)
+  //   console.log("toValid", toValid)
+  //   if (fromValid && toValid) {
+  //     setIsAddressValid(true);
+  //   }
+  //   if (dimValid) {
+  //     setIsDimensionsValid(true)
+  //   }
+    
+
+  // }, [fromAddressRef, toAddressRef, dimensionsRef]);
   const scrollToSection = (id: string, offset = 100) => {
     console.log(id);
     const element = document.getElementById(id);
@@ -379,6 +377,7 @@ export default function DynamicQuote({
                     type="TO"
                     title="Shipping To"
                     onChange={syncRealTimeData}
+                    
                   />
                 </div>
               </div>
@@ -415,6 +414,7 @@ export default function DynamicQuote({
                   shipmentType={shipmentType}
                   onChange={syncRealTimeData}
                   quoteType={quoteType}
+                  setIsDimensionsValid={setIsDimensionsValid}
                 />
               </div>
               {shipmentType !== "STANDARD_FTL" ? (

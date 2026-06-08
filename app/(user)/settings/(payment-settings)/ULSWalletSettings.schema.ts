@@ -19,7 +19,7 @@ export const addCardSchema = z.object({
 export type AddCardFormValues = z.infer<typeof addCardSchema>;
 
 export const topupSchema = z.object({
-  amount: z.number().refine((val) => val > 0, "Amount must be greater than 0"),
+  amount: z.number().refine((val) => val > 50, "Amount must be greater than 50"),
   currency: z.enum(["cad", "usd"]),
 });
 

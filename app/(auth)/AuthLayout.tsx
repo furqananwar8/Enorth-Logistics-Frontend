@@ -54,7 +54,7 @@ export const AuthLayout = ({
                         // className="w-auto h-auto"
                         />
                         <div className="flex items-center gap-2">
-                            <LanguageToggle />
+                            {/* <LanguageToggle /> */}
                             <ModeToggle />
                         </div>
                     </div>

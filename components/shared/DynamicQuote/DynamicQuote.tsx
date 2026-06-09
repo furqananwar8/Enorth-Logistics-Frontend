@@ -85,7 +85,11 @@ export default function DynamicQuote({
     updateShipmentMutation,
     bookShipmentMutation,
     createQuoteAndConvertToShipmentMutation,
-  } = useDynamicQuoteMutations({ shipmentId: shipmentId!, quoteId: quoteId! });
+  } = useDynamicQuoteMutations({
+    shipmentId: shipmentId!,
+    quoteId: quoteId!,
+    quoteType: quoteType,
+  });
   const { buildPayloads, payloadTransformer, getMergedPayload } =
     useDynamicQuotePayloads({
       fromAddressRef,
@@ -138,7 +142,6 @@ export default function DynamicQuote({
   //   if (dimValid) {
   //     setIsDimensionsValid(true)
   //   }
-    
 
   // }, [fromAddressRef, toAddressRef, dimensionsRef]);
   const scrollToSection = (id: string, offset = 100) => {
@@ -377,7 +380,6 @@ export default function DynamicQuote({
                     type="TO"
                     title="Shipping To"
                     onChange={syncRealTimeData}
-                    
                   />
                 </div>
               </div>
@@ -512,7 +514,9 @@ export default function DynamicQuote({
                     ) : (
                       ""
                     )}
-                    Convert to Shipment
+                    {quoteType === "STANDARD"
+                      ? "Convert to Shipment"
+                      : "Create Spot Quote"}
                   </Button>
                 )}
               </div>

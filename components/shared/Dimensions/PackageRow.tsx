@@ -46,7 +46,7 @@ export function PackageRow({
   } = useFormContext<any>();
 
   const measurementUnit = useWatch({ name: "lineItem.measurementUnit" });
-//   const watchedWeight = useWatch({ name: `lineItem.units.${index}.weight` });
+  //   const watchedWeight = useWatch({ name: `lineItem.units.${index}.weight` });
   const isImperial = measurementUnit === "IMPERIAL";
   const lengthUnit = isImperial ? "in" : "cm";
   const weightUnit = isImperial ? "lbs" : "kg";
@@ -124,108 +124,110 @@ export function PackageRow({
   const weight = useWatch({
     name: `lineItem.units.${index}.weight`,
   });
-//   useEffect(() => {
-//     // const { length, width, height, weight } = rowSnapshot;
-//     validateDimensionFields({
-//       index,
-//       weight,
-//       length,
-//       width,
-//       height,
-//       isImperial,
-//       weightUnit,
-//       lengthUnit,
-//       setError,
-//       clearErrors,
-//     });
-//   }, [
-//     rowSnapshot.length,
-//     rowSnapshot.width,
-//     rowSnapshot.height,
-//     rowSnapshot.weight,
-//     index,
-//   ]);
+  //   useEffect(() => {
+  //     // const { length, width, height, weight } = rowSnapshot;
+  //     validateDimensionFields({
+  //       index,
+  //       weight,
+  //       length,
+  //       width,
+  //       height,
+  //       isImperial,
+  //       weightUnit,
+  //       lengthUnit,
+  //       setError,
+  //       clearErrors,
+  //     });
+  //   }, [
+  //     rowSnapshot.length,
+  //     rowSnapshot.width,
+  //     rowSnapshot.height,
+  //     rowSnapshot.weight,
+  //     index,
+  //   ]);
 
-const watchedLength = useWatch({
-  name: `lineItem.units.${index}.length`,
-});
+  const watchedLength = useWatch({
+    name: `lineItem.units.${index}.length`,
+  });
 
-const watchedWidth = useWatch({
-  name: `lineItem.units.${index}.width`,
-});
+  const watchedWidth = useWatch({
+    name: `lineItem.units.${index}.width`,
+  });
 
-const watchedHeight = useWatch({
-  name: `lineItem.units.${index}.height`,
-});
+  const watchedHeight = useWatch({
+    name: `lineItem.units.${index}.height`,
+  });
 
-const watchedWeight = useWatch({
-  name: `lineItem.units.${index}.weight`,
-});
+  const watchedWeight = useWatch({
+    name: `lineItem.units.${index}.weight`,
+  });
 
-useEffect(() => {
-  const weightField = `lineItem.units.${index}.weight`;
-  const lengthField = `lineItem.units.${index}.length`;
-  const widthField = `lineItem.units.${index}.width`;
-  const heightField = `lineItem.units.${index}.height`;
+  useEffect(() => {
+    if (quoteType !== "SPOT") {
+      const weightField = `lineItem.units.${index}.weight`;
+      const lengthField = `lineItem.units.${index}.length`;
+      const widthField = `lineItem.units.${index}.width`;
+      const heightField = `lineItem.units.${index}.height`;
 
-  const weight = Number(watchedWeight);
-  const length = Number(watchedLength);
-  const width = Number(watchedWidth);
-  const height = Number(watchedHeight);
+      const weight = Number(watchedWeight);
+      const length = Number(watchedLength);
+      const width = Number(watchedWidth);
+      const height = Number(watchedHeight);
 
-  // Limits
-  const maxWeight = isImperial ? 5000 : 2268;
-  const maxLength = isImperial ? 120 : 305; // example
-  const maxWidth = isImperial ? 96 : 244;
-  const maxHeight = isImperial ? 96 : 244;
+      // Limits
+      const maxWeight = isImperial ? 5000 : 2268;
+      const maxLength = isImperial ? 120 : 305; // example
+      const maxWidth = isImperial ? 96 : 244;
+      const maxHeight = isImperial ? 96 : 244;
 
-  // Weight
-  if (weight && weight > maxWeight) {
-    setError(weightField, {
-      type: "manual",
-      message: `Weight exceeds maximum allowed (${maxWeight} ${weightUnit})`,
-    });
-  } else {
-    clearErrors(weightField);
-  }
+      // Weight
+      if (weight && weight > maxWeight) {
+        setError(weightField, {
+          type: "manual",
+          message: `Weight exceeds maximum allowed (${maxWeight} ${weightUnit})`,
+        });
+      } else {
+        clearErrors(weightField);
+      }
 
-  // Length
-  if (length && length > maxLength) {
-    setError(lengthField, {
-      type: "manual",
-      message: `Length exceeds maximum allowed (${maxLength} ${lengthUnit})`,
-    });
-  } else {
-    clearErrors(lengthField);
-  }
+      // Length
+      if (length && length > maxLength) {
+        setError(lengthField, {
+          type: "manual",
+          message: `Length exceeds maximum allowed (${maxLength} ${lengthUnit})`,
+        });
+      } else {
+        clearErrors(lengthField);
+      }
 
-  // Width
-  if (width && width > maxWidth) {
-    setError(widthField, {
-      type: "manual",
-      message: `Width exceeds maximum allowed (${maxWidth} ${lengthUnit})`,
-    });
-  } else {
-    clearErrors(widthField);
-  }
+      // Width
+      if (width && width > maxWidth) {
+        setError(widthField, {
+          type: "manual",
+          message: `Width exceeds maximum allowed (${maxWidth} ${lengthUnit})`,
+        });
+      } else {
+        clearErrors(widthField);
+      }
 
-  // Height
-  if (height && height > maxHeight) {
-    setError(heightField, {
-      type: "manual",
-      message: `Height exceeds maximum allowed (${maxHeight} ${lengthUnit})`,
-    });
-  } else {
-    clearErrors(heightField);
-  }
-}, [
-  watchedWeight,
-  watchedLength,
-  watchedWidth,
-  watchedHeight,
-  isImperial,
-  index,
-]);
+      // Height
+      if (height && height > maxHeight) {
+        setError(heightField, {
+          type: "manual",
+          message: `Height exceeds maximum allowed (${maxHeight} ${lengthUnit})`,
+        });
+      } else {
+        clearErrors(heightField);
+      }
+    }
+  }, [
+    watchedWeight,
+    watchedLength,
+    watchedWidth,
+    watchedHeight,
+    isImperial,
+    index,
+  ]);
   const exceedDimensionLimitsError =
     rowErrors?.weight?.type === "manual" ||
     rowErrors?.length?.type === "manual" ||
@@ -382,7 +384,11 @@ useEffect(() => {
                 setOpen={setOpen}
                 initialData={rowSnapshot}
               >
-                <Button variant="link" type="button" className="text-primary dark:text-accent">
+                <Button
+                  variant="link"
+                  type="button"
+                  className="text-primary dark:text-accent"
+                >
                   <Save /> Save Package
                 </Button>
               </AddPackage>

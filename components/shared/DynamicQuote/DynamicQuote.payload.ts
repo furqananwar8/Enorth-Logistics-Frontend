@@ -69,13 +69,13 @@ export function useDynamicQuotePayloads({
         ...completePayload,
         services: { ...equipment.services },
         spotDetails: {
-          spotEquipment: equipment.spotEquipment,
           spotType:
             spotShipmentType[
               shipmentType as ShipmentOptions[keyof ShipmentOptions]
             ],
         },
       };
+      console.log("completePayload", completePayload);
     }
     if (Object.keys(signature).length > 0) {
       completePayload = { ...completePayload, ...signature };
@@ -84,7 +84,14 @@ export function useDynamicQuotePayloads({
     if (Object.keys(spotContact).length > 0) {
       completePayload = {
         ...completePayload,
-        spotDetails: { ...completePayload.spotDetails, ...spotContact },
+        spotDetails: { ...completePayload.spotDetails, ...spotContact,
+          spotEquipment: {
+            // ...(equipment?.spotEquipment ?? {}),
+            refrigerated: {
+              type: "FRESH",
+            },
+          },
+         },
       };
     }
 
@@ -98,6 +105,13 @@ export function useDynamicQuotePayloads({
         spotDetails: {
           ...equipment,
           ...spotContact,
+          // hard coded remove later
+          spotEquipment: {
+            // ...(equipment?.spotEquipment ?? {}),
+            refrigerated: {
+              type: "FRESH",
+            },
+          },
           spotType:
             spotShipmentType[
               shipmentType as ShipmentOptions[keyof ShipmentOptions]

@@ -171,7 +171,7 @@ export default function InvoicesDashboardPage() {
 
                         <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Packaging Type</label>
-                            <MultiSelect options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
+                            <MultiSelect className="bg-white w-full" options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
                         </div>
 
                         <div className="space-y-1">
@@ -224,7 +224,7 @@ export default function InvoicesDashboardPage() {
                     ))}
                 </TabsList>
 
-                <div className="flex justify-between items-center my-4 gap-4">
+                {/* <div className="flex justify-between items-center my-4 gap-4">
                     <div className="flex gap-2">
                         <Button className="bg-primary hover:bg-[#005999] flex items-center">
                             Pay Invoices <ChevronDown className="w-4 h-4 ml-2" />
@@ -245,7 +245,7 @@ export default function InvoicesDashboardPage() {
                             <Label htmlFor="r3">USD Invoices</Label>
                         </div>
                     </RadioGroup>
-                </div>
+                </div> */}
 
                 <TabsContent value="all">
                     <DynamicInvoicesTable setCount={setCount} filters={{ dateRange, search, selectedPackaging, selectedCarrier, selectedService, selectedStatus, shipmentDetail, selectedBookedBy }} invoiceCategory="all" currencyFilter={currencyFilter} />

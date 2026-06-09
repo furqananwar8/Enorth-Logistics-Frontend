@@ -13,9 +13,11 @@ import { toast } from "sonner";
 export function useDynamicQuoteMutations({
   shipmentId,
   quoteId,
+  quoteType,
 }: {
   shipmentId?: string;
   quoteId?: string;
+  quoteType?: "STANDARD" | "SPOT";
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -33,7 +35,12 @@ export function useDynamicQuoteMutations({
   const createQuoteAndConvertToShipmentMutation = useMutation({
     mutationFn: (data: unknown) => createQuote(data),
     onSuccess: (res) => {
-      router.push(`/shipment/?id=${res.quote.id}&mode=conversion`);
+      if(quoteType === "STANDARD"){
+        router.push(`/shipment/?id=${res.quote.id}&mode=conversion`);
+      }
+      if(quoteType === "SPOT"){
+        toast("Spot quote created successfully! Our team will contact you soon.")
+      }
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error.response?.data.message);

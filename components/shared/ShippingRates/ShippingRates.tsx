@@ -244,7 +244,7 @@ export default function ShippingRates({
     //   },
     // ],
     packages: dimensionsPayload(),
-    shipmentType: shipmentType,
+    shipmentType: shipmentType === "COURIER_PAK" ? "COURIER" : shipmentType,
     stackable: false,
     // shipmentType: "",
   };

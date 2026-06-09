@@ -46,7 +46,7 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType, onChange }: { sh
                 },
                 protectFromFreeze: false,
                 limitedAccessCheckbox: false,
-                limitedAccess: "",
+                limitedAccess: "AMUSEMENT_PARK",
                 limitedAccessDescription: "",
                 dangerousGoods: false,
                 allPalletsStackable: false,
@@ -108,7 +108,7 @@ export const EquimentTypeSelector = forwardRef(({ shipmentType, onChange }: { sh
                                 fields={
                                     [
                                         {
-                                            name: "spotEquipment",
+                                            name: "spotEquipment2",
                                             type: "radio",
                                             label: "Please describe the equipment required for this shipment",
                                             options: shipmentType === "SPOT_LTL" ? ltlOptions : shipmentType === "SPOT_FTL" ? ftlOptions : timeCriticalOptions,

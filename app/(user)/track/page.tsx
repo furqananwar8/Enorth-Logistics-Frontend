@@ -197,22 +197,7 @@ export default function TrackingDashboardPage() {
               </Select>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground block">
-                Filter by Username:
-              </label>
-              <Select
-                value={selectedUsername}
-                onValueChange={setSelectedUsername}
-              >
-                <SelectTrigger className="bg-white w-full">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user1">User 1</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            
 
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">

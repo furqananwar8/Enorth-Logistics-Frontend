@@ -170,7 +170,7 @@
 //                                             <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" />
 //                                             {invoice.billTo.phone}
 //                                         </p>
-                                        
+
 //                                     </div>
 //                                 </div>
 //                                 <div>
@@ -362,416 +362,345 @@
 //     )
 // }
 
-"use client"
+"use client";
 
-import { useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
-    Info,
-    FileText,
-    Download,
-    Calendar,
-    MapPin,
-    Phone,
-    Mail,
-    Building2
-} from "lucide-react"
-import { useState } from "react"
-import { PayInvoiceModal } from "../components/PayInvoiceModal"
-import { useQuery } from "@tanstack/react-query"
-import { getInvoiceById } from "@/api/services/invoices.api"
-import { Loader } from "@/components/common/Loader"
+  Info,
+  FileText,
+  Download,
+  Calendar,
+  MapPin,
+  Phone,
+  Mail,
+  Building2,
+} from "lucide-react";
+import { useState } from "react";
+import { PayInvoiceModal } from "../components/PayInvoiceModal";
+import { useQuery } from "@tanstack/react-query";
+import { getInvoiceById } from "@/api/services/invoices.api";
+import { Loader } from "@/components/common/Loader";
 
 export default function SingleInvoicePage() {
-    const searchParams = useSearchParams()
-    const invoiceId = searchParams.get("id")
+  const searchParams = useSearchParams();
+  const invoiceId = searchParams.get("id");
 
-    const { data: apiInvoice, isLoading, isError } = useQuery({
-        queryKey: ["invoice", invoiceId],
-        queryFn: () => getInvoiceById(Number(invoiceId)),
-        enabled: !!invoiceId,
-    })
+  const {
+    data: apiInvoice,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["invoice", invoiceId],
+    queryFn: () => getInvoiceById(Number(invoiceId)),
+    enabled: !!invoiceId,
+  });
 
-    const invoice = apiInvoice?.invoice
-    const [isPayModalOpen, setIsPayModalOpen] = useState(false)
+  const invoice = apiInvoice?.invoice;
+  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
 
-    if (isLoading) return <Loader className="py-20" />
+  if (isLoading) return <Loader className="py-20" />;
 
-    if (isError || !invoice) {
-        return (
-            <div className="py-20 text-center text-red-500">
-                Invoice not found
-            </div>
-        )
-    }
+  if (isError || !invoice) {
+    return (
+      <div className="py-20 text-center text-red-500">Invoice not found</div>
+    );
+  }
 
-    const shipment = invoice.shipment
-    const totalSurchargeAmount =
-        invoice.surcharges?.reduce(
-            (sum: number, s: any) => sum + Number(s.amount || 0),
-            0
-        ) || 0
+  const shipment = invoice.shipment;
+  const surcharges = invoice.surcharges || [];
 
-    const totalDue = invoice.paid
-        ? 0
-        : Number(shipment?.totalNetCharge || 0)
+  const totalSurchargeAmount = surcharges.reduce(
+    (sum: number, surcharge: any) => sum + Number(surcharge.amount || 0),
+    0,
+  );
 
-    const handleCSVDownload = () => {
-        const headers = [
-            "Tracking/BOL #",
-            "Reference",
-            "Freight",
-            "Adjustment",
-            "Additional",
-            "Tax",
-            "Total"
+  const totalDue = invoice.paid ? 0 : Number(shipment?.totalNetCharge || 0);
+
+  const handleCSVDownload = () => {
+    const headers = [
+      "Tracking/BOL #",
+      "Reference",
+      "Freight",
+      "Adjustment",
+      "Additional",
+      "Tax",
+      "Total",
+    ];
+
+    const rows = shipment
+      ? [
+          [
+            shipment.trackingNumber || shipment.bolNumber,
+            shipment.serviceName,
+            shipment.totalBaseCharge,
+            0,
+            shipment.totalSurcharges,
+            shipment.totalTax,
+            shipment.totalNetCharge,
+          ],
         ]
+      : [];
 
-        const rows = shipment
-            ? [[
-                shipment.trackingNumber || shipment.bolNumber,
-                shipment.serviceName,
-                shipment.totalBaseCharge,
-                0,
-                shipment.totalSurcharges,
-                shipment.totalTax,
-                shipment.totalNetCharge
-            ]]
-            : []
+    const csvArray = [headers, ...rows];
+    const csvContent =
+      "\uFEFF" + csvArray.map((row) => row.join(",")).join("\n");
 
-        const csvArray = [headers, ...rows]
-        const csvContent =
-            "\uFEFF" +
-            csvArray.map((row) => row.join(",")).join("\n")
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
 
-        const blob = new Blob([csvContent], {
-            type: "text/csv;charset=utf-8;"
-        })
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `invoice_${invoice.invoiceNumber}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute(
-            "download",
-            `invoice_${invoice.invoiceNumber}.csv`
-        )
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
-    }
+  return (
+    <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl font-bold text-slate-900">
+              Invoice #{invoice.invoiceNumber}
+            </h1>
 
-    return (
-        <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100 uppercase tracking-wider">
+              {invoice.paid ? "Paid" : "Pending"}
+            </span>
+          </div>
+
+          <div className="flex items-center text-slate-500 text-sm">
+            <Calendar className="w-4 h-4 mr-1.5" />
+            <span>
+              Issued on {new Date(invoice.createdAt).toLocaleDateString()} • Due
+              by{" "}
+              <span className="font-semibold text-slate-900">
+                {new Date(invoice.dueDate).toLocaleDateString()}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            className="text-slate-600 border-slate-200"
+            onClick={() =>
+              window.open(`/invoices/single/pdf?id=${invoiceId}`, "_blank")
+            }
+          >
+            <Download className="w-4 h-4 mr-2" />
+            PDF Download
+          </Button>
+
+          <Button
+            className="bg-primary hover:bg-[#005999] px-8 shadow-sm"
+            onClick={() => setIsPayModalOpen(true)}
+            disabled={invoice.paid}
+          >
+            {invoice.paid ? "Paid" : "Pay"}
+            {invoice.paid ? "" : totalDue.toFixed(2) + " " + shipment?.currency}
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2  space-y-6">
+          <Card className="rounded-xl pt-0 border shadow-sm overflow-hidden">
+            <CardHeader className="bg-primary text-white border-b py-4">
+              <CardTitle className="text-lg font-bold flex items-center ">
+                <Info className="w-5 h-5 mr-2.5" />
+                Invoice Details
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="p-0">
+              {/* BILL TO */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <h1 className="text-3xl font-bold text-slate-900">
-                            Invoice #{invoice.invoiceNumber}
-                        </h1>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
+                    <Building2 className="w-4 h-4 mr-2" />
+                    Bill To
+                  </h3>
 
-                        <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100 uppercase tracking-wider">
-                            {invoice.paid ? "Paid" : "Pending"}
+                  <div className="space-y-2">
+                    <p className="font-bold text-slate-900 text-lg">
+                      {invoice.company?.name}
+                    </p>
+
+                    <p className="text-slate-600 flex items-center">
+                      <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" />
+                      {shipment?.bookedBy?.phoneNumber || "-"}
+                    </p>
+
+                    <p className="text-slate-600 flex items-center">
+                      <Mail className="w-3.5 h-3.5 mr-2 text-slate-400" />
+                      {shipment?.bookedBy?.email || "-"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Shipment */}
+                <div>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Shipment Info
+                  </h3>
+
+                  <div className="space-y-2 text-sm text-slate-600">
+                    <p>
+                      Carrier: <strong>{shipment?.carrier}</strong>
+                    </p>
+                    <p>
+                      Service: <strong>{shipment?.serviceName}</strong>
+                    </p>
+                    <p>
+                      Status: <strong>{shipment?.currentStatus}</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* CHARGES */}
+              <div className="p-6">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Charges Breakdown
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                  
+
+                  {surcharges.map((surcharge: any) => (
+                    <ChargeRow
+                      key={surcharge.id}
+                      label={surcharge.name}
+                      value={surcharge.amount}
+                    />
+                  ))}
+
+                  
+                </div>
+
+                <div className="mt-8 flex justify-end">
+                  <div className="w-full md:w-72 space-y-3 bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+                    <SummaryRow
+                      label="Subtotal"
+                      value={totalSurchargeAmount}
+                    />
+
+                    <SummaryRow
+                      label="Total Paid"
+                      value={invoice.paid ? totalSurchargeAmount : 0}
+                      paid
+                    />
+
+                    <Separator />
+
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold">Amount Due</span>
+
+                      <span className="text-xl font-black text-primary">
+                        ${totalDue.toFixed(2)}
+                        <span className="text-xs ml-1 text-slate-400">
+                          {shipment?.currency}
                         </span>
+                      </span>
                     </div>
+                  </div>
+                </div>
+              </div>
 
-                    <div className="flex items-center text-slate-500 text-sm">
-                        <Calendar className="w-4 h-4 mr-1.5" />
-                        <span>
-                            Issued on{" "}
-                            {new Date(
-                                invoice.createdAt
-                            ).toLocaleDateString()}{" "}
-                            • Due by{" "}
-                            <span className="font-semibold text-slate-900">
-                                {new Date(
-                                    invoice.dueDate
-                                ).toLocaleDateString()}
-                            </span>
-                        </span>
-                    </div>
+              <Separator />
+
+              {/* SHIPMENT TABLE */}
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-sm font-bold text-slate-800">
+                    Shipments Included (1)
+                  </h3>
+
+                  <Button variant="ghost" size="sm" onClick={handleCSVDownload}>
+                    <Download className="w-3.5 h-3.5 mr-1.5" />
+                    Export CSV
+                  </Button>
                 </div>
 
-                <div className="flex gap-3">
-                    <Button
-                        variant="outline"
-                        className="text-slate-600 border-slate-200"
-                        onClick={() =>
-                            window.open(
-                                `/invoices/single/pdf?id=${invoiceId}`,
-                                "_blank"
-                            )
-                        }
-                    >
-                        <Download className="w-4 h-4 mr-2" />
-                        PDF Download
-                    </Button>
+                <div className="overflow-x-auto border rounded-xl border-primary">
+                  <table className="w-full text-sm">
+                    <thead className="bg-primary text-white border-b">
+                      <tr>
+                        <th className="px-4 py-4 text-left">Tracking/BOL #</th>
+                        <th className="px-4 py-4 text-left">Service</th>
+                        {/* <th className="px-4 py-4 text-right">Freight</th> */}
+                        {/* <th className="px-4 py-4 text-right">Adj.</th> */}
+                        {/* <th className="px-4 py-4 text-right">Addtl.</th> */}
+                        <th className="px-4 py-4 text-right">Surcharges</th>
+                      </tr>
+                    </thead>
 
-                    <Button
-                        className="bg-primary hover:bg-[#005999] px-8 shadow-sm"
-                        onClick={() => setIsPayModalOpen(true)}
-                        disabled={invoice.paid}
-                    >
-                        {invoice.paid ? "Paid" : "Pay"}
-                        {invoice.paid ? "" : totalDue.toFixed(2) + " " +shipment?.currency}
-                    </Button>
+                    <tbody>
+                      <tr>
+                        <td className="px-4 py-4 font-bold text-primary">
+                          {shipment?.trackingNumber ||
+                            shipment?.bolNumber ||
+                            "-"}
+                        </td>
+
+                        <td className="px-4 py-4">{shipment?.serviceName}</td>
+
+                       
+
+                        <td className="px-4 py-4 text-right">
+                          ${totalSurchargeAmount.toFixed(2)}
+                        </td>
+
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2  space-y-6">
-                    <Card className="rounded-xl pt-0 border shadow-sm overflow-hidden">
-                        <CardHeader className="bg-primary text-white border-b py-4">
-                            <CardTitle className="text-lg font-bold flex items-center ">
-                                <Info className="w-5 h-5 mr-2.5" />
-                                Invoice Details
-                            </CardTitle>
-                        </CardHeader>
-
-                        <CardContent className="p-0">
-                            {/* BILL TO */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-                                <div>
-                                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
-                                        <Building2 className="w-4 h-4 mr-2" />
-                                        Bill To
-                                    </h3>
-
-                                    <div className="space-y-2">
-                                        <p className="font-bold text-slate-900 text-lg">
-                                            {invoice.company?.name}
-                                        </p>
-
-                                        <p className="text-slate-600 flex items-center">
-                                            <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" />
-                                            {shipment?.bookedBy?.phoneNumber || "-"}
-                                        </p>
-
-                                        <p className="text-slate-600 flex items-center">
-                                            <Mail className="w-3.5 h-3.5 mr-2 text-slate-400" />
-                                            {shipment?.bookedBy?.email || "-"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Shipment */}
-                                <div>
-                                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
-                                        <MapPin className="w-4 h-4 mr-2" />
-                                        Shipment Info
-                                    </h3>
-
-                                    <div className="space-y-2 text-sm text-slate-600">
-                                        <p>
-                                            Carrier:{" "}
-                                            <strong>{shipment?.carrier}</strong>
-                                        </p>
-                                        <p>
-                                            Service:{" "}
-                                            <strong>{shipment?.serviceName}</strong>
-                                        </p>
-                                        <p>
-                                            Status:{" "}
-                                            <strong>{shipment?.currentStatus}</strong>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Separator />
-
-                            {/* CHARGES */}
-                            <div className="p-6">
-                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center">
-                                    <FileText className="w-4 h-4 mr-2" />
-                                    Charges Breakdown
-                                </h3>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
-                                    <ChargeRow
-                                        label="Freight Charges"
-                                        value={shipment?.totalBaseCharge}
-                                    />
-
-                                    <ChargeRow
-                                        label="Fuel / Surcharges"
-                                        value={totalSurchargeAmount}
-                                    />
-
-                                    <ChargeRow
-                                        label="Accessorials"
-                                        value={shipment?.totalSurcharges}
-                                    />
-
-                                    <ChargeRow
-                                        label="Taxes"
-                                        value={shipment?.totalTax}
-                                    />
-                                </div>
-
-                                <div className="mt-8 flex justify-end">
-                                    <div className="w-full md:w-72 space-y-3 bg-slate-50/50 p-4 rounded-lg border border-slate-100">
-                                        <SummaryRow
-                                            label="Subtotal"
-                                            value={shipment?.totalNetCharge}
-                                        />
-
-                                        <SummaryRow
-                                            label="Total Paid"
-                                            value={
-                                                invoice.paid
-                                                    ? shipment?.totalNetCharge
-                                                    : 0
-                                            }
-                                            paid
-                                        />
-
-                                        <Separator />
-
-                                        <div className="flex justify-between items-center">
-                                            <span className="font-bold">
-                                                Amount Due
-                                            </span>
-
-                                            <span className="text-xl font-black text-primary">
-                                                ${totalDue.toFixed(2)}
-                                                <span className="text-xs ml-1 text-slate-400">
-                                                    {shipment?.currency}
-                                                </span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Separator />
-
-                            {/* SHIPMENT TABLE */}
-                            <div className="p-6">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-sm font-bold text-slate-800">
-                                        Shipments Included (1)
-                                    </h3>
-
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={handleCSVDownload}
-                                    >
-                                        <Download className="w-3.5 h-3.5 mr-1.5" />
-                                        Export CSV
-                                    </Button>
-                                </div>
-
-                                <div className="overflow-x-auto border rounded-xl border-primary">
-                                    <table className="w-full text-sm">
-                                        <thead className="bg-primary text-white border-b">
-                                            <tr>
-                                                <th className="px-4 py-4 text-left">
-                                                    Tracking/BOL #
-                                                </th>
-                                                <th className="px-4 py-4 text-left">
-                                                    Service
-                                                </th>
-                                                <th className="px-4 py-4 text-right">
-                                                    Freight
-                                                </th>
-                                                <th className="px-4 py-4 text-right">
-                                                    Adj.
-                                                </th>
-                                                <th className="px-4 py-4 text-right">
-                                                    Addtl.
-                                                </th>
-                                                <th className="px-4 py-4 text-right">
-                                                    Total
-                                                </th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            <tr>
-                                                <td className="px-4 py-4 font-bold text-primary">
-                                                    {shipment?.trackingNumber ||
-                                                        shipment?.bolNumber ||
-                                                        "-"}
-                                                </td>
-
-                                                <td className="px-4 py-4">
-                                                    {shipment?.serviceName}
-                                                </td>
-
-                                                <td className="px-4 py-4 text-right">
-                                                    $
-                                                    {Number(
-                                                        shipment?.totalBaseCharge || 0
-                                                    ).toFixed(2)}
-                                                </td>
-
-                                                <td className="px-4 py-4 text-right">
-                                                    $0.00
-                                                </td>
-
-                                                <td className="px-4 py-4 text-right">
-                                                    $
-                                                    {Number(
-                                                        shipment?.totalSurcharges || 0
-                                                    ).toFixed(2)}
-                                                </td>
-
-                                                <td className="px-4 py-4 text-right font-bold">
-                                                    $
-                                                    {Number(
-                                                        shipment?.totalNetCharge || 0
-                                                    ).toFixed(2)}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-
-            <PayInvoiceModal
-                open={isPayModalOpen}
-                onOpenChange={setIsPayModalOpen}
-                amount={totalDue}
-                currency={shipment?.currency || "USD"}
-                invoiceId={invoiceId || ""}
-            />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-    )
+      </div>
+
+      <PayInvoiceModal
+        open={isPayModalOpen}
+        onOpenChange={setIsPayModalOpen}
+        amount={totalDue}
+        currency={shipment?.currency || "USD"}
+        invoiceId={invoiceId || ""}
+      />
+    </div>
+  );
 }
 
-function ChargeRow({
-    label,
-    value,
-}: any) {
-    return (
-        <div className="flex justify-between text-sm py-1 border-b border-slate-50">
-            <span className="text-slate-500">{label}</span>
-            <span className="font-semibold">
-                ${Number(value || 0).toFixed(2)}
-            </span>
-        </div>
-    )
+function ChargeRow({ label, value }: any) {
+  return (
+    <div className="flex justify-between text-sm py-1 border-b border-slate-50">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-semibold">${Number(value || 0).toFixed(2)}</span>
+    </div>
+  );
 }
 
-function SummaryRow({
-    label,
-    value,
-    paid,
-}: any) {
-    return (
-        <div className="flex justify-between text-sm">
-            <span className="text-slate-500">{label}</span>
-            <span className={paid ? "text-green-600 font-semibold" : "font-semibold"}>
-                {paid ? "-" : ""}${Number(value || 0).toFixed(2)}
-            </span>
-        </div>
-    )
+function SummaryRow({ label, value, paid }: any) {
+  return (
+    <div className="flex justify-between text-sm">
+      <span className="text-slate-500">{label}</span>
+      <span className={paid ? "text-green-600 font-semibold" : "font-semibold"}>
+        {paid ? "-" : ""}${Number(value || 0).toFixed(2)}
+      </span>
+    </div>
+  );
 }

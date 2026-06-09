@@ -120,15 +120,21 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
-      const address = row?.original?.addresses[0]?.addressBookEntry
-        ? row?.original?.addresses[0]?.addressBookEntry?.address
-        : row?.original?.addresses[0]?.address;
+      const fromAddress = row.original.addresses?.find(
+        (item: any) => item.type === "FROM",
+      );
+
+      const address = fromAddress?.addressBookEntry
+        ? fromAddress.addressBookEntry.address
+        : fromAddress?.address;
+
       const address1 = address?.address1;
       const city = address?.city;
       const state = address?.state;
       const country = address?.country;
+
       return (
-        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -136,19 +142,25 @@ export const columns: ColumnDef<any>[] = [
       );
     },
   },
-  {
+    {
     accessorKey: "shipTo",
     header: "Ship To",
     cell: ({ row }) => {
-      const address = row.original.addresses[1].addressBookEntry
-        ? row.original.addresses[1].addressBookEntry.address
-        : row.original.addresses[1].address;
+      const fromAddress = row.original.addresses?.find(
+        (item: any) => item.type === "TO",
+      );
+
+      const address = fromAddress?.addressBookEntry
+        ? fromAddress.addressBookEntry.address
+        : fromAddress?.address;
+
       const address1 = address?.address1;
       const city = address?.city;
       const state = address?.state;
       const country = address?.country;
+
       return (
-        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
+        <span className="text-primary font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}

@@ -170,7 +170,7 @@ export default function RegisterPage() {
                 <Image loading="eager" src={theme === "dark" ? "/enorth-logo-dark.svg" : "/enorth-logo.svg"} alt="ENorth Logistics" width={200} height={200} />
               </Link>
               <div className="flex items-center gap-2">
-                <LanguageToggle />
+                {/* <LanguageToggle /> */}
                 <ModeToggle />
               </div>
             </div>

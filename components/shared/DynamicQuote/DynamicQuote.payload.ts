@@ -107,10 +107,10 @@ export function useDynamicQuotePayloads({
           ...spotContact,
           // hard coded remove later
           spotEquipment: {
-            // ...(equipment?.spotEquipment ?? {}),
-            refrigerated: {
-              type: "FRESH",
-            },
+            ...(equipment?.spotEquipment ?? {}),
+            // refrigerated: {
+            //   type: "FRESH",
+            // },
           },
           spotType:
             spotShipmentType[

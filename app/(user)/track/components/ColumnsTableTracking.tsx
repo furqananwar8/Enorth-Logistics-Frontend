@@ -64,7 +64,10 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "carrier",
     header: "Carrier",
     cell: ({ row }) => {
-      console.log("row.original.shipment.carrier", row.original.shipment?.carrier);
+      console.log(
+        "row.original.shipment.carrier",
+        row.original.shipment?.carrier,
+      );
       return (
         <div className="h-24 w-24 p-2 flex justify-center items-center">
           {/* <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" /> */}
@@ -96,8 +99,8 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: "shipDate",
-    header: "Ship Date",
+    accessorKey: "createdAt",
+    header: "Date Created",
     cell: ({ row }) => {
       // show time first and date after and use 12 hour format
       const createdAt = row.original.createdAt;
@@ -129,13 +132,19 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
-      const address = row.original.addresses[0].addressBookEntry
-        ? row.original.addresses[0].addressBookEntry.address
-        : row.original.addresses[0].address;
+      const fromAddress = row.original.addresses?.find(
+        (item: any) => item.type === "FROM",
+      );
+
+      const address = fromAddress?.addressBookEntry
+        ? fromAddress.addressBookEntry.address
+        : fromAddress?.address;
+
       const address1 = address?.address1;
       const city = address?.city;
       const state = address?.state;
       const country = address?.country;
+
       return (
         <span className="text-primary font-medium whitespace-nowrap">
           {address1}
@@ -149,13 +158,19 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipTo",
     header: "Ship To",
     cell: ({ row }) => {
-      const address = row.original.addresses[1].addressBookEntry
-        ? row.original.addresses[1].addressBookEntry.address
-        : row.original.addresses[1].address;
+      const fromAddress = row.original.addresses?.find(
+        (item: any) => item.type === "TO",
+      );
+
+      const address = fromAddress?.addressBookEntry
+        ? fromAddress.addressBookEntry.address
+        : fromAddress?.address;
+
       const address1 = address?.address1;
       const city = address?.city;
       const state = address?.state;
       const country = address?.country;
+
       return (
         <span className="text-primary font-medium whitespace-nowrap">
           {address1}
@@ -178,7 +193,9 @@ export const columns: ColumnDef<any>[] = [
         <div className="leading-tight capitalize">
           {totalUnits} {totalUnits === 1 ? "Pallet" : "Pallets"}
           <br />
-          <span className="text-muted-foreground">Total Weight: {totalWeight} lbs</span>
+          <span className="text-muted-foreground">
+            Total Weight: {totalWeight} lbs
+          </span>
         </div>
       );
     },
@@ -246,8 +263,7 @@ export const columns: ColumnDef<any>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
               {/* if role is admin enabled for testing for now */}
-              {user.user.role.name === "superAdmin" ?
-              (
+              {user.user.role.name === "superAdmin" ? (
                 <DropdownMenuItem className="cursor-pointer">
                   <button
                     // variant={"ghost"}
@@ -260,15 +276,19 @@ export const columns: ColumnDef<any>[] = [
               ) : (
                 ""
               )}
-              {row.original.shipment ? <DropdownMenuItem className="cursor-pointer">
-                <Link
-                  className="flex gap-2 items-center w-full"
-                  href={`/track/single?id=${row.original.id}`}
-                >
-                  {/* view */}
-                  <Eye size={14} /> View
-                </Link>
-              </DropdownMenuItem> : ""}
+              {row.original.shipment ? (
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link
+                    className="flex gap-2 items-center w-full"
+                    href={`/track/single?id=${row.original.id}`}
+                  >
+                    {/* view */}
+                    <Eye size={14} /> View
+                  </Link>
+                </DropdownMenuItem>
+              ) : (
+                ""
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
           <AddSurchargesModal

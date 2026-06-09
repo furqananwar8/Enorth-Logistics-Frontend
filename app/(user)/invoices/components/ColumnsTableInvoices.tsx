@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Checkbox } from "@/components/ui/checkbox"
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Eye, MoreVertical, Calendar } from "lucide-react"
-import Link from "next/link"
+} from "@/components/ui/dropdown-menu";
+import { Eye, MoreVertical, Calendar } from "lucide-react";
+import Link from "next/link";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -35,27 +35,29 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "invoiceNumber",
     header: "Invoice #",
     cell: ({ row }) => {
-      // Use trackingNumber or fallback
-      // console.log("MY INVOICES:", row.original);
-      const invoiceNumber = row.original.trackingNumber || `FC${Math.floor(Math.random() * 100000000)}`;
+      const invoiceNumber = row?.original?.invoiceNumber;
       return (
         <span className="text-primary font-medium whitespace-nowrap">
           {invoiceNumber}
         </span>
-      )
+      );
     },
   },
   {
     accessorKey: "invoiceCreatedDate",
     header: "Invoice Created Date",
     cell: ({ row }) => {
-      const createdAt = row.original.createdAt ? new Date(row.original.createdAt) : new Date();
-      const formattedDate = createdAt.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
+      const createdAt = new Date(row.original.createdAt);
+      const formattedDate = createdAt.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
-      return <span className="whitespace-nowrap text-muted-foreground">{formattedDate}</span>
+      return (
+        <span className="whitespace-nowrap text-muted-foreground">
+          {formattedDate}
+        </span>
+      );
     },
   },
   {
@@ -63,21 +65,25 @@ export const columns: ColumnDef<any>[] = [
     header: "Invoice Age",
     cell: ({ row }) => {
       // Mocking age
-      const ageDays = Math.floor(Math.random() * 30) + 1;
-      return <span className="whitespace-nowrap">{ageDays} Days</span>
+      const createdAt = new Date(row.original.createdAt);
+      const today = new Date();
+
+      const ageDays = Math.floor(
+        (today.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24),
+      );
+      return <span className="whitespace-nowrap">{ageDays} Day(s)</span>;
     },
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "dueDate",
+    header: "Due Date",
     cell: ({ row }) => {
       // Mocking due date
-      const dueDate = new Date();
-      dueDate.setDate(dueDate.getDate() + 15);
-      const formattedDueDate = dueDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
+      const dueDate = new Date(row.original.dueDate);
+      const formattedDueDate = dueDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
 
       return (
@@ -85,49 +91,67 @@ export const columns: ColumnDef<any>[] = [
           <div className="flex items-center text-primary font-medium">
             <Calendar className="w-3 h-3 mr-1" /> Upcoming
           </div>
-          <span className="text-xs text-muted-foreground">Due {formattedDueDate}</span>
+          <span className="text-xs text-muted-foreground">
+            Due {formattedDueDate}
+          </span>
         </div>
-      )
+      );
     },
   },
   {
     accessorKey: "invoiceAmount",
     header: "Invoice Amount",
     cell: ({ row }) => {
-      const amount = (Math.random() * 500 + 50).toFixed(2);
-      const currency = Math.random() > 0.5 ? "CAD" : "USD";
-      return <span className="whitespace-nowrap">${amount} {currency}</span>
+      console.log("row.original", row.original);
+      const amount = row.original.totalAmount;
+      const currency = row.original.currency;
+      return (
+        <span className="whitespace-nowrap">
+          ${amount} {currency}
+        </span>
+      );
     },
   },
   {
-    accessorKey: "credits",
-    header: "Credits",
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => {
-      return <span className="whitespace-nowrap">$0.00</span>
+      const isPaid = row.original.paid
+      return <span className="whitespace-nowrap">{isPaid ? "Paid" : "Pending"}</span>;
     },
   },
-  {
-    accessorKey: "balanceDue",
-    header: "Balance Due",
-    cell: ({ row }) => {
-      // Mocking same as amount
-      const amount = (Math.random() * 500 + 50).toFixed(2);
-      const currency = Math.random() > 0.5 ? "CAD" : "USD";
-      return <span className="font-semibold whitespace-nowrap">${amount} {currency}</span>
-    },
-  },
+  // {
+  //   accessorKey: "balanceDue",
+  //   header: "Balance Due",
+  //   cell: ({ row }) => {
+  //     // Mocking same as amount
+  //     const amount = (Math.random() * 500 + 50).toFixed(2);
+  //     const currency = Math.random() > 0.5 ? "CAD" : "USD";
+  //     return (
+  //       <span className="font-semibold whitespace-nowrap">
+  //         ${amount} {currency}
+  //       </span>
+  //     );
+  //   },
+  // },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2 w-max">
-          <Link className="flex gap-1 items-center text-primary hover:underline text-sm font-medium" href={`/invoices/single?id=${row.original.id || 'FC15017348'}`}>
+          <Link
+            className="flex gap-1 items-center text-primary hover:underline text-sm font-medium"
+            href={`/invoices/single?id=${row.original.id || "FC15017348"}`}
+          >
             <Eye size={14} /> View
           </Link>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <MoreVertical size={16} className="cursor-pointer text-muted-foreground" />
+              <MoreVertical
+                size={16}
+                className="cursor-pointer text-muted-foreground"
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
               <DropdownMenuItem className="cursor-pointer">
@@ -137,9 +161,9 @@ export const columns: ColumnDef<any>[] = [
                 Send via Email
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
-      )
+      );
     },
   },
-]
+];

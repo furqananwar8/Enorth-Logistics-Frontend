@@ -24,7 +24,7 @@ const SERVICE_TYPES = [
 ]
 
 const INVOICE_STATUSES = [
-    { label: "Upcoming", value: "UPCOMING" },
+    { label: "Urgent", value: "URGENT" },
     { label: "Overdue", value: "OVERDUE" },
     { label: "Paid", value: "PAID" },
 ]
@@ -115,7 +115,7 @@ export default function InvoicesDashboardPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Carrier</label>
                             <Select value={selectedCarrier} onValueChange={setSelectedCarrier}>
                                 <SelectTrigger className="bg-white w-full">
@@ -125,9 +125,9 @@ export default function InvoicesDashboardPage() {
                                     {CARRIER_TYPES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
                                 </SelectContent>
                             </Select>
-                        </div>
+                        </div> */}
 
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Service</label>
                             <Select value={selectedService} onValueChange={setSelectedService}>
                                 <SelectTrigger className="bg-white w-full">
@@ -137,7 +137,7 @@ export default function InvoicesDashboardPage() {
                                     {SERVICE_TYPES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                                 </SelectContent>
                             </Select>
-                        </div>
+                        </div> */}
 
                         <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Invoice Status</label>
@@ -151,7 +151,7 @@ export default function InvoicesDashboardPage() {
                             </Select>
                         </div>
 
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Shipment Detail</label>
                             <div className="flex w-full">
                                 <Input
@@ -167,14 +167,14 @@ export default function InvoicesDashboardPage() {
                                     <Search size={16} />
                                 </Button>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Packaging Type</label>
                             <MultiSelect className="bg-white w-full" options={PACKAGING_TYPES} value={selectedPackaging} onChange={setSelectedPackaging} />
                         </div>
 
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1">
                             <label className="text-sm text-muted-foreground block">Shipment Booked By</label>
                             <Select value={selectedBookedBy} onValueChange={setSelectedBookedBy}>
                                 <SelectTrigger className="bg-white w-full">
@@ -185,7 +185,7 @@ export default function InvoicesDashboardPage() {
                                     <SelectItem value="other">Other</SelectItem>
                                 </SelectContent>
                             </Select>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             ) : (

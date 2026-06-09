@@ -36,9 +36,26 @@ export const getSingleQuote = async (id: string | number) => {
     return response.data;
 };
 
-export const getAllQuotes = async (search: string, dateRange: string[], shipmentType: string) => {
-    // /api/v1/quotes?status=draft&quoteNumber&dateFrom&dateTo&shipmentType
-    const response = await apiClient.get(`/quotes`);
+// export const getAllQuotes = async (search: string, dateRange: string[], shipmentType: string) => {
+//     // /api/v1/quotes?status=draft&quoteNumber&dateFrom&dateTo&shipmentType
+//     const response = await apiClient.get(`/quotes`);
+//     return response.data;
+// };
+
+export const getAllQuotes = async (
+    search: string = "", 
+    dateRange: string[] = ["", ""], 
+    packaging: string = "",
+    status: string = "",
+) => {
+    const query = new URLSearchParams();
+    if (search) query.append("quoteNumber", search);
+    if (dateRange[0]) query.append("dateFrom", dateRange[0]);
+    if (dateRange[1]) query.append("dateTo", dateRange[1]);
+    if (packaging) query.append("shipmentType", packaging);
+    if (status) query.append("status", status);
+
+    const response = await apiClient.get(`/quotes?${query.toString()}`);
     return response.data;
 };
 export const getFavoriteQuotes = async () => {

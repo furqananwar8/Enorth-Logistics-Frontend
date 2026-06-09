@@ -123,16 +123,7 @@ export default function FileNewClaim() {
             shipmentDetails={shipmentDetails}
           />
           {claimId ? <Comments claimId={claimId} /> : ""}
-          {!isAdmin ? <div className="flex justify-between pt-2">
-            <Button
-              variant="outline"
-              disabled={isAdmin}
-              // onClick={onPrevious}
-              // className="px-6 py-2 border border-slate-300 rounded-md text-sm hover:bg-slate-50"
-            >
-              Previous Step
-            </Button>
-
+          {!isAdmin ? <div className="flex justify-end pt-2">
             <Button
               variant="default"
               onClick={handleSubmit}

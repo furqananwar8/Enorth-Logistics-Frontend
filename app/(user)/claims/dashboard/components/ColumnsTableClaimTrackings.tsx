@@ -34,18 +34,21 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
   },
   {
-      accessorKey: "carrier",
-      header: "Carrier",
-      cell: ({ row }) => {
-        console.log("row.original.shipment.carrier", row.original.shipment?.carrier);
-        return (
-          <div className="h-24 w-24 p-2 flex justify-center items-center">
-            {/* <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" /> */}
-            {getCarrierImg(row.original.shipment.carrier)}
-          </div>
-        );
-      },
+    accessorKey: "carrier",
+    header: "Carrier",
+    cell: ({ row }) => {
+      console.log(
+        "row.original.shipment.carrier",
+        row.original.shipment?.carrier,
+      );
+      return (
+        <div className="h-24 w-24 p-2 flex justify-center items-center">
+          {/* <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" /> */}
+          {getCarrierImg(row.original.shipment.carrier)}
+        </div>
+      );
     },
+  },
   {
     accessorKey: "trackingNumber",
     header: "Tracking #/BOL #",
@@ -89,13 +92,19 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
-      const address = row.original.addresses?.[0]?.addressBookEntry
-        ? row.original.addresses[0].addressBookEntry.address
-        : row.original.addresses?.[0]?.address;
-      const address1 = address?.address1 || "";
-      const city = address?.city || "";
-      const state = address?.state || "";
-      const country = address?.country || "";
+      const fromAddress = row.original.addresses?.find(
+        (item: any) => item.type === "FROM",
+      );
+
+      const address = fromAddress?.addressBookEntry
+        ? fromAddress.addressBookEntry.address
+        : fromAddress?.address;
+
+      const address1 = address?.address1;
+      const city = address?.city;
+      const state = address?.state;
+      const country = address?.country;
+
       return (
         <span className="text-primary font-medium whitespace-nowrap">
           {address1}
@@ -109,13 +118,19 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipTo",
     header: "Ship To",
     cell: ({ row }) => {
-      const address = row.original.addresses?.[1]?.addressBookEntry
-        ? row.original.addresses[1].addressBookEntry.address
-        : row.original.addresses?.[1]?.address;
-      const address1 = address?.address1 || "";
-      const city = address?.city || "";
-      const state = address?.state || "";
-      const country = address?.country || "";
+      const fromAddress = row.original.addresses?.find(
+        (item: any) => item.type === "TO",
+      );
+
+      const address = fromAddress?.addressBookEntry
+        ? fromAddress.addressBookEntry.address
+        : fromAddress?.address;
+
+      const address1 = address?.address1;
+      const city = address?.city;
+      const state = address?.state;
+      const country = address?.country;
+
       return (
         <span className="text-primary font-medium whitespace-nowrap">
           {address1}
@@ -161,7 +176,6 @@ export const columns: ColumnDef<any>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-    
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -178,7 +192,7 @@ export const columns: ColumnDef<any>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <Link
-                href={`/claims/file?shipmentId=${row.original?.id}&action=create`}
+                href={`/claims/file?shipmentId=${row.original?.shipment?.id}&quoteId=${row.original?.id}&action=create`}
                 className="flex gap-2 items-center w-full"
               >
                 <FileText size={14} /> Start Claim

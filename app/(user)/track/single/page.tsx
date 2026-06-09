@@ -40,7 +40,6 @@ export default function SingleShipmentTrackingPage() {
       </div>
     );
   }
-
   return (
     <>
       {quote?.quote?.shipment ? (
@@ -62,7 +61,6 @@ export default function SingleShipmentTrackingPage() {
           </div>
         </div>
       ) : (
-        // "No shipment details available for this quote. Please Convert it to a shipment to view tracking details."
         <EmptyUI
           icon={<Truck size={80} />}
           title="No shipment details available for this quote."

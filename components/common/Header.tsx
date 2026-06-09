@@ -162,7 +162,7 @@ export default function Header() {
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-8">
           <div className="flex gap-2">
-            <LanguageToggle />
+            {/* <LanguageToggle /> */}
             <NotificationsWidget />
             <ModeToggle />
           </div>

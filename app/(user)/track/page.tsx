@@ -42,6 +42,13 @@ const PACKAGING_TYPES = [
   { label: "Time Critical", value: "TIME_CRITICAL" },
 ];
 export type QuoteCategory = "all" | "saved" | "spot" | "favorite";
+export const shipmentStatuses = [
+  { name: "Draft", value: "DRAFT" },
+  { name: "Archived", value: "ARCHIVED" },
+  { name: "Saved", value: "SAVED" },
+  { name: "Submitted", value: "SUBMITTED" },
+  { name: "Converted to shipment", value: "CONVERTED_TO_SHIPMENT" },
+];
 export default function TrackingDashboardPage() {
   const [search, setSearch] = useState("");
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>();
@@ -69,7 +76,11 @@ export default function TrackingDashboardPage() {
   return (
     <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1">{user.user.role.name === "superAdmin" ? "Add Surcharges" : "Tracking Dashboard"}</h1>
+        <h1 className="text-2xl font-bold mb-1">
+          {user.user.role.name === "superAdmin"
+            ? "Add Surcharges"
+            : "Tracking Dashboard"}
+        </h1>
       </div>
 
       {showFilters ? (
@@ -111,7 +122,7 @@ export default function TrackingDashboardPage() {
               </label>
               <div className="flex w-full">
                 <Input
-                  placeholder="Search"
+                  placeholder="Tracking number or address"
                   className="rounded-r-none bg-white"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -124,65 +135,7 @@ export default function TrackingDashboardPage() {
                 </Button>
               </div>
             </div>
-
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground block">
-                Filter by Carrier:
-              </label>
-              <Select
-                value={selectedCarrier}
-                onValueChange={setSelectedCarrier}
-              >
-                <SelectTrigger className="bg-white w-full">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="carrier1">Carrier 1</SelectItem>
-                  <SelectItem value="carrier2">Carrier 2</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground block">
-                Filter by Packaging Type:
-              </label>
-              <Select
-                value={selectedPackaging}
-                onValueChange={setSelectedPackaging}
-              >
-                <SelectTrigger className="bg-white w-full">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {PACKAGING_TYPES.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground block">
-                Filter by Service:
-              </label>
-              <Select
-                value={selectedService}
-                onValueChange={setSelectedService}
-              >
-                <SelectTrigger className="bg-white w-full">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="service1">Service 1</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
+            
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">
                 Filter by Shipment Status:
@@ -192,29 +145,14 @@ export default function TrackingDashboardPage() {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="status1">Status 1</SelectItem>
+                  {shipmentStatuses.map((status) => (
+                    <SelectItem value={status.value}>{status.name}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             
-
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground block">
-                Filter by Order Source:
-              </label>
-              <Select
-                value={selectedOrderSource}
-                onValueChange={setSelectedOrderSource}
-              >
-                <SelectTrigger className="bg-white w-full">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="source1">Source 1</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">
@@ -240,6 +178,8 @@ export default function TrackingDashboardPage() {
               />
             </div>
           </div>
+
+          
         </div>
       ) : (
         <div className="mb-6 flex justify-end">

@@ -22,8 +22,8 @@ export const getAllTrackings = async (
     if (status) query.append("status", status);
     if (username) query.append("username", username);
     if (orderSource) query.append("orderSource", orderSource);
-    if (originPostal) query.append("originPostal", originPostal);
-    if (destinationPostal) query.append("destinationPostal", destinationPostal);
+    if (originPostal) query.append("originPostalCode", originPostal);
+    if (destinationPostal) query.append("destinationPostalCode", destinationPostal);
 
     const response = await apiClient.get(`/trackings?${query.toString()}`);
     return response.data;

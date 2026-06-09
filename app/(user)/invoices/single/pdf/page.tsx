@@ -126,7 +126,7 @@ export default function InvoicePdfPage() {
                         </span>
 
                         <span className="font-bold w-28 text-left">
-                            ${totalDue.toFixed(2)}{" "}
+                            ${surchargeTotal.toFixed(2)}{" "}
                             {shipment?.currency}
                         </span>
                     </div>
@@ -139,45 +139,16 @@ export default function InvoicePdfPage() {
                     <thead className="bg-[#d2e3f0] text-xs">
                         <tr>
                             <th className="py-2 px-3 font-normal">
-                                # Shipments
+                                # Total Surcharges
                             </th>
 
-                            <th className="py-2 px-3 font-normal">
-                                Freight Charges
-                            </th>
-
-                            <th className="py-2 px-3 font-normal">
-                                Fuel Charges
-                            </th>
-
-                            <th className="py-2 px-3 font-normal">
-                                Accessorials
-                            </th>
-
-                            <th className="py-2 px-3 font-normal">
-                                Taxes
-                            </th>
+                            
                         </tr>
                     </thead>
 
                     <tbody className="border-b border-gray-300">
                         <tr>
-                            <td className="py-3 px-3">
-                                1
-                            </td>
-
-                            <td className="py-3 px-3">
-                                $
-                                {Number(
-                                    shipment?.totalBaseCharge || 0
-                                ).toFixed(2)}
-                            </td>
-
-                            <td className="py-3 px-3">
-                                $
-                                {surchargeTotal.toFixed(2)}
-                            </td>
-
+                            
                             <td className="py-3 px-3">
                                 $
                                 {Number(
@@ -185,12 +156,7 @@ export default function InvoicePdfPage() {
                                 ).toFixed(2)}
                             </td>
 
-                            <td className="py-3 px-3">
-                                $
-                                {Number(
-                                    shipment?.totalTax || 0
-                                ).toFixed(2)}
-                            </td>
+                           
                         </tr>
                     </tbody>
                 </table>
@@ -198,7 +164,7 @@ export default function InvoicePdfPage() {
 
             {/* Totals */}
             <div className="flex justify-end mb-16 text-sm">
-                <div className="w-[350px]">
+                <div className="w-87.5">
                     <div className="flex justify-between mb-1">
                         <span className="text-gray-600">
                             Invoice Subtotal:
@@ -207,7 +173,7 @@ export default function InvoicePdfPage() {
                         <span>
                             $
                             {Number(
-                                shipment?.totalNetCharge || 0
+                                shipment?.surchargeTotal || 0
                             ).toFixed(2)}
                         </span>
                     </div>
@@ -221,7 +187,7 @@ export default function InvoicePdfPage() {
                             $
                             {invoice.paid
                                 ? Number(
-                                      shipment?.totalNetCharge || 0
+                                      shipment?.surchargeTotal || 0
                                   ).toFixed(2)
                                 : "0.00"}
                         </span>
@@ -237,7 +203,7 @@ export default function InvoicePdfPage() {
                         <span className="font-bold">
                             $
                             {Number(
-                                shipment?.totalNetCharge || 0
+                                shipment?.surchargeTotal || 0
                             ).toFixed(2)}
                         </span>
                     </div>

@@ -37,8 +37,8 @@ export function useClaimFile({
 }) {
   const searchParams = useSearchParams();
   const claimId = action === "edit" ? searchParams.get("claimId") : null;
-  const shipmentId = searchParams.get("shipmentId");
-
+  const quoteId = Number(searchParams.get("quoteId"))
+  const shipmentId = Number(searchParams.get("shipmentId"))
   const { data: claimData } = useQuery({
     queryKey: ["claim", claimId],
     queryFn: () => getClaimById(claimId!),
@@ -51,16 +51,16 @@ export function useClaimFile({
     isLoading: quoteDataLoading,
     isPending: quoteDataPending,
   } = useQuery({
-    queryKey: ["quote", shipmentId],
-    queryFn: () => getSingleQuote(shipmentId!),
-    enabled: !!shipmentId,
+    queryKey: ["quote", quoteId],
+    queryFn: () => getSingleQuote(quoteId!),
+    enabled: !!quoteId,
   });
 
   useEffect(() => {
     if (claimData) {
       console.log("Fetched Claim Data:", claimData);
-      // if (claim.shipmentId) {
-      //   setShipmentId(claim.shipmentId);
+      // if (claim.quoteId) {
+      //   setquoteId(claim.quoteId);
       // }
       if (claimData.claim.documents) {
         setUploadedDocument(claimData.claim.documents);
@@ -88,8 +88,8 @@ export function useClaimFile({
   useEffect(() => {
     if (action === "create") {
       if (quoteData) {
-        setShipmentDetails(quoteData.quote);
         console.log("quoteData:", quoteData);
+        setShipmentDetails(quoteData.quote);
       }
     } else {
       if (claimData) {
@@ -119,7 +119,6 @@ export function useClaimFile({
     },
   });
   const handleSubmit = async () => {
-    console.log(shipmentId);
     try {
       const isContactValid = await contactInfoRef.current?.trigger();
       const isClaimDetailsValid = await claimDetailsRef.current?.trigger();
@@ -136,7 +135,7 @@ export function useClaimFile({
       if (
         isContactValid &&
         isClaimDetailsValid &&
-        shipmentId &&
+        quoteId &&
         uploadedDocument
       ) {
         console.log("All forms are valid");

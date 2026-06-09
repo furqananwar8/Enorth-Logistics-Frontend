@@ -33,6 +33,8 @@ const PACKAGING_TYPES = [
 export type QuoteCategory = "all" | "saved" | "spot" | "favorite"
 export default function QuotesDashboardPage() {
   // const [selectedTab, setSelectedTab] = useState<QuoteCategory>("all")
+  const [originPostal, setOriginPostal] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [search, setSearch] = useState("")
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>()
   const [selectedPackaging, setSelectedPackaging] = useState<string[]>([])

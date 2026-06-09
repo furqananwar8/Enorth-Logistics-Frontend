@@ -153,20 +153,20 @@ export const columns: ColumnDef<any>[] = [
               <DropdownMenuItem>
                 <Link
                   className="flex gap-1 items-center text-primary hover:underline text-sm font-medium"
-                  href={`/claims/file?claimId=${row.original.id}&shipmentId=${row.original.shipment.id}&action=edit`}
+                  href={`/claims/file?claimId=${row.original.id}&quoteId=${row.original.shipment.quote.id}&action=edit`}
                 >
                   <Eye size={14} />
                   Edit
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="w-max cursor-pointer">
+              {/* <DropdownMenuItem className="w-max cursor-pointer">
                 <Download size={14} />
                 Download PDF
               </DropdownMenuItem>
               <DropdownMenuItem className="w-max cursor-pointer">
                 <Mail size={14} />
                 Send via Email
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -179,7 +179,6 @@ export default function AddUser({
     }
   };
   const currentUserRole = user?.user?.role?.name; // "superAdmin" | "admin" | etc.
-
   const filteredRoles = roles?.filter((role: any) => {
     if (currentUserRole === "superAdmin") {
       return ["superAdmin", "staff"].includes(role.name);
@@ -188,6 +187,8 @@ export default function AddUser({
     return ["admin", "user"].includes(role.name);
   });
   // // console.log(isValid)
+
+  console.log("form.formState.errors", form.formState.errors);
   return (
     <>
       {isLoading ? (
@@ -210,7 +211,7 @@ export default function AddUser({
         + Add New User
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[450px]">
+        <DialogContent className="sm:max-w-112.5">
           <DialogHeader>
             <DialogTitle>
               {mode === "create" ? "Add New" : "Edit"} User
@@ -250,7 +251,6 @@ export default function AddUser({
                 ]}
               />
 
-              
               {isRolesLoading ? (
                 <Loader />
               ) : (
@@ -275,13 +275,15 @@ export default function AddUser({
                         </SelectTrigger>
 
                         <SelectContent>
-                          {filteredRoles?.map((role:any) => (
+                          {filteredRoles?.map((role: any) => (
                             <SelectItem
                               key={role.id}
                               value={role.id.toString()}
                             >
-                              {role.name.charAt(0).toUpperCase() +
-                                role.name.slice(1)}
+                              {role.name === "superAdmin"
+                                ? "Super Admin"
+                                : role.name.charAt(0).toUpperCase() +
+                                  role.name.slice(1)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -293,7 +295,7 @@ export default function AddUser({
               <div className="space-y-2">
                 {isPermissionsLoading ? (
                   <Loader />
-                ) : (
+                ) : roleId === 2 || roleId === 4 ? (
                   permissions?.map((permission: any) => (
                     <div
                       key={permission.id}
@@ -325,6 +327,8 @@ export default function AddUser({
                       </span>
                     </div>
                   ))
+                ) : (
+                  ""
                 )}
               </div>
               <DialogFooter>
@@ -333,9 +337,11 @@ export default function AddUser({
                   type="submit"
                   className="w-full"
                 >
-                  {createUserMutation.isPending ?
-                      <LoaderCircle className="animate-spin mr-2" size={16} />
-                   : ""}
+                  {createUserMutation.isPending ? (
+                    <LoaderCircle className="animate-spin mr-2" size={16} />
+                  ) : (
+                    ""
+                  )}
                   {mode === "create" ? "Create" : "Update"} User
                 </Button>
               </DialogFooter>

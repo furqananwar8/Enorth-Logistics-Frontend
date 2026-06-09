@@ -21,7 +21,7 @@ export const navItems = [
         title: "Track",
         items: [
             { title: "Tracking Dashboard", href: "/track" },
-            { title: "Pickups Dashboard", href: "/pickups" },
+            // { title: "Pickups Dashboard", href: "/pickups" },
         ],
     },
 
@@ -29,9 +29,6 @@ export const navItems = [
         title: "Invoices",
         items: [
             { title: "Invoice Dashboard", href: "/invoices" },
-            // { title: "Search Shipment Charges", href: "/payments" },
-            // reporting
-            { title: "Reporting", href: "/reporting" },
         ],
     },
 

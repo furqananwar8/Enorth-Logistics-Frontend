@@ -14,13 +14,14 @@ export const getAllInvoices = async (
 ) => {
     const query = new URLSearchParams();
     if (search) query.append("search", search);
-    if (dateRange[0]) query.append("dateFrom", dateRange[0]);
-    if (dateRange[1]) query.append("dateTo", dateRange[1]);
-    if (packaging) query.append("packaging", packaging);
-    if (carrier) query.append("carrier", carrier);
-    if (service) query.append("service", service);
-    if (status) query.append("status", status);
-    if (shipmentDetail) query.append("shipmentDetail", shipmentDetail);
+    if (dateRange[0]) query.append("startDate", dateRange[0]);
+    if (dateRange[1]) query.append("endDate", dateRange[1]);
+    if (packaging) query.append("shipmentType", packaging);
+    // if (carrier) query.append("carrier", carrier);
+    // if (service) query.append("service", service);
+    if (status) query.append("paid", status === "PAID" ? "true" : "false");
+    if (status) query.append("urgent", status === "URGENT" ? "true" : "false");
+    // if (shipmentDetail) query.append("shipmentDetail", shipmentDetail);
     if (bookedBy) query.append("bookedBy", bookedBy);
     if (category && category !== "all") query.append("category", category);
     if (currency && currency !== "both") query.append("currency", currency);

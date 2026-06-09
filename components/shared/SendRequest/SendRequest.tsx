@@ -240,11 +240,11 @@ const SendRequest = forwardRef(({
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t flex justify-end items-center">
+                {/* <div className="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-t flex justify-end items-center">
                     <Button onClick={onSubmit} className="bg-primary hover:bg-[#005a9c] text-white px-8">
                         Request Quote
                     </Button>
-                </div>
+                </div> */}
             </form>
         </FormProvider>
     )

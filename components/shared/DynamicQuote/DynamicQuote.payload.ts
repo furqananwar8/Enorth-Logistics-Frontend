@@ -84,14 +84,7 @@ export function useDynamicQuotePayloads({
     if (Object.keys(spotContact).length > 0) {
       completePayload = {
         ...completePayload,
-        spotDetails: { ...completePayload.spotDetails, ...spotContact,
-          spotEquipment: {
-            // ...(equipment?.spotEquipment ?? {}),
-            refrigerated: {
-              type: "FRESH",
-            },
-          },
-         },
+        spotDetails: { ...completePayload.spotDetails, ...spotContact},
       };
     }
 

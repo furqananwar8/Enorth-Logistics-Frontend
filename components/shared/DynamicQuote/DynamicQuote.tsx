@@ -516,7 +516,7 @@ export default function DynamicQuote({
                     )}
                     {quoteType === "STANDARD"
                       ? "Convert to Shipment"
-                      : "Create Spot Quote"}
+                      : "Request Quote"}
                   </Button>
                 )}
               </div>

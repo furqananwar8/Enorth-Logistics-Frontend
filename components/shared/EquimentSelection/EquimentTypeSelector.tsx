@@ -9,10 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { LIMITED_ACCESS_LOCATIONS } from "@/shared-data/shipment.data";
-
 export const EquimentTypeSelector = forwardRef(
   (
     {
@@ -29,20 +27,20 @@ export const EquimentTypeSelector = forwardRef(
       defaultValues: {
         refrigeratedCheckbox: false,
         spotEquipment: {
-          dryVan: false,
-          flatbed: false,
+          dryVan: true,
+          //   flatbed: false,
           isRefrigeratedCheck: false,
-          ventilatedTrailer: false,
-          refrigerated: {
-            type: "",
-          },
-          nextFlighOut: {
-            isKnownShipper: false,
-          },
+          //   ventilatedTrailer: false,
+          //   refrigerated: {
+          //     type: "",
+          //   },
+          //   nextFlighOut: {
+          //     isKnownShipper: false,
+          //   },
         },
-        refrigerated: {
-          type: "FRESH",
-        },
+        // refrigerated: {
+        //   type: "FRESH",
+        // },
         services: {
           inBondCheckbox: false,
           inBond: {
@@ -52,13 +50,13 @@ export const EquimentTypeSelector = forwardRef(
             contactValue: "",
             address: "",
           },
-          protectFromFreeze: false,
+          //   protectFromFreeze: false,
           limitedAccessCheckbox: false,
-          limitedAccess: "AMUSEMENT_PARK",
-          limitedAccessDescription: "",
-          dangerousGoods: false,
-          allPalletsStackable: false,
-          somePalletsStackable: false,
+          //   limitedAccess: "AMUSEMENT_PARK",
+          //   limitedAccessDescription: "",
+          //   dangerousGoods: false,
+          //   allPalletsStackable: false,
+          //   somePalletsStackable: false,
         },
       },
     });
@@ -99,8 +97,9 @@ export const EquimentTypeSelector = forwardRef(
     ];
     let isRefrigerated = false;
     useEffect(() => {
-      let isRefrigerated = methods.watch("spotEquipment.isRefrigeratedCheck") === true;
-      console.log("isRefrigerated", isRefrigerated)
+      let isRefrigerated =
+        methods.watch("spotEquipment.isRefrigeratedCheck") === true;
+      console.log("isRefrigerated", isRefrigerated);
     }, [methods]);
     return (
       <FormProvider {...methods}>
@@ -125,7 +124,7 @@ export const EquimentTypeSelector = forwardRef(
                   formWrapperClassName="grid grid-cols-1 md:grid-cols-6 gap-6"
                   fields={[
                     {
-                      name: "spotEquipment2",
+                      name: "spotEquipment",
                       type: "radio",
                       label:
                         "Please describe the equipment required for this shipment",
@@ -147,14 +146,14 @@ export const EquimentTypeSelector = forwardRef(
                         { label: "Frozen (0°F / -17°C)", value: "FROZEN" },
                       ],
                       selectedClassName: "text-amber-500 border-amber-500",
-                      show: isRefrigerated,
+                      //   show: isRefrigerated,
                       wrapperClassName: "col-span-full flex flex-col gap-4",
                     },
                     {
                       name: "spotEquipment.isKnownShipper",
                       type: "radio",
                       label:
-                        "For <b>Next Flight Out</b> service, please verify if you are a known shipper",
+                        "For Next Flight Out service, please verify if you are a known shipper",
                       options: [
                         { label: "Yes, I am a known shipper", value: "Yes" },
                         { label: "No, I am not a known shipper", value: "No" },
@@ -236,8 +235,8 @@ export const EquimentTypeSelector = forwardRef(
                           placeholder: "Please specify",
                           type: "text",
                           className: "w-1/3 ml-[50%]",
-                          show:
-                            methods.watch("services.limitedAccess") === "OTHER",
+                          //   show:
+                          //     methods.watch("services.limitedAccess") === "OTHER",
                         },
                       ]}
                     />

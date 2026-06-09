@@ -228,6 +228,7 @@ export const columns: ColumnDef<any>[] = [
         mutationRemoveFromFavorite.mutate(id);
       };
       const isFavorite = true;
+      const isSpotQuote = row.original.shipmentType.includes("SPOT") || row.original.shipmentType.includes("TIME_CRITICAL")
       return (
         <div className="flex items-center gap-4 w-max">
           <DropdownMenu>
@@ -235,7 +236,7 @@ export const columns: ColumnDef<any>[] = [
               <MoreVertical size={16} className="cursor-pointer" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-max">
-              <DropdownMenuItem className="cursor-pointer">
+              {!isSpotQuote ? <DropdownMenuItem className="cursor-pointer">
                 <Link
                   className="flex gap-2 items-center w-full"
                   href={
@@ -246,7 +247,7 @@ export const columns: ColumnDef<any>[] = [
                 >
                   <CircleCheck size={14} /> Book Now
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> : ""}
 
               <DropdownMenuItem
                 className="cursor-pointer w-max"
@@ -256,7 +257,7 @@ export const columns: ColumnDef<any>[] = [
               >
                 <Heart size={14} /> Add to Favorites
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              {!isSpotQuote ? <DropdownMenuItem className="cursor-pointer">
                 <Link
                   className="flex gap-2 items-center w-full"
                   href={
@@ -267,7 +268,7 @@ export const columns: ColumnDef<any>[] = [
                 >
                   <Edit size={14} /> Edit
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> : ""}
               <DropdownMenuItem
                 className="text-red-500 cursor-pointer"
                 onClick={() => handleDeleteQuote(row.original.id)}

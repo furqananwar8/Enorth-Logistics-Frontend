@@ -6,7 +6,6 @@ import { getSingleQuote } from "@/api/services/quotes.api";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-
 import { ShippingTypeSelector } from "../Shipping/ShippingTypeSelector";
 import { ShippingAddressSection } from "../Shipping/ShippingAddressSection";
 import { EquimentTypeSelector } from "../EquimentSelection/EquimentTypeSelector";
@@ -125,7 +124,9 @@ export default function DynamicQuote({
   const [isDimensionsValid, setIsDimensionsValid] = useState(false);
   const [realTimeData, setRealTimeData] = useState<any>({});
   const [newlyCreatedQuoteId, setNewlyCreatedQuoteId] = useState<any>(null);
-
+  const searchParams = useSearchParams();
+  const isSpotEditPage = searchParams.get("isSpotQuote")!
+  const isSpotQuotePage = pathname.includes("spot-quote")
   const syncRealTimeData = useCallback(() => {
     setRealTimeData(getMergedPayload());
   }, []);
@@ -171,9 +172,13 @@ export default function DynamicQuote({
     console.log("DIM VALID:", dimValid);
 
     if (quoteType === "SPOT") {
+      console.log("SPOT QUOTE BLOCK")
       const contactValid = await contactRef.current?.trigger();
       const equipmentValid = await equipmentRef.current?.trigger();
       valid = valid && contactValid && equipmentValid;
+      console.log("contactValid", contactValid)
+      console.log("equipmentValid", equipmentValid)
+
     }
 
     if (!valid) {
@@ -323,7 +328,8 @@ export default function DynamicQuote({
   //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
 
   const [step, setStep] = useState(1);
-
+  console.log("quoteType", quoteType)
+  console.log("isSpotEditPage", isSpotEditPage);
   return (
     <>
       <AddFundsModal
@@ -347,7 +353,7 @@ export default function DynamicQuote({
           <div className="lg:col-span-3">
             <div className="space-y-6">
               <ShippingTypeSelector
-                quoteType={quoteType}
+                quoteType={isSpotEditPage ? "SPOT" : quoteType}
                 shipmentType={shipmentType}
                 setShipmentType={setShipmentType}
               />
@@ -388,23 +394,26 @@ export default function DynamicQuote({
                             >
                                 Next Step
                             </Button> */}
-              {quoteType === "SPOT" ? (
+              {(quoteType === "SPOT" || isSpotEditPage) ? (
                 <div className="space-y-6 mt-6">
                   <EquimentTypeSelector
                     ref={equipmentRef}
                     shipmentType={shipmentType}
                     onChange={syncRealTimeData}
+                    quoteDetails={singleQuote}
+
                   />
                 </div>
               ) : (
                 ""
               )}
-              {quoteType === "SPOT" ? (
+              {(quoteType === "SPOT" || isSpotEditPage) ? (
                 <div className="space-y-6 mt-6">
                   <ContactInformation
                     quoteType={quoteType}
                     ref={contactRef}
                     onChange={syncRealTimeData}
+                    quoteDetails={singleQuote}
                   />
                 </div>
               ) : (
@@ -442,7 +451,7 @@ export default function DynamicQuote({
                 <SignaturePreference ref={signatureRef} />
               </div>
             )}
-            {quoteType === "SPOT" && (
+            {(quoteType === "SPOT" || isSpotEditPage) && (
               <div className="mt-6">
                 <SendRequest
                   ref={sendRequestRef}
@@ -457,7 +466,8 @@ export default function DynamicQuote({
                 />
               </div>
             )}
-            <div className="mt-6">
+            {(!isSpotEditPage && !isSpotQuotePage) ?
+             <div className="mt-6">
               <ShippingRates
                 getRatesLoading={getRatesLoading}
                 setGetRatesLoading={setGetRatesLoading}
@@ -472,11 +482,11 @@ export default function DynamicQuote({
                 quoteId={singleQuote?.quote?.id || newlyCreatedQuoteId}
                 shipmentType={shipmentType}
               />
-            </div>
+            </div> : ""}
 
             <div className="w-full z-10 flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
               <div className="flex gap-4">
-                <Button
+                {(!isSpotEditPage && !isSpotQuotePage) && <Button
                   variant={"secondary"}
                   disabled={getRatesLoading}
                   onClick={handleGetRates}
@@ -488,7 +498,7 @@ export default function DynamicQuote({
                     ""
                   )}
                   Get Rates
-                </Button>
+                </Button>}
                 {isShipment ? (
                   <Button
                     onClick={handleBookShipment}
@@ -514,7 +524,7 @@ export default function DynamicQuote({
                     ) : (
                       ""
                     )}
-                    {quoteType === "STANDARD"
+                    {quoteType === "STANDARD" && !isSpotEditPage
                       ? "Convert to Shipment"
                       : "Request Quote"}
                   </Button>

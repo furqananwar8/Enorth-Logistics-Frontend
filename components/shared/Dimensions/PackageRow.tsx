@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import AddPackage from "@/app/(user)/packages/AddPackage";
 import { FREIGHT_CLASS_OPTIONS } from "./constants";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import PackageSelectionModal from "@/app/(user)/packages/PackageSelectionModal";
 import { useEffect } from "react";
 import { calculateClass } from "./DensityCalculatorModal";
@@ -46,6 +46,8 @@ export function PackageRow({
   } = useFormContext<any>();
 
   const measurementUnit = useWatch({ name: "lineItem.measurementUnit" });
+    const searchParams = useSearchParams();
+    const isSpotEditPage = searchParams.get("isSpotQuote")!
   //   const watchedWeight = useWatch({ name: `lineItem.units.${index}.weight` });
   const isImperial = measurementUnit === "IMPERIAL";
   const lengthUnit = isImperial ? "in" : "cm";
@@ -163,7 +165,7 @@ export function PackageRow({
   });
 
   useEffect(() => {
-    if (quoteType !== "SPOT") {
+    if (quoteType !== "SPOT" && !isSpotEditPage) {
       const weightField = `lineItem.units.${index}.weight`;
       const lengthField = `lineItem.units.${index}.length`;
       const widthField = `lineItem.units.${index}.width`;

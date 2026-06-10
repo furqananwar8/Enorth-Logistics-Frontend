@@ -38,6 +38,17 @@ export const getAllUnverifiedUsers = async () => {
   const response = await apiClient.get("/users/unverified-accounts");
   return response.data;
 };
+export const getAllCompanies = async () => {
+  const response = await apiClient.get("/companies");
+  return response.data;
+};
+export const addCompanyRates = async (
+  id:string,
+  payload:any) => {
+  const response = await apiClient.patch(`/companies/${id}/rates`, payload);
+  return response.data;
+};
+
 export const logoutUser = async () => {
   const response = await apiClient.post("/auth/logout");
   return response.data;

@@ -15,6 +15,7 @@ import {
   palletLineItemSchema,
   spotFtlLineItemSchema,
   spotLtlLineItemSchema,
+  timeCriticalLineItemSchema,
 } from "./Dimensions.schema";
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
 
@@ -37,7 +38,7 @@ export function useDimensions(
       case "SPOT_FTL":
         return spotFtlLineItemSchema;
       case "TIME_CRITICAL":
-        return spotFtlLineItemSchema;
+        return timeCriticalLineItemSchema;
     }
   };
 

@@ -76,7 +76,7 @@ export function SideBar({
             </div>
 
             <div
-              className={`flex items-center gap-3 ${currentStep >= 2 ? "text-primary font-medium" : "text-muted-foreground"}`}
+              className={`flex items-center gap-3 text-primary`}
             >
               {/* <div
                 className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? "text-primary" : "text-muted-foreground"}`}
@@ -106,7 +106,7 @@ export function SideBar({
                 setQuoteStatus("SAVED");
                 onSubmit();
               }}
-              className="flex items-center justify-center gap-3 text-primary cursor-pointer hover:underline text-sm font-medium"
+              className="flex items-center justify-center gap-3 text-primary cursor-pointer hover:underline text-sm"
             >
               {isPending ? (
                 <LoaderCircle className="animate-spin mr-2" size={16} />

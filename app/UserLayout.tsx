@@ -1,13 +1,9 @@
 "use client";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
-import Infobar from "@/components/common/Infobar";
 import { Loader } from "@/components/common/Loader";
 import { useAuth } from "@/context/auth.context";
-import { useUser } from "@/hooks/useUser";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function UserLayout({
   children,

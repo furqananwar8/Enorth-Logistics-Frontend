@@ -116,6 +116,7 @@ const ContactInformation = forwardRef(
                   variant="outline"
                   type="button"
                   className="text-sm flex items-center gap-2 hover:underline"
+                  disabled={isAdmin}
                 >
                   <BookUser className="w-4 h-4" />
                   Address Book

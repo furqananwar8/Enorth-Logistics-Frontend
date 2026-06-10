@@ -9,27 +9,60 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import { LIMITED_ACCESS_LOCATIONS } from "@/shared-data/shipment.data";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  spotFtlLineItemSchema,
+  spotLtlLineItemSchema,
+} from "../Dimensions/Dimensions.schema";
+import DangerousGoodsForm from "../Dimensions/DangerousGoodDetails";
+import { ltlEquipmentSelectorSchema, timeCriticalEquipmentSelectorSchema } from "./EquipmentTypeSelector.schema";
+
 export const EquimentTypeSelector = forwardRef(
   (
     {
       shipmentType,
       onChange,
+      quoteDetails,
     }: {
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
       onChange?: (data: any) => void;
+      quoteDetails: any;
     },
     ref,
   ) => {
+    const dynamicSchema = (shipmentType: string) => {
+      switch (shipmentType) {
+        case "SPOT_LTL":
+          return ltlEquipmentSelectorSchema;
+        case "SPOT_FTL":
+          return ltlEquipmentSelectorSchema;
+        case "TIME_CRITICAL":
+          return timeCriticalEquipmentSelectorSchema;
+        default:
+          return ltlEquipmentSelectorSchema;
+      }
+    };
+
+    const schema = useMemo(() => {
+      return dynamicSchema(shipmentType);
+    }, [shipmentType]);
+    const resolver = useMemo(() => zodResolver(schema as any), [schema]);
     const [isOpen, setIsOpen] = useState(false);
     const methods = useForm({
+      resolver,
       defaultValues: {
-        refrigeratedCheckbox: false,
         spotEquipment: {
           dryVan: true,
           //   flatbed: false,
-          isRefrigeratedCheck: false,
+          // isRefrigeratedCheck: false,
           //   ventilatedTrailer: false,
           //   refrigerated: {
           //     type: "",
@@ -41,23 +74,23 @@ export const EquimentTypeSelector = forwardRef(
         // refrigerated: {
         //   type: "FRESH",
         // },
-        services: {
-          inBondCheckbox: false,
-          inBond: {
-            bondType: "",
-            bondCancler: "",
-            contactKey: "",
-            contactValue: "",
-            address: "",
-          },
-          //   protectFromFreeze: false,
-          limitedAccessCheckbox: false,
-          //   limitedAccess: "AMUSEMENT_PARK",
-          //   limitedAccessDescription: "",
-          //   dangerousGoods: false,
-          //   allPalletsStackable: false,
-          //   somePalletsStackable: false,
-        },
+        // services: {
+        //   inBondCheckbox: false,
+        //   inBond: {
+        //     bondType: "",
+        //     bondCancler: "",
+        //     contactKey: "",
+        //     contactValue: "",
+        //     address: "",
+        //   },
+        //   //   protectFromFreeze: false,
+        //   limitedAccessCheckbox: false,
+        //   //   limitedAccess: "AMUSEMENT_PARK",
+        //   //   limitedAccessDescription: "",
+        //   //   dangerousGoods: false,
+        //   //   allPalletsStackable: false,
+        //   //   somePalletsStackable: false,
+        // },
       },
     });
 
@@ -95,12 +128,74 @@ export const EquimentTypeSelector = forwardRef(
       { label: "Flatbed", value: "flatbed" },
       { label: "Ventilated Trailer", value: "ventilatedTrailer" },
     ];
-    let isRefrigerated = false;
+    // let isRefrigerated = false;
+    // useEffect(() => {
+    //   let isRefrigerated =
+    //     methods.watch("spotEquipment.isRefrigeratedCheck") === true;
+    //   console.log("isRefrigerated", isRefrigerated);
+    // }, [methods]);
+
     useEffect(() => {
-      let isRefrigerated =
-        methods.watch("spotEquipment.isRefrigeratedCheck") === true;
-      console.log("isRefrigerated", isRefrigerated);
-    }, [methods]);
+      const spotDetails = quoteDetails?.quote?.spotDetails;
+
+      if (!spotDetails) return;
+      const type =
+        spotDetails?.spotEquipment?.dryVan === "true"
+          ? "dryVan"
+          : spotDetails?.spotEquipment?.flatbed === "true"
+            ? "flatBed"
+            : spotDetails?.spotEquipment?.ventilatedTrailer === "true"
+              ? "ventilatedTrailer"
+              : "";
+      methods.reset({
+        spotEquipment: {
+          type,
+          isRefrigeratedCheck:
+            spotDetails?.spotEquipment?.isRefrigeratedCheck ?? false,
+          refrigerated: {
+            type: spotDetails?.spotEquipment?.refrigerated?.type ?? "",
+          },
+          isKnownShipper: spotDetails?.spotEquipment?.isKnownShipper ?? "",
+          protectFromFreeze:
+            spotDetails?.spotEquipment?.protectFromFreeze ?? false,
+          dangerousGoods: spotDetails?.spotEquipment?.dangerousGoods ?? false,
+          allPalletsStackable:
+            spotDetails?.spotEquipment?.allPalletsStackable ?? false,
+          somePalletsStackable:
+            spotDetails?.spotEquipment?.somePalletsStackable ?? false,
+        },
+
+        services: {
+          inBondCheckbox: spotDetails?.services?.inBondCheckbox ?? false,
+          inBound: {
+            bondType: spotDetails?.services?.inBond?.bondType ?? "",
+            bondCancler: spotDetails?.services?.inBond?.bondCancler ?? "",
+            contactKey: spotDetails?.services?.inBond?.contactKey ?? "",
+            contactValue: spotDetails?.services?.inBond?.contactValue ?? "",
+            address: spotDetails?.services?.inBond?.address ?? "",
+          },
+          // limitedAccessCheckbox:
+          // spotDetails?.services?.limitedAccessCheckbox ?? false,
+          // limitedAccess: spotDetails?.services?.limitedAccess ?? "",
+          // limitedAccessDescription:
+          // spotDetails?.services?.limitedAccessDescription ?? "",
+        },
+      });
+    }, [quoteDetails, methods]);
+    const isRefrigerated = methods.watch("spotEquipment") === "refrigerated";
+    useEffect(() => {
+      const subscription = methods.watch((value) => {
+        console.log("EQUIPMENT VALUES:", value);
+      });
+
+      return () => subscription.unsubscribe();
+    }, [methods.watch]);
+
+    useEffect(() => {
+      console.log("methods.formState.errors", methods.formState.errors);
+    }, [methods.formState.errors]);
+
+    const equipmentType = methods.watch("spotEquipment.type")
     return (
       <FormProvider {...methods}>
         <Accordion
@@ -124,7 +219,7 @@ export const EquimentTypeSelector = forwardRef(
                   formWrapperClassName="grid grid-cols-1 md:grid-cols-6 gap-6"
                   fields={[
                     {
-                      name: "spotEquipment",
+                      name: "spotEquipment.type",
                       type: "radio",
                       label:
                         "Please describe the equipment required for this shipment",
@@ -137,7 +232,7 @@ export const EquimentTypeSelector = forwardRef(
                       wrapperClassName: "col-span-full flex flex-col gap-4",
                     },
                     {
-                      name: "spotEquipment.refrigerated.type",
+                      name: "refrigerated.type",
                       type: "radio",
                       label:
                         "Please specify what kind of Refrigerated Service is required:",
@@ -146,7 +241,7 @@ export const EquimentTypeSelector = forwardRef(
                         { label: "Frozen (0°F / -17°C)", value: "FROZEN" },
                       ],
                       selectedClassName: "text-amber-500 border-amber-500",
-                      //   show: isRefrigerated,
+                      show: isRefrigerated,
                       wrapperClassName: "col-span-full flex flex-col gap-4",
                     },
                     {
@@ -159,7 +254,7 @@ export const EquimentTypeSelector = forwardRef(
                         { label: "No, I am not a known shipper", value: "No" },
                       ],
                       selectedClassName: "text-amber-500 border-amber-500",
-                      show: isTimeCritical,
+                      show: equipmentType === "nextFlightOut",
                     },
                     {
                       type: "non-input",
@@ -192,19 +287,19 @@ export const EquimentTypeSelector = forwardRef(
                       wrapperClassName: "col-span-1",
                     },
                     {
-                      name: "spotEquipment.dangerousGoods",
+                      name: "dangerousGoods",
                       type: "checkbox",
                       label: "Dangerous Goods",
                       show: shipmentType === "SPOT_FTL",
                     },
                     {
-                      name: "spotEquipment.allPalletsStackable",
+                      name: "allPalletsStackable",
                       type: "checkbox",
                       label: "All Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
                     },
                     {
-                      name: "spotEquipment.somePalletsStackable",
+                      name: "somePalletsStackable",
                       type: "checkbox",
                       label: "Some Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
@@ -216,6 +311,12 @@ export const EquimentTypeSelector = forwardRef(
                     <InBond />
                   </div>
                 )}
+                {methods.watch("dangerousGoods") && (
+                  <div className="my-4">
+                    <DangerousGoodsForm />
+                  </div>
+                )}
+
                 {methods.watch("services.limitedAccessCheckbox") && (
                   <div className="my-4">
                     <GlobalForm

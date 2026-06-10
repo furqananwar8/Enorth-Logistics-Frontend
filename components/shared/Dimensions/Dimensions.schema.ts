@@ -109,7 +109,6 @@ export const spotLtlLineItemSchema = z.object({
         height: z.coerce.number(" ").min(1),
         weight: z.coerce.number(" ").min(1),
         freightClass: z.string(" ").optional(),
-        nmfc: z.string().optional(),
         palletUnitType: z.string(" ").optional(),
         unitsOnPallet: z.coerce.number(" ").optional(),
         stackable: z.boolean().optional(),
@@ -167,6 +166,25 @@ export const ftlLineItemSchema = z.object({
     units: z.array(ftlUnitSchema).min(1, "Add at least one item"),
   }),
 });
+export const timeCriticalLineItemSchema = z.object({
+  shipmentType: z.literal("TIME_CRITICAL"),
+  lineItem: z.object({
+    type: z.literal("TIME_CRITICAL"),
+    measurementUnit: z.enum(["METRIC", "IMPERIAL"]),
+    units: z.array(
+      z.object({
+        length: z.coerce.number(" ").min(1),
+        width: z.coerce.number(" ").min(1),
+        height: z.coerce.number(" ").min(1),
+        weight: z.coerce.number(" ").min(1),
+        unitsOnPallet: z.coerce.number(" ").optional(),
+        description: z.string().optional(),
+        palletUnitType: z.string(" ").optional(),
+        stackable: z.boolean().optional(),
+      }),
+    ),
+  }),
+});
 
 // ─── Discriminated union — the single source of truth ─────────────────────────
 
@@ -175,12 +193,13 @@ export const lineItemSchema = z.discriminatedUnion("shipmentType", [
   packageLineItemSchema,
   courierLineItemSchema,
   ftlLineItemSchema,
+  timeCriticalLineItemSchema
 ]);
 
 // ─── Master dimensions schema ──────────────────────────────────────────────────
 
 export const dimensionsSchema = z.object({
-  shipmentType: z.enum(["PALLET", "PACKAGE", "COURIER_PAK", "STANDARD_FTL"]),
+  shipmentType: z.enum(["PALLET", "PACKAGE", "COURIER_PAK", "STANDARD_FTL", "TIME_CRITICAL"]),
   lineItem: lineItemSchema,
 });
 

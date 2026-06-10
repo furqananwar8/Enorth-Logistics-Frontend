@@ -163,7 +163,7 @@ export default function Header() {
         <div className="flex items-center gap-8">
           <div className="flex gap-2">
             {/* <LanguageToggle /> */}
-            <NotificationsWidget />
+            {user?.user?.role.name !== "superAdmin" ? <NotificationsWidget /> : ""}
             <ModeToggle />
           </div>
           <UserProfile />

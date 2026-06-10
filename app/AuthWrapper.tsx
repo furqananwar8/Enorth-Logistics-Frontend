@@ -39,7 +39,7 @@ export default function AuthWrapper({
             !isAuthRoute &&
             !isExceptionalRoute
         ) {
-            router.push("/login");
+            router.replace("/login");
         }
 
         if (
@@ -48,7 +48,7 @@ export default function AuthWrapper({
             isAuthRoute &&
             !isExceptionalRoute
         ) {
-            router.push("/");
+            router.replace("/");
         }
     }, [
         user,

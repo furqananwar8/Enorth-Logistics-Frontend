@@ -1,7 +1,8 @@
 import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/contact.mapper";
 import { ShipmentOptions } from "./DynamicQuote.types";
+import { useSearchParams } from "next/navigation";
 const spotShipmentType: any = {
-  SPOT_LTL: "LTL_PARTIAL",
+  SPOT_LTL: "LTL",
   SPOT_FTL: "FULL_TRUCK_LOAD",
   TIME_CRITICAL: "TIME_CRITICAL",
 };
@@ -38,6 +39,8 @@ export function useDynamicQuotePayloads({
   quoteStatus: "DRAFT" | "SAVED";
   singleQuote: any;
 }) {
+  const searchParams = useSearchParams();
+  const isSpotEditPage = searchParams.get("isSpotQuote")!;
   const getMergedPayload = () => {
     const fromAddress = fromAddressRef.current?.getValues() || {};
     const toAddress = toAddressRef.current?.getValues() || {};
@@ -75,7 +78,6 @@ export function useDynamicQuotePayloads({
             ],
         },
       };
-      console.log("completePayload", completePayload);
     }
     if (Object.keys(signature).length > 0) {
       completePayload = { ...completePayload, ...signature };
@@ -84,7 +86,7 @@ export function useDynamicQuotePayloads({
     if (Object.keys(spotContact).length > 0) {
       completePayload = {
         ...completePayload,
-        spotDetails: { ...completePayload.spotDetails, ...spotContact},
+        spotDetails: { ...completePayload.spotDetails, ...spotContact },
       };
     }
 
@@ -93,6 +95,9 @@ export function useDynamicQuotePayloads({
       completePayload = { ...completePayload, ...sendRequestData };
     }
     if (quoteType === "SPOT") {
+      if(equipment.spotEquipment === "refrigerated"){
+        delete equipment.spotEquipment
+      }
       completePayload = {
         ...completePayload,
         spotDetails: {
@@ -164,7 +169,7 @@ export function useDynamicQuotePayloads({
     const basePayload = {
       ...data,
       addresses: formattedAddresses,
-      quoteType,
+      quoteType: isSpotEditPage ? "SPOT" : quoteType,
       shipmentType,
 
       ...(!isEditing &&

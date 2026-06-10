@@ -45,4 +45,5 @@ export const superAdminNavItems = [
     { title: "Add Surcharges", href: "/track" },
     { title: "Claims", href: "/claims" },
     { title: "Users", href: "/users" },
+    { title: "Companies", href: "/companies" },
 ]

@@ -139,14 +139,14 @@ const AdditionalServices = forwardRef(({ shipmentType, quoteType, onChange }: { 
                     <AccordionContent className="px-6 pb-6 space-y-6 h-full">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div className="sm:col-span-3 ">
-                                {quoteType === "SPOT" ? <FormCheckbox
+                                {/* {quoteType === "SPOT" ? <FormCheckbox
                                     field={{
                                         name: "limitedAccess",
                                         label: "Limited Access",
                                         defaultValue: false,
                                         icon: <Info size={16} />,
                                     }}
-                                /> : ""}
+                                /> : ""} */}
 
                                 <div className="my-4">
                                     <GlobalForm

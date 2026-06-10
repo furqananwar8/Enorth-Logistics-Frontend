@@ -257,18 +257,20 @@ export const columns: ColumnDef<any>[] = [
               >
                 <Heart size={14} /> Add to Favorites
               </DropdownMenuItem>
-              {!isSpotQuote ? <DropdownMenuItem className="cursor-pointer">
+              
+              <DropdownMenuItem className="cursor-pointer">
                 <Link
                   className="flex gap-2 items-center w-full"
                   href={
-                    row.original.shipment
+                    isSpotQuote ? `/quote?id=${row.original.id}&mode=edit&isSpotQuote=${isSpotQuote}` :
+                    (row.original.shipment
                       ? `/shipment?id=${row.original.id}&mode=edit`
-                      : `/quote?id=${row.original.id}&mode=edit`
+                      : `/quote?id=${row.original.id}&mode=edit`)
                   }
                 >
                   <Edit size={14} /> Edit
                 </Link>
-              </DropdownMenuItem> : ""}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500 cursor-pointer"
                 onClick={() => handleDeleteQuote(row.original.id)}

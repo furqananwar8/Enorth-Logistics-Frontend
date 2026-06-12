@@ -31,7 +31,6 @@ import {
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
-import { normalText } from "../../packages/AddPackage";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -53,17 +52,17 @@ export const columns: ColumnDef<any>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
-      return (
-        <span className="text-primary dark:text-white font-medium whitespace-nowrap">
-          {row.original.quoteId}
-        </span>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "name",
+  //   header: "Name",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <span className="text-primary dark:text-white font-medium whitespace-nowrap">
+  //         {row.original.quoteId}
+  //       </span>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "quoteId",
     header: "Quote ID",
@@ -228,7 +227,7 @@ export const columns: ColumnDef<any>[] = [
         mutationRemoveFromFavorite.mutate(id);
       };
       const isFavorite = true;
-      const isSpotQuote = row.original.shipmentType.includes("SPOT") || row.original.shipmentType.includes("TIME_CRITICAL")
+      const isSpotQuote = row?.original?.shipmentType?.includes("SPOT") || row?.original?.shipmentType?.includes("TIME_CRITICAL")
       return (
         <div className="flex items-center gap-4 w-max">
           <DropdownMenu>

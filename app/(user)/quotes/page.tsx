@@ -82,7 +82,7 @@ export default function QuotesDashboardPage() {
             </div>
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">Search:</label>
-              <div className="flex w-[240px]">
+              <div className="flex w-60">
                 <Input
                   placeholder="Search"
                   className="rounded-r-none bg-white"
@@ -119,8 +119,8 @@ export default function QuotesDashboardPage() {
         <TabsList className="gap-2 w-max overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1" >
           {[
             { icon: Heart, label: "All Quotes", value: "all", count: count.all },
-            // { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },
-            // { icon: Truck, label: "Favorite Quotes", value: "favorite", count: count.spot }
+            { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },
+            { icon: Truck, label: "Favorite Quotes", value: "favorite", count: count.spot }
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}

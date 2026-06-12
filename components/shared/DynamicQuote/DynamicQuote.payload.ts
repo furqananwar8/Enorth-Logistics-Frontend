@@ -2,7 +2,7 @@ import { formatTime12h } from "@/app/(user)/settings/(address-book)/mappers/cont
 import { ShipmentOptions } from "./DynamicQuote.types";
 import { useSearchParams } from "next/navigation";
 const spotShipmentType: any = {
-  SPOT_LTL: "LTL",
+  SPOT_LTL: "LTL_PARTIAL",
   SPOT_FTL: "FULL_TRUCK_LOAD",
   TIME_CRITICAL: "TIME_CRITICAL",
 };
@@ -95,9 +95,9 @@ export function useDynamicQuotePayloads({
       completePayload = { ...completePayload, ...sendRequestData };
     }
     if (quoteType === "SPOT") {
-      if(equipment.spotEquipment === "refrigerated"){
-        delete equipment.spotEquipment
-      }
+      
+      
+      // delete equipment?.spotEquipment?.type;
       completePayload = {
         ...completePayload,
         spotDetails: {
@@ -106,6 +106,8 @@ export function useDynamicQuotePayloads({
           // hard coded remove later
           spotEquipment: {
             ...(equipment?.spotEquipment ?? {}),
+            ...(equipment?.spotEquipment?.type !== "refrigerated" ? {[equipment?.spotEquipment?.type]: true} : {}),
+            ...(equipment?.spotEquipment?.type === "nextFlightOut" ? {nextFlightOut:{isKnowShipper:equipment?.spotEquipment?.isKnowShipper === "Yes" ? true : false}} : {})
             // refrigerated: {
             //   type: "FRESH",
             // },

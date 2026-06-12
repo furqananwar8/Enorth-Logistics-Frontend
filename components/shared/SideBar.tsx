@@ -25,7 +25,8 @@ export function SideBar({
   onSubmit,
   setQuoteStatus,
   isPending,
-  isAddressValid,
+  isToAddressValid,
+  isFromAddressValid,
   isDimensionsValid,
 }: {
   currentStep: number;
@@ -33,93 +34,88 @@ export function SideBar({
   setQuoteStatus: any;
   onSubmit: () => void;
   isPending: boolean;
-  isAddressValid: boolean;
   isDimensionsValid: boolean;
+  isToAddressValid: boolean;
+  isFromAddressValid: boolean;
 }) {
-  console.log("ADDRESS VALID:", isAddressValid);
-  console.log("DIMENSIONS VALID:", isDimensionsValid);
+  const isStep1Complete = isToAddressValid && isFromAddressValid;
 
+  const steps = [
+    {
+      active: isStep1Complete,
+      label: "Shipping Details",
+      activeLabel: "Step 1: Shipping Details",
+      Icon: ArrowRight,
+    },
+    {
+      active: isDimensionsValid,
+      label: "Dimensions & Weight",
+      activeLabel: "Step 2: Dimensions & Weight",
+      Icon: Package,
+    },
+  ];
   return (
     <div className="lg:col-span-1">
-      <div className="border border-border p-5 rounded-md sticky top-24 bg-white dark:bg-card space-y-4 shadow-lg">
+      <div className="sticky top-24">
+      <div className="p-5 rounded-md  bg-white dark:bg-card space-y-4 shadow-lg mb-5">
         <div className="flex justify-between items-center border-b pb-2">
           <h2 className="font-semibold text-lg">
-            {currentStep === 1 ? "Shipment Overview" : "Quote Overview"}
+            {isToAddressValid && isFromAddressValid
+              ? "Shipment Overview"
+              : "Quote Overview"}
           </h2>
           {/* {currentStep === 1 && <span className="text-primary text-sm flex items-center gap-1 cursor-pointer hover:underline"><Eye size={14} /> Hide</span>} */}
         </div>
-
         <div className="relative pt-2 pl-2">
           {/* Stepper Lines connecting steps */}
-          {/* <div className="absolute left-4 top-5 bottom-8 w-px bg-slate-200 dark:bg-slate-800 z-0 hidden lg:block"></div> */}
-          <div className="space-y-6 relative z-10">
-            <div
-              className={`flex items-center gap-3 ${currentStep >= 1 ? "text-primary font-medium" : "text-muted-foreground"}`}
-            >
-              {/* <div
-                className={`p-1 rounded-full flex items-center justify-center text-xs ${isAddressValid ? "bg-primary text-white" : "border-2 border-primary text-primary bg-white"}`}
-              >
-                {isAddressValid ? (
-                  <Check size={10} />
-                ) : (
-                  <ArrowRight size={12} />
-                )}
-              </div> */}
-              <div className="flex justify-between w-full items-center">
-                <span>
-                  {currentStep === 1
-                    ? "Step 1: Shipping Details"
-                    : "Shipping Details"}
-                </span>
-                
-              </div>
-            </div>
+          <div className="absolute left-4.5 top-5 bottom-5 w-px bg-slate-200 dark:bg-slate-800 z-0 hidden lg:block"></div>
+          <div className="space-y-6 relative z-10 mb-5">
+            {steps.map((step) => (
+              <div key={step.activeLabel} className="flex items-center gap-3">
+                <div
+                  className={`flex items-center justify-center text-xs ${
+                    step.active ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {step.active ? (
+                    <div className="bg-primary text-white rounded-full p-1">
+                      <Check size={10} />
+                    </div>
+                  ) : (
+                    <div className="border border-muted-foreground/30 text-muted-foreground/30 rounded-full p-1 bg-white dark:bg-transparent">
+                      <step.Icon
+                        size={12}
+                        className="text-muted-foreground/30"
+                      />
+                    </div>
+                  )}
+                </div>
 
-            <div
-              className={`flex items-center gap-3 text-primary`}
-            >
-              {/* <div
-                className={`w-5 h-5 flex shrink-0 items-center justify-center ${currentStep === 2 ? "text-primary" : "text-muted-foreground"}`}
-              >
-                {isDimensionsValid ? (
-                  <div className="bg-primary text-white rounded-full p-1">
-                    <Check size={10} />
-                  </div>
-                ) : (
-                  <div className="border border-muted-foreground/30 text-muted-foreground/30 rounded-full p-1 bg-white dark:bg-transparent">
-                    <Package size={12} />
-                  </div>
-                )}
-              </div> */}
-              <div className="flex justify-between w-full items-center">
-                <span>
-                  {currentStep === 1
-                    ? "Step 2: Dimensions & Weight"
-                    : "Dimensions & Weight"}
-                </span>
+                <div className="flex justify-between w-full items-center">
+                  <span>{step.active ? step.activeLabel : step.label}</span>
+                </div>
               </div>
-            </div>
-
-            <Button
-              variant="outline"
-              onClick={() => {
-                setQuoteStatus("SAVED");
-                onSubmit();
-              }}
-              className="flex items-center justify-center gap-3 text-primary cursor-pointer hover:underline text-sm"
-            >
-              {isPending ? (
-                <LoaderCircle className="animate-spin mr-2" size={16} />
-              ) : (
-                <Save size={16} />
-              )}
-              <span>Save For Later</span>
-            </Button>
+            ))}
           </div>
-        </div>
 
-        {/* Sidebar Carousel */}
-        <PromoBannerWidget />
+        </div>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setQuoteStatus("SAVED");
+              onSubmit();
+            }}
+            className="flex items-center justify-center gap-3 text-primary cursor-pointer hover:underline text-sm"
+          >
+            {isPending ? (
+              <LoaderCircle className="animate-spin mr-2" size={16} />
+            ) : (
+              <Save size={16} />
+            )}
+            <span>Save For Later</span>
+          </Button>
+      </div>
+      <PromoBannerWidget />
       </div>
     </div>
   );

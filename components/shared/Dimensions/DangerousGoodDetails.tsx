@@ -1,9 +1,31 @@
 import { Info } from "lucide-react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
-import { useEffect } from "react";
-import { useFormContext } from "react-hook-form";
 
-const DangerousGoodsForm = ({}) => {
+interface fieldNameProps{
+  type:string,
+  un:string,
+  packagingGroup:string,
+  dgClass:string,
+  technicalName:string,
+  emergencyContactName:string,
+  emergencyContactPhone:string
+}
+const DangerousGoodsForm = ({
+  type,
+  un,
+  packagingGroup,
+  dgClass,
+  technicalName,
+  emergencyContactName,
+  emergencyContactPhone
+}:fieldNameProps) => {
+  console.log("type, un", type,
+  un,
+  packagingGroup,
+  dgClass,
+  technicalName,
+  emergencyContactName,
+  emergencyContactPhone)
   return (
     <div className="border border-blue-100 p-6 rounded-sm">
       <p className="text-sm text-slate-700 mb-6">
@@ -16,7 +38,7 @@ const DangerousGoodsForm = ({}) => {
         formWrapperClassName="grid grid-cols-1 md:grid-cols-3 gap-4"
         fields={[
           {
-            name: "lineItem.dangerousGoods.type",
+            name: type,
             label: "Dangerous Good Type",
             type: "radio",
             options: [
@@ -40,7 +62,7 @@ const DangerousGoodsForm = ({}) => {
             className:"mt-4"
           },
           {
-            name: "lineItem.dangerousGoods.un",
+            name: un,
             label: "UN #",
             type: "text",
             placeholder: "Enter UN #",
@@ -48,7 +70,7 @@ const DangerousGoodsForm = ({}) => {
             className: "bg-white dark:bg-card",
           },
           {
-            name: "lineItem.dangerousGoods.packagingGroup",
+            name: packagingGroup,
             label: "Packaging Group",
             type: "select",
             placeholder: "Select Packaging Group",
@@ -61,7 +83,7 @@ const DangerousGoodsForm = ({}) => {
             className: "bg-white dark:bg-card",
           },
           {
-            name: "lineItem.dangerousGoods.class",
+            name: dgClass,
             label: "Class",
             placeholder: "Enter Class",
             type: "select",
@@ -79,7 +101,7 @@ const DangerousGoodsForm = ({}) => {
             className: "bg-white dark:bg-card",
           },
           {
-            name: "lineItem.dangerousGoods.technicalName",
+            name: technicalName,
             label: "Technical Name or Description",
             type: "text",
             placeholder: "Enter Technical Name or Description",
@@ -87,14 +109,14 @@ const DangerousGoodsForm = ({}) => {
             className: "bg-white dark:bg-card",
           },
           {
-            name: "lineItem.dangerousGoods.emergencyContactName",
+            name: emergencyContactName,
             label: "24-hr Emergency Contact Name",
             type: "text",
             placeholder: "Enter Emergency Contact Name",
             className: "bg-white dark:bg-card",
           },
           {
-            name: "lineItem.dangerousGoods.emergencyContactPhone",
+            name: emergencyContactPhone,
             label: "Contact Phone Number",
             type: "phone",
             placeholder: "Enter Contact Phone Number",

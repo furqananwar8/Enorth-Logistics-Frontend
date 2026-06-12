@@ -93,8 +93,8 @@ export default function DynamicQuotesTable({
     if (quotes) {
       setCount({
         all: quotes?.data?.length,
-        saved: 0,
-        spot: 0,
+        saved: quotes?.data?.length,
+        spot: quotes?.data?.length,
       });
     }
   }, [quotes]);

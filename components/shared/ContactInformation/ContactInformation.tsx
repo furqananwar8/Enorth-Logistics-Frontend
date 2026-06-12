@@ -13,6 +13,7 @@ import { useMemo, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { QuoteTypes } from "../DynamicQuote/DynamicQuote.types";
+import { isFuture } from "date-fns";
 
 const contactInfoSchema = z.object({
   spotContact: z.object({
@@ -125,6 +126,7 @@ const ContactInformation = forwardRef(
                       label: "Ship Date*",
                       type: "date",
                       placeholder: "Ship Date",
+                      futureDatesOnly: true,
                     },
                     {
                       name: "spotContact.email",

@@ -120,31 +120,21 @@ export default function DynamicQuote({
   const services = servicesRef.current?.getValues() || {};
   const insurance = insuranceRef.current?.getValues() || {};
   const signature = signatureRef.current?.getValues() || {};
-  const [isAddressValid, setIsAddressValid] = useState(false);
   const [isDimensionsValid, setIsDimensionsValid] = useState(false);
   const [realTimeData, setRealTimeData] = useState<any>({});
   const [newlyCreatedQuoteId, setNewlyCreatedQuoteId] = useState<any>(null);
   const searchParams = useSearchParams();
-  const isSpotEditPage = searchParams.get("isSpotQuote")!
-  const isSpotQuotePage = pathname.includes("spot-quote")
+  const isSpotEditPage = searchParams.get("isSpotQuote")!;
+  const isSpotQuotePage = pathname.includes("spot-quote");
+  const [isFromAddressValid, setIsFromAddressValid] = useState(false);
+  const [isToAddressValid, setIsToAddressValid] = useState(false);
+  const [spotDetailsValidConfirmation, setSpotDetailsValidConfirmation] =
+    useState(false);
   const syncRealTimeData = useCallback(() => {
     setRealTimeData(getMergedPayload());
   }, []);
 
-  // useEffect(() => {
-  //   const fromValid = fromAddressRef.current?.isValid;
-  //   const toValid = toAddressRef.current?.isValid;
-  //   const dimValid = dimensionsRef.current?.isValid;
-  //   console.log("fromValid", fromValid)
-  //   console.log("toValid", toValid)
-  //   if (fromValid && toValid) {
-  //     setIsAddressValid(true);
-  //   }
-  //   if (dimValid) {
-  //     setIsDimensionsValid(true)
-  //   }
 
-  // }, [fromAddressRef, toAddressRef, dimensionsRef]);
   const scrollToSection = (id: string, offset = 100) => {
     console.log(id);
     const element = document.getElementById(id);
@@ -172,13 +162,12 @@ export default function DynamicQuote({
     console.log("DIM VALID:", dimValid);
 
     if (quoteType === "SPOT") {
-      console.log("SPOT QUOTE BLOCK")
+      console.log("SPOT QUOTE BLOCK");
       const contactValid = await contactRef.current?.trigger();
       const equipmentValid = await equipmentRef.current?.trigger();
       valid = valid && contactValid && equipmentValid;
-      console.log("contactValid", contactValid)
-      console.log("equipmentValid", equipmentValid)
-
+      console.log("contactValid", contactValid);
+      console.log("equipmentValid", equipmentValid);
     }
 
     if (!valid) {
@@ -328,7 +317,7 @@ export default function DynamicQuote({
   //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
 
   const [step, setStep] = useState(1);
-  console.log("quoteType", quoteType)
+  console.log("quoteType", quoteType);
   console.log("isSpotEditPage", isSpotEditPage);
   return (
     <>
@@ -371,6 +360,7 @@ export default function DynamicQuote({
                     type="FROM"
                     title="Shipping From"
                     onChange={syncRealTimeData}
+                    onValidityChange={setIsFromAddressValid}
                   />
                 </div>
                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
@@ -386,6 +376,7 @@ export default function DynamicQuote({
                     type="TO"
                     title="Shipping To"
                     onChange={syncRealTimeData}
+                    onValidityChange={setIsToAddressValid}
                   />
                 </div>
               </div>
@@ -394,20 +385,19 @@ export default function DynamicQuote({
                             >
                                 Next Step
                             </Button> */}
-              {(quoteType === "SPOT" || isSpotEditPage) ? (
+              {quoteType === "SPOT" || isSpotEditPage ? (
                 <div className="space-y-6 mt-6">
                   <EquimentTypeSelector
                     ref={equipmentRef}
                     shipmentType={shipmentType}
                     onChange={syncRealTimeData}
                     quoteDetails={singleQuote}
-
                   />
                 </div>
               ) : (
                 ""
               )}
-              {(quoteType === "SPOT" || isSpotEditPage) ? (
+              {quoteType === "SPOT" || isSpotEditPage ? (
                 <div className="space-y-6 mt-6">
                   <ContactInformation
                     quoteType={quoteType}
@@ -463,42 +453,50 @@ export default function DynamicQuote({
                   services={realTimeData?.services}
                   onPrevious={() => {}}
                   onSubmit={onSubmit}
+                  setSpotDetailsValidConfirmation={
+                    setSpotDetailsValidConfirmation
+                  }
                 />
               </div>
             )}
-            {(!isSpotEditPage && !isSpotQuotePage) ?
-             <div className="mt-6">
-              <ShippingRates
-                getRatesLoading={getRatesLoading}
-                setGetRatesLoading={setGetRatesLoading}
-                ref={getRatesRef}
-                selectedCarrier={selectedCarrier}
-                setSelectedCarrier={setSelectedCarrier}
-                openGetRates={openGetRates}
-                setOpenGetRates={setOpenGetRates}
-                dimensions={dimensions}
-                fromAddress={fromAddress}
-                toAddress={toAddress}
-                quoteId={singleQuote?.quote?.id || newlyCreatedQuoteId}
-                shipmentType={shipmentType}
-              />
-            </div> : ""}
+            {!isSpotEditPage && !isSpotQuotePage ? (
+              <div className="mt-6">
+                <ShippingRates
+                  getRatesLoading={getRatesLoading}
+                  setGetRatesLoading={setGetRatesLoading}
+                  ref={getRatesRef}
+                  selectedCarrier={selectedCarrier}
+                  setSelectedCarrier={setSelectedCarrier}
+                  openGetRates={openGetRates}
+                  setOpenGetRates={setOpenGetRates}
+                  dimensions={dimensions}
+                  fromAddress={fromAddress}
+                  toAddress={toAddress}
+                  quoteId={singleQuote?.quote?.id || newlyCreatedQuoteId}
+                  shipmentType={shipmentType}
+                />
+              </div>
+            ) : (
+              ""
+            )}
 
             <div className="w-full z-10 flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
               <div className="flex gap-4">
-                {(!isSpotEditPage && !isSpotQuotePage) && <Button
-                  variant={"secondary"}
-                  disabled={getRatesLoading}
-                  onClick={handleGetRates}
-                  className="border border-primary/50"
-                >
-                  {getRatesLoading ? (
-                    <LoaderCircle className="animate-spin mr-2" size={16} />
-                  ) : (
-                    ""
-                  )}
-                  Get Rates
-                </Button>}
+                {!isSpotEditPage && !isSpotQuotePage && (
+                  <Button
+                    variant={"secondary"}
+                    disabled={getRatesLoading}
+                    onClick={handleGetRates}
+                    className="border border-primary/50"
+                  >
+                    {getRatesLoading ? (
+                      <LoaderCircle className="animate-spin mr-2" size={16} />
+                    ) : (
+                      ""
+                    )}
+                    Get Rates
+                  </Button>
+                )}
                 {isShipment ? (
                   <Button
                     onClick={handleBookShipment}
@@ -517,7 +515,12 @@ export default function DynamicQuote({
                       // onSubmit()
                       handleConvertToShipment();
                     }}
-                    disabled={createQuoteAndConvertToShipmentMutation.isPending}
+                    disabled={
+                      createQuoteAndConvertToShipmentMutation.isPending ||
+                      (quoteType !== "STANDARD" || isSpotEditPage
+                        ? !spotDetailsValidConfirmation
+                        : false)
+                    }
                   >
                     {createQuoteAndConvertToShipmentMutation.isPending ? (
                       <LoaderCircle className="animate-spin mr-2" size={16} />
@@ -540,7 +543,8 @@ export default function DynamicQuote({
             setQuoteStatus={setQuoteStatus}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
-            isAddressValid={isAddressValid}
+            isFromAddressValid={isFromAddressValid}
+            isToAddressValid={isToAddressValid}
             isDimensionsValid={isDimensionsValid}
           />
         </div>

@@ -67,6 +67,6 @@ export const getSavedQuotes = async () => {
     return response.data;
 };
 export const getSpotQuotes = async () => {
-    const response = await apiClient.get(`/quotes/spot`);
+    const response = await apiClient.get(`/quotes/?shipmentType=SPOT_LTL,SPOT_FTL`);
     return response.data;
 };

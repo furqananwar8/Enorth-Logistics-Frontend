@@ -67,6 +67,7 @@ export const ShippingAddressSection = forwardRef(
       isFetchedQuoteShipment,
       setIsFetchedQuoteShipment,
       onChange,
+      onValidityChange,
     }: {
       quoteType: keyof ShipmentOptions;
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
@@ -80,6 +81,7 @@ export const ShippingAddressSection = forwardRef(
       step: number;
       setStep: (step: number) => void;
       onChange?: (data: any) => void;
+      onValidityChange?: (data: any) => void;
     },
     ref,
   ) => {
@@ -208,29 +210,53 @@ export const ShippingAddressSection = forwardRef(
 
     const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
 
-    // const {
-    //   data: postalCodeData,
-    //   isLoading: postalCodeLoading,
-    //   isPending: postalCodeIsPending,
-    // } = useQuery({
-    //   queryKey: ["postalCode", postalCodeWatch],
-    //   // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
-    //   queryFn: () => getAddressByPostalCode(postalCodeWatch),
-    //   // enabled: postalCodeWatch.length === 5,
-    // });
+    const {
+      data: postalCodeData,
+      isLoading: postalCodeLoading,
+      isPending: postalCodeIsPending,
+    } = useQuery({
+      queryKey: ["postalCode", postalCodeWatch],
+      // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
+      queryFn: () => getAddressByPostalCode(postalCodeWatch),
+      // enabled: postalCodeWatch.length === 5,
+    });
+    const getProvinceCode = (provinceNumber: string): string => {
+      console.log("provinceNumber", provinceNumber)
+      const provinceMap: Record<string, string> = {
+        "10": "NL",
+        "11": "PE",
+        "12": "NS",
+        "13": "NB",
+        "24": "QC",
+        "35": "ON",
+        "46": "MB",
+        "47": "SK",
+        "48": "AB",
+        "59": "BC",
+        "60": "YT",
+        "61": "NT",
+        "62": "NU",
+      };
 
-    // useEffect(() => {
-    //   if (postalCodeData) {
-    //     console.log("address.city", postalCodeData["placeName"])
-    //     console.log("address.state", postalCodeData["country"])
-    //     console.log("address.country", postalCodeData["fsa_province"])
+      return provinceMap[provinceNumber] ?? "";
+    };
+    useEffect(() => {
+      if (postalCodeData) {
+        console.log("address.city", postalCodeData["placeName"]);
+        console.log("address.state", postalCodeData["country"]);
+        console.log("address.country", postalCodeData["fsa_province"]);
 
-    //     methods.setValue("address.city", postalCodeData["placeName"]);
-    //     // wrong mapping in DB, swapped values
-    //     methods.setValue("address.state", postalCodeData["country"]);
-    //     methods.setValue("address.country", postalCodeData["fsaProvince"]);
-    //   }
-    // }, [postalCodeData, postalCodeWatch]);
+        methods.setValue("address.city", postalCodeData["placeName"]);
+        // wrong mapping in DB, swapped values
+        if (postalCodeData["fsaProvince"] === "CA") {
+          methods.setValue("address.state", getProvinceCode(postalCodeData["country"]));
+        }
+        else{
+          methods.setValue("address.state", postalCodeData["country"]);
+        }
+        methods.setValue("address.country", postalCodeData["fsaProvince"]);
+      }
+    }, [postalCodeData, postalCodeWatch]);
 
     // on change of ship date setshipdate state coming from parent
 
@@ -254,6 +280,10 @@ export const ShippingAddressSection = forwardRef(
       }),
       [methods.formState.isValid],
     );
+
+    useEffect(() => {
+      onValidityChange?.(methods.formState.isValid);
+    }, [methods.formState.isValid]);
 
     const index = type === "FROM" ? 0 : 1;
     // print errors
@@ -425,7 +455,7 @@ export const ShippingAddressSection = forwardRef(
         if (isAddressFromAddressBook) {
           setAddressLocked(true);
         }
-        
+
         methods.reset({
           ...(isAddressBookEntry && { addressBookId: quoteAddress.id ?? null }),
           address: {
@@ -446,7 +476,11 @@ export const ShippingAddressSection = forwardRef(
               : quoteAddress?.state || "", // important
             // ...(showLocationType && { locationTypeId: quoteAddress?.locationTypeId }),
             locationTypeId: quoteAddress?.locationTypeId,
-            ...(isShipment && { unit: quoteAddress?.address?.unit ? quoteAddress?.address?.unit : quoteAddress?.unit }),
+            ...(isShipment && {
+              unit: quoteAddress?.address?.unit
+                ? quoteAddress?.address?.unit
+                : quoteAddress?.unit,
+            }),
           },
           ...(isShipment && { companyName: quoteAddress.companyName }),
           ...(isShipment && { contactId: quoteAddress.contactId }),

@@ -52,6 +52,8 @@ export type FormCheckboxTypes = {
 type RadioOption = {
     label: string
     value: string | number
+    isDefault?:boolean;
+
 }
 
 export type FormRadioTypes = {

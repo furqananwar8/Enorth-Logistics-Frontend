@@ -162,10 +162,10 @@ export function useDimensions(
   }, [getValues]);
   const handleAddPackage = () => {
     fieldArray.append({
-      length: 0,
-      width: 0,
-      height: 0,
-      weight: 0,
+      length: null,
+      width: null,
+      height: null,
+      weight: null,
       description: "",
     });
     setValue("lineItem.quantity", fieldArray.fields.length);

@@ -79,10 +79,8 @@ const Dimensions = forwardRef(
     const isValid = methods.formState.isValid;
 
     useEffect(() => {
-      if (isValid) {
-        setIsDimensionsValid(true);
-      }
-    }, [methods.getValues()]);
+      setIsDimensionsValid(isValid)
+    }, [isValid]);
 
     const handleQuantityChange = (targetCount: number) => {
       const currentCount = fields.length;
@@ -197,7 +195,17 @@ const Dimensions = forwardRef(
                   />
                 </div>
 
-                {isDangerousGood && <DangerousGoodsForm />}
+                {isDangerousGood && (
+                  <DangerousGoodsForm
+                    type="lineItem.dangerousGoods.type"
+                    un="lineItem.dangerousGoods.un"
+                    packagingGroup="lineItem.dangerousGoods.packagingGroup"
+                    dgClass="lineItem.dangerousGoods.class"
+                    technicalName="lineItem.dangerousGoods.technicalName"
+                    emergencyContactName="lineItem.dangerousGoods.emergencyContactName"
+                    emergencyContactPhone="lineItem.dangerousGoods.emergencyContactPhone"
+                  />
+                )}
               </AccordionContent>
             </AccordionItem>
           </Accordion>

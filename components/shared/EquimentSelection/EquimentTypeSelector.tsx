@@ -1,5 +1,5 @@
 import { Truck, ChevronUp } from "lucide-react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import InBond from "../AdditionalService/InBond";
@@ -18,12 +18,12 @@ import {
 } from "react";
 import { LIMITED_ACCESS_LOCATIONS } from "@/shared-data/shipment.data";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  spotFtlLineItemSchema,
-  spotLtlLineItemSchema,
-} from "../Dimensions/Dimensions.schema";
 import DangerousGoodsForm from "../Dimensions/DangerousGoodDetails";
-import { ltlEquipmentSelectorSchema, timeCriticalEquipmentSelectorSchema } from "./EquipmentTypeSelector.schema";
+import {
+  ftlEquipmentSelectorSchema,
+  ltlEquipmentSelectorSchema,
+  timeCriticalEquipmentSelectorSchema,
+} from "./EquipmentTypeSelector.schema";
 
 export const EquimentTypeSelector = forwardRef(
   (
@@ -43,7 +43,7 @@ export const EquimentTypeSelector = forwardRef(
         case "SPOT_LTL":
           return ltlEquipmentSelectorSchema;
         case "SPOT_FTL":
-          return ltlEquipmentSelectorSchema;
+          return ftlEquipmentSelectorSchema;
         case "TIME_CRITICAL":
           return timeCriticalEquipmentSelectorSchema;
         default:
@@ -58,40 +58,6 @@ export const EquimentTypeSelector = forwardRef(
     const [isOpen, setIsOpen] = useState(false);
     const methods = useForm({
       resolver,
-      defaultValues: {
-        spotEquipment: {
-          dryVan: true,
-          //   flatbed: false,
-          // isRefrigeratedCheck: false,
-          //   ventilatedTrailer: false,
-          //   refrigerated: {
-          //     type: "",
-          //   },
-          //   nextFlighOut: {
-          //     isKnownShipper: false,
-          //   },
-        },
-        // refrigerated: {
-        //   type: "FRESH",
-        // },
-        // services: {
-        //   inBondCheckbox: false,
-        //   inBond: {
-        //     bondType: "",
-        //     bondCancler: "",
-        //     contactKey: "",
-        //     contactValue: "",
-        //     address: "",
-        //   },
-        //   //   protectFromFreeze: false,
-        //   limitedAccessCheckbox: false,
-        //   //   limitedAccess: "AMUSEMENT_PARK",
-        //   //   limitedAccessDescription: "",
-        //   //   dangerousGoods: false,
-        //   //   allPalletsStackable: false,
-        //   //   somePalletsStackable: false,
-        // },
-      },
     });
 
     useEffect(() => {
@@ -128,25 +94,54 @@ export const EquimentTypeSelector = forwardRef(
       { label: "Flatbed", value: "flatbed" },
       { label: "Ventilated Trailer", value: "ventilatedTrailer" },
     ];
-    // let isRefrigerated = false;
-    // useEffect(() => {
-    //   let isRefrigerated =
-    //     methods.watch("spotEquipment.isRefrigeratedCheck") === true;
-    //   console.log("isRefrigerated", isRefrigerated);
-    // }, [methods]);
 
+    const [spotDetails, setSpotDetails] = useState();
     useEffect(() => {
       const spotDetails = quoteDetails?.quote?.spotDetails;
-
       if (!spotDetails) return;
-      const type =
-        spotDetails?.spotEquipment?.dryVan === "true"
-          ? "dryVan"
-          : spotDetails?.spotEquipment?.flatbed === "true"
-            ? "flatBed"
-            : spotDetails?.spotEquipment?.ventilatedTrailer === "true"
-              ? "ventilatedTrailer"
-              : "";
+      console.log("INBOUND 2", quoteDetails?.quote);
+      setSpotDetails(spotDetails);
+      let type = "";
+
+      switch (true) {
+        // Common
+        case spotDetails?.spotEquipment?.dryVan === "true":
+          type = "dryVan";
+          break;
+
+        case spotDetails?.spotEquipment?.refrigerated === "true":
+          type = "refrigerated";
+          break;
+
+        // FTL
+        case spotDetails?.spotEquipment?.flatbed === "true":
+          type = "flatbed";
+          break;
+
+        case spotDetails?.spotEquipment?.ventilatedTrailer === "true":
+          type = "ventilatedTrailer";
+          break;
+
+        // Time Critical
+        case spotDetails?.spotEquipment?.truck === "true":
+          type = "truck";
+          break;
+
+        case spotDetails?.spotEquipment?.car === "true":
+          type = "car";
+          break;
+
+        case spotDetails?.spotEquipment?.van === "true":
+          type = "van";
+          break;
+
+        case spotDetails?.spotEquipment?.nextFlightOut === "true":
+          type = "nextFlightOut";
+          break;
+
+        default:
+          type = "";
+      }
       methods.reset({
         spotEquipment: {
           type,
@@ -166,7 +161,7 @@ export const EquimentTypeSelector = forwardRef(
         },
 
         services: {
-          inBondCheckbox: spotDetails?.services?.inBondCheckbox ?? false,
+          inBondCheckbox: spotDetails?.inBound ?? false,
           inBound: {
             bondType: spotDetails?.services?.inBond?.bondType ?? "",
             bondCancler: spotDetails?.services?.inBond?.bondCancler ?? "",
@@ -182,7 +177,8 @@ export const EquimentTypeSelector = forwardRef(
         },
       });
     }, [quoteDetails, methods]);
-    const isRefrigerated = methods.watch("spotEquipment") === "refrigerated";
+    const isRefrigerated =
+      methods.watch("spotEquipment.type") === "refrigerated";
     useEffect(() => {
       const subscription = methods.watch((value) => {
         console.log("EQUIPMENT VALUES:", value);
@@ -195,7 +191,34 @@ export const EquimentTypeSelector = forwardRef(
       console.log("methods.formState.errors", methods.formState.errors);
     }, [methods.formState.errors]);
 
-    const equipmentType = methods.watch("spotEquipment.type")
+    const dangerousGoodsCheckbox = methods.watch("dangerousGoodsCheckbox");
+    useEffect(() => {
+      if (dangerousGoodsCheckbox) {
+        methods.setValue("services.dangerousGoods", {
+          type: "",
+          un: "",
+          packagingGroup: "",
+          class: "",
+          technicalName: "",
+          emergencyContactName: "",
+          emergencyContactPhone: "",
+        });
+      }
+    }, [dangerousGoodsCheckbox]);
+
+    const inBondCheckbox = methods.watch("services.inBondCheckbox");
+    useEffect(() => {
+      if (inBondCheckbox) {
+        methods.setValue("inBound", {
+            bondType: "",
+            bondCancler: "",
+            contactKey: "",
+            contactValue: "",
+            address: "",
+        });
+      }
+    }, [inBondCheckbox]);
+    const equipmentType = methods.watch("spotEquipment.type");
     return (
       <FormProvider {...methods}>
         <Accordion
@@ -209,7 +232,7 @@ export const EquimentTypeSelector = forwardRef(
             <AccordionTrigger className="group px-6 py-4 hover:no-underline items-center cursor-pointer [&>svg]:hidden!">
               <h2 className="flex gap-2 items-center text-lg font-semibold text-slate-800 dark:text-slate-100">
                 <Truck size={20} />
-                Equipment Type & {!isTimeCritical ? "Additional Services" : ""}
+                Equipment Type {!isTimeCritical ? "& Additional Services" : ""}
                 <ChevronUp className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </h2>
             </AccordionTrigger>
@@ -232,7 +255,7 @@ export const EquimentTypeSelector = forwardRef(
                       wrapperClassName: "col-span-full flex flex-col gap-4",
                     },
                     {
-                      name: "refrigerated.type",
+                      name: "spotEquipment.refrigerated.type",
                       type: "radio",
                       label:
                         "Please specify what kind of Refrigerated Service is required:",
@@ -275,32 +298,36 @@ export const EquimentTypeSelector = forwardRef(
                     {
                       name: "spotEquipment.protectFromFreeze",
                       type: "checkbox",
+                      labelClassName:"whitespace-nowrap",
                       label: "Protect from Freeze",
                       show: shipmentType === "SPOT_LTL",
-                      wrapperClassName: "col-span-1",
                     },
                     {
                       name: "services.limitedAccessCheckbox",
                       type: "checkbox",
+                      labelClassName:"whitespace-nowrap",
                       label: "Limited Access",
                       show: shipmentType === "SPOT_LTL",
-                      wrapperClassName: "col-span-1",
                     },
                     {
-                      name: "dangerousGoods",
+                      name: "dangerousGoodsCheckbox",
                       type: "checkbox",
+                      labelClassName:"whitespace-nowrap",
                       label: "Dangerous Goods",
                       show: shipmentType === "SPOT_FTL",
+                      
                     },
                     {
                       name: "allPalletsStackable",
                       type: "checkbox",
+                      labelClassName:"whitespace-nowrap",
                       label: "All Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
                     },
                     {
                       name: "somePalletsStackable",
                       type: "checkbox",
+                      labelClassName:"whitespace-nowrap",
                       label: "Some Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
                     },
@@ -308,12 +335,20 @@ export const EquimentTypeSelector = forwardRef(
                 />
                 {methods.watch("services.inBondCheckbox") && (
                   <div className="my-4">
-                    <InBond />
+                    <InBond spotDetails={spotDetails} />
                   </div>
                 )}
-                {methods.watch("dangerousGoods") && (
+                {methods.watch("dangerousGoodsCheckbox") && (
                   <div className="my-4">
-                    <DangerousGoodsForm />
+                    <DangerousGoodsForm
+                      type="services.dangerousGoods.type"
+                      un="services.dangerousGoods.un"
+                      packagingGroup="services.dangerousGoods.packagingGroup"
+                      dgClass="services.dangerousGoods.class"
+                      technicalName="services.dangerousGoods.technicalName"
+                      emergencyContactName="services.dangerousGoods.emergencyContactName"
+                      emergencyContactPhone="services.dangerousGoods.emergencyContactPhone"
+                    />
                   </div>
                 )}
 

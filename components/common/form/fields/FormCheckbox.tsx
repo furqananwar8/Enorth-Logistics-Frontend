@@ -8,9 +8,7 @@ import { memo } from "react"
 import { useFieldController } from "../useFieldController"
 
 const FormCheckbox = memo(({ field: config }: { field: FormCheckboxTypes }) => {
-
     const { field, error } = useFieldController(config.name)
-
     return (
         <div className={`flex items-center gap-2 ${config.wrapperClassName || ""}`}>
             {/* icon position left */}

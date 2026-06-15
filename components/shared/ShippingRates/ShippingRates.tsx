@@ -87,7 +87,7 @@ export default function ShippingRates({
       return [];
     }
     return dimensions?.lineItem?.units?.map((unit: any) => {
-      console.log("UNIT:", unit)
+      console.log("UNIT:", unit);
       return {
         weightUnit:
           dimensions.lineItem.measurementUnit === "IMPERIAL" ? "LB" : "KG",
@@ -97,7 +97,10 @@ export default function ShippingRates({
         ...(unit.length > 0 ? { length: unit.length } : {}),
         ...(unit.width > 0 ? { width: unit.width } : {}),
         ...(unit.height > 0 ? { height: unit.height } : {}),
-        handlingUnits: shipmentType === "STANDARD_FTL" ? unit.count : (unit.unitsOnPallet ?? 1),
+        handlingUnits:
+          shipmentType === "STANDARD_FTL"
+            ? unit.count
+            : (unit.unitsOnPallet ?? 1),
         //   packaging: unit.palletUnitType,
         packaging: "BOX",
       };
@@ -222,7 +225,22 @@ export default function ShippingRates({
         isResidential: toAddress?.isResidential,
       },
     },
+    xpo: {
+      "from": {
+        city: fromAddress?.address?.city,
+        postalCode: fromAddress?.address?.postalCode,
+        countryCode: fromAddress?.address?.country,
+        state: toAddress?.address?.state,
 
+      },
+      "to": {
+        city: toAddress?.address?.city,
+        postalCode: toAddress?.address?.postalCode,
+        countryCode: toAddress?.address?.country,
+        state: toAddress?.address?.state,
+
+      },
+    },
     pickupType: "DROPOFF_AT_FEDEX_LOCATION",
     rateRequestType: ["LIST"],
     serviceType: "FEDEX_EXPRESS_SAVER",

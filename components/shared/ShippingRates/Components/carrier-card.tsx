@@ -21,14 +21,25 @@ export function getCarrierImg(carrierName: string) {
   switch (carrierName?.toLowerCase()) {
     case "fedex":
       return (
-        <Image src="/FedExFreight.svg" width={80} height={80} alt="FedEx" />
+        <Image src="/carriers/fedex.svg" width={80} height={80} alt="FedEx" />
       );
     case "tst":
-      return <Image src="/tst.png" width={80} height={80} alt="TST" />;
+      return <Image src="/carriers/tst.png" width={80} height={80} alt="TST" />;
     case "tforce":
-      return <Image src="/tforce.png" className="mix-blend-multiply" width={80} height={80} alt="TForce" />;
+      return (
+        <Image
+          src="/carriers/tforce.png"
+          className="mix-blend-multiply"
+          width={80}
+          height={80}
+          alt="TForce"
+        />
+      );
+    case "xpo":
+      return <Image src="/carriers/xpo.svg" width={80} height={80} alt="XPO" />;
+
     default:
-      return <Image src="/tst.png" width={80} height={80} alt="TST" />;
+      return <div className="border rounded-2xl p-3 flex justify-center items-center">{carrierName}</div>;
   }
 }
 export function CarrierCard({
@@ -67,44 +78,50 @@ export function CarrierCard({
         // </TableRow>
         ""
       ) : quotesList.length > 0 ? (
-        quotesList.map((quote: any, index: number) => (
-          <TableRow
-            key={index}
-            className={isSelected(quote) ? "border-primary bg-primary/10" : ""}
-          >
-            {/* Carrier */}
-            <TableCell>
-              <div className="h-16 w-16 flex items-center justify-center">
-                {getCarrierImg(result.carrier)}
-              </div>
-            </TableCell>
+        quotesList
+          .filter(
+            (r) => r.estimatedDeliveryDays && r.finalTotalWithAdminCut != null,
+          )
+          .map((quote: any, index: number) => (
+            <TableRow
+              key={index}
+              className={
+                isSelected(quote) ? "border-primary bg-primary/10" : ""
+              }
+            >
+              {/* Carrier */}
+              <TableCell>
+                <div className="h-16 w-16 flex items-center justify-center">
+                  {getCarrierImg(result.carrier)}
+                </div>
+              </TableCell>
 
-            {/* Service */}
-            <TableCell>{quote?.serviceName || "N/A"}</TableCell>
+              {/* Service */}
+              <TableCell>{quote?.serviceName || "N/A"}</TableCell>
 
-            {/* EST Time */}
-            <TableCell>{quote?.estimatedDeliveryDays || "—"}</TableCell>
+              {/* EST Time */}
+              <TableCell>{quote?.estimatedDeliveryDays || "—"}</TableCell>
 
-            {/* Shipping Rate */}
-            <TableCell>
-              {quote?.totalPrice
-                ? `${quote.currency} ${quote.totalPrice}`
-                : "—"}
-            </TableCell>
+              {/* Shipping Rate */}
+              <TableCell>
+                {quote?.totalPrice
+                  ? `${quote.currency} ${quote.finalTotalWithAdminCut}`
+                  : "—"}
+              </TableCell>
 
-            {/* Action */}
-            <TableCell className="cursor-pointer">
-              <Button
-                variant={isSelected(quote) ? "default" : "outline"}
-                onClick={() => {
-                  setSelectedCarrier(quote);
-                }}
-              >
-                {isSelected(quote) ? "Selected" : "Select"}
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))
+              {/* Action */}
+              <TableCell className="cursor-pointer">
+                <Button
+                  variant={isSelected(quote) ? "default" : "outline"}
+                  onClick={() => {
+                    setSelectedCarrier(quote);
+                  }}
+                >
+                  {isSelected(quote) ? "Selected" : "Select"}
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))
       ) : (
         // 🟡 Empty / loading state
         <TableRow>

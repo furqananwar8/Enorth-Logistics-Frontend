@@ -218,6 +218,7 @@ export const ShippingAddressSection = forwardRef(
       queryKey: ["postalCode", postalCodeWatch],
       // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
       queryFn: () => getAddressByPostalCode(postalCodeWatch),
+      retry: false,
       // enabled: postalCodeWatch.length === 5,
     });
     const getProvinceCode = (provinceNumber: string): string => {

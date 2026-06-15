@@ -24,6 +24,7 @@ import {
   ltlEquipmentSelectorSchema,
   timeCriticalEquipmentSelectorSchema,
 } from "./EquipmentTypeSelector.schema";
+import { useSearchParams } from "next/navigation";
 
 export const EquimentTypeSelector = forwardRef(
   (
@@ -56,6 +57,9 @@ export const EquimentTypeSelector = forwardRef(
     }, [shipmentType]);
     const resolver = useMemo(() => zodResolver(schema as any), [schema]);
     const [isOpen, setIsOpen] = useState(false);
+    const searchParams = useSearchParams();
+    const isEdit = searchParams.get("mode") === "edit";
+    console.log("isEdit,", isEdit);
     const methods = useForm({
       resolver,
     });
@@ -95,12 +99,16 @@ export const EquimentTypeSelector = forwardRef(
       { label: "Ventilated Trailer", value: "ventilatedTrailer" },
     ];
 
-    const [spotDetails, setSpotDetails] = useState();
+    const [inBoundDetails, setInBoundDetails] = useState();
     useEffect(() => {
       const spotDetails = quoteDetails?.quote?.spotDetails;
+      const inBoundDetails = quoteDetails?.quote?.palletServices;
       if (!spotDetails) return;
-      console.log("INBOUND 2", quoteDetails?.quote);
-      setSpotDetails(spotDetails);
+      console.log(
+        "spotDetails?.spotEquipment?.refrigerated",
+        spotDetails?.spotEquipment?.refrigerated,
+      );
+      setInBoundDetails(inBoundDetails);
       let type = "";
 
       switch (true) {
@@ -109,7 +117,7 @@ export const EquimentTypeSelector = forwardRef(
           type = "dryVan";
           break;
 
-        case spotDetails?.spotEquipment?.refrigerated === "true":
+        case !!spotDetails?.spotEquipment?.refrigerated:
           type = "refrigerated";
           break;
 
@@ -145,8 +153,7 @@ export const EquimentTypeSelector = forwardRef(
       methods.reset({
         spotEquipment: {
           type,
-          isRefrigeratedCheck:
-            spotDetails?.spotEquipment?.isRefrigeratedCheck ?? false,
+          isRefrigeratedCheck: type === "refrigerated",
           refrigerated: {
             type: spotDetails?.spotEquipment?.refrigerated?.type ?? "",
           },
@@ -161,13 +168,13 @@ export const EquimentTypeSelector = forwardRef(
         },
 
         services: {
-          inBondCheckbox: spotDetails?.inBound ?? false,
+          inBondCheckbox: inBoundDetails?.inBound ?? false,
           inBound: {
-            bondType: spotDetails?.services?.inBond?.bondType ?? "",
-            bondCancler: spotDetails?.services?.inBond?.bondCancler ?? "",
-            contactKey: spotDetails?.services?.inBond?.contactKey ?? "",
-            contactValue: spotDetails?.services?.inBond?.contactValue ?? "",
-            address: spotDetails?.services?.inBond?.address ?? "",
+            bondType: inBoundDetails?.inBound?.bondType ?? "",
+            bondCancler: inBoundDetails?.inBound?.bondCancler ?? "",
+            contactKey: inBoundDetails?.inBound?.contactKey ?? "",
+            contactValue: inBoundDetails?.inBound?.contactValue ?? "",
+            address: inBoundDetails?.inBound?.address ?? "",
           },
           // limitedAccessCheckbox:
           // spotDetails?.services?.limitedAccessCheckbox ?? false,
@@ -187,10 +194,6 @@ export const EquimentTypeSelector = forwardRef(
       return () => subscription.unsubscribe();
     }, [methods.watch]);
 
-    useEffect(() => {
-      console.log("methods.formState.errors", methods.formState.errors);
-    }, [methods.formState.errors]);
-
     const dangerousGoodsCheckbox = methods.watch("dangerousGoodsCheckbox");
     useEffect(() => {
       if (dangerousGoodsCheckbox) {
@@ -208,13 +211,13 @@ export const EquimentTypeSelector = forwardRef(
 
     const inBondCheckbox = methods.watch("services.inBondCheckbox");
     useEffect(() => {
-      if (inBondCheckbox) {
-        methods.setValue("inBound", {
-            bondType: "",
-            bondCancler: "",
-            contactKey: "",
-            contactValue: "",
-            address: "",
+      if (inBondCheckbox && !isEdit) {
+        methods.setValue("services.inBound", {
+          bondType: "",
+          bondCancler: "",
+          contactKey: "",
+          contactValue: "",
+          address: "",
         });
       }
     }, [inBondCheckbox]);
@@ -298,36 +301,35 @@ export const EquimentTypeSelector = forwardRef(
                     {
                       name: "spotEquipment.protectFromFreeze",
                       type: "checkbox",
-                      labelClassName:"whitespace-nowrap",
+                      labelClassName: "whitespace-nowrap",
                       label: "Protect from Freeze",
                       show: shipmentType === "SPOT_LTL",
                     },
                     {
                       name: "services.limitedAccessCheckbox",
                       type: "checkbox",
-                      labelClassName:"whitespace-nowrap",
+                      labelClassName: "whitespace-nowrap",
                       label: "Limited Access",
                       show: shipmentType === "SPOT_LTL",
                     },
                     {
                       name: "dangerousGoodsCheckbox",
                       type: "checkbox",
-                      labelClassName:"whitespace-nowrap",
+                      labelClassName: "whitespace-nowrap",
                       label: "Dangerous Goods",
                       show: shipmentType === "SPOT_FTL",
-                      
                     },
                     {
                       name: "allPalletsStackable",
                       type: "checkbox",
-                      labelClassName:"whitespace-nowrap",
+                      labelClassName: "whitespace-nowrap",
                       label: "All Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
                     },
                     {
                       name: "somePalletsStackable",
                       type: "checkbox",
-                      labelClassName:"whitespace-nowrap",
+                      labelClassName: "whitespace-nowrap",
                       label: "Some Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
                     },
@@ -335,7 +337,7 @@ export const EquimentTypeSelector = forwardRef(
                 />
                 {methods.watch("services.inBondCheckbox") && (
                   <div className="my-4">
-                    <InBond spotDetails={spotDetails} />
+                    <InBond />
                   </div>
                 )}
                 {methods.watch("dangerousGoodsCheckbox") && (

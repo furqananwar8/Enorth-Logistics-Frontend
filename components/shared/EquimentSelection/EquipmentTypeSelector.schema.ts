@@ -43,8 +43,8 @@ export const ltlEquipmentSelectorSchema = z
       somePalletsStackable: z.boolean().optional(),
       refrigerated: refrigeratedSchema.optional(),
     }),
-    inBound: inBondSchema.partial().optional(),
     services: z.object({
+      inBound: inBondSchema.partial().optional(),
       inBondCheckbox: z.boolean().optional(),
       limitedAccessCheckbox: z.boolean().optional(),
       limitedAccess: z.string().optional(),
@@ -66,7 +66,7 @@ export const ltlEquipmentSelectorSchema = z
 
     // In Bond validation
     if (data.services?.inBondCheckbox) {
-      if (!data.inBound) {
+      if (!data.services.inBound) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["inBound"],
@@ -75,7 +75,7 @@ export const ltlEquipmentSelectorSchema = z
         return;
       }
 
-      const result = inBondSchema.safeParse(data.inBound);
+      const result = inBondSchema.safeParse(data.services.inBound);
 
       if (!result.success) {
         result.error.issues.forEach((issue) => {

@@ -119,6 +119,14 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
+      // const fromAddressQuote = row.original.addresses?.find(
+      //   (item: any) => item.type === "FROM",
+      // );
+
+      // const fromAddressFavQuote = row.original.addresses?.find(
+      //   (item: any) => item.type === "FROM",
+      // );
+
       const fromAddress = row.original.addresses?.find(
         (item: any) => item.type === "FROM",
       );

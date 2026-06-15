@@ -74,6 +74,24 @@ export const columns: ColumnDef<any>[] = [
       );
     },
   },
+  {
+    accessorKey: "totalRates",
+    header: "Total Rates",
+    cell: ({ row }) => {
+      const ftl = row.original.ftlRateToBeChargedPerShipment;
+      const ltl = row.original.ltlRateToBeChargedPerShipment;
+      return (
+        <div className="flex flex-col">
+          <span className="text-primary font-medium whitespace-nowrap">
+            LTL: {ltl} USD
+          </span>
+          <span className="text-primary font-medium whitespace-nowrap">
+            FTL: {ftl} USD
+          </span>
+        </div>
+      );
+    },
+  },
 
   {
     id: "actions",
@@ -88,8 +106,7 @@ export const columns: ColumnDef<any>[] = [
               size="sm"
               variant="default"
               className="bg-primary text-white flex items-center gap-1"
-                                  onClick={() => setOpen(true)}
-
+              onClick={() => setOpen(true)}
             >
               Add Rates
             </Button>

@@ -3,25 +3,26 @@ import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
-export default function InBond(spotDetails: any) {
+export default function InBond() {
   const methods = useFormContext();
-  const contactType = methods.watch("inBound.contactKey")?.toLowerCase();
-  useEffect(() => {
-    console.log("spotDetails", spotDetails)
-    if (!spotDetails) return;
-    const InBound = spotDetails?.services?.inBound
-    console.log("INBOUND", InBound)
-    // methods.reset({
-    //   inBound: {
-    //       bondType: InBound.bondType ?? "",
-    //       bondCancler: InBound.bondCancler ?? "",
-    //       contactKey: InBound.contactKey ?? "",
-    //       contactValue: InBound.contactValue ?? "",
-    //       address: InBound.address ?? "",
-        
-    //   },
-    // });
-  }, [spotDetails, methods]);
+  const contactType = methods
+    .watch("services.inBound.contactKey")
+    ?.toLowerCase();
+  // useEffect(() => {
+  //   if (!inBoundDetails) return;
+  //   const InBound = inBoundDetails;
+  //   methods.reset({
+  //     services: {
+  //       inBound: {
+  //         bondType: InBound.bondType ?? "",
+  //         bondCancler: InBound.bondCancler ?? "",
+  //         contactKey: InBound.contactKey ?? "",
+  //         contactValue: InBound.contactValue ?? "",
+  //         address: InBound.address ?? "",
+  //       },
+  //     },
+  //   });
+  // }, [inBoundDetails]);
   return (
     <div className="border border-blue-100 bg-[#f8fbfe] rounded-md p-6 space-y-6">
       {/* Title */}
@@ -46,21 +47,21 @@ export default function InBond(spotDetails: any) {
             wrapperClassName: "col-span-2 flex flex-col gap-4",
           },
           {
-            name: "inBound.bondCancler",
+            name: "services.inBound.bondCancler",
             label: "Warehouse or Carrier who will cancel US Bond",
             type: "text",
             placeholder: "",
             inputClassName: "bg-white",
           },
           {
-            name: "inBound.address",
+            name: "services.inBound.address",
             label: "Address",
             type: "text",
             placeholder: "123 Address",
             inputClassName: "bg-white",
           },
           {
-            name: "inBound.contactKey",
+            name: "services.inBound.contactKey",
             options: [
               { label: "Email", value: "EMAIL" },
               { label: "Fax Number", value: "FAX" },
@@ -70,7 +71,7 @@ export default function InBond(spotDetails: any) {
             className: "mb-4",
           },
           {
-            name: "inBound.contactValue",
+            name: "services.inBound.contactValue",
             label: contactType,
             placeholder: `Please enter your ${contactType}`,
             inputClassName: "w-1/2 bg-white",

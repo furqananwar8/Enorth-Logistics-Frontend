@@ -8,5 +8,5 @@ export const LIMITED_ACCESS_LOCATIONS = [
     { value: "SCHOOL_UNIVERSITY", label: "School/University" },
     { value: "PLAZA_MALL_DELIVERIES", label: "Plaza/Mall deliveries or stores with only parking lot/Street access" },
     { value: "GROCERY_RETAIL_LOCATIONS", label: "Grocery/Retail Locations (ex: Costco or Walmart)" },
-    { value: "OTHER", label: "Other" },
+    { value: "OTHERS", label: "Other" },
 ]

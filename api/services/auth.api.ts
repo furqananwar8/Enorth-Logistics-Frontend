@@ -45,7 +45,8 @@ export const getAllCompanies = async () => {
 export const addCompanyRates = async (
   id:string,
   payload:any) => {
-  const response = await apiClient.patch(`/companies/${id}/rates`, payload);
+  
+  const response = await apiClient.patch(`/companies/${id}/rates`, {...payload.payload});
   return response.data;
 };
 

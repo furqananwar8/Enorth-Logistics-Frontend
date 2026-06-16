@@ -59,7 +59,6 @@ export const EquimentTypeSelector = forwardRef(
     const [isOpen, setIsOpen] = useState(false);
     const searchParams = useSearchParams();
     const isEdit = searchParams.get("mode") === "edit";
-    console.log("isEdit,", isEdit);
     const methods = useForm({
       resolver,
     });
@@ -104,10 +103,6 @@ export const EquimentTypeSelector = forwardRef(
       const spotDetails = quoteDetails?.quote?.spotDetails;
       const inBoundDetails = quoteDetails?.quote?.palletServices;
       if (!spotDetails) return;
-      console.log(
-        "spotDetails?.spotEquipment?.refrigerated",
-        spotDetails?.spotEquipment?.refrigerated,
-      );
       setInBoundDetails(inBoundDetails);
       let type = "";
 
@@ -184,15 +179,7 @@ export const EquimentTypeSelector = forwardRef(
         },
       });
     }, [quoteDetails, methods]);
-    const isRefrigerated =
-      methods.watch("spotEquipment.type") === "refrigerated";
-    useEffect(() => {
-      const subscription = methods.watch((value) => {
-        console.log("EQUIPMENT VALUES:", value);
-      });
-
-      return () => subscription.unsubscribe();
-    }, [methods.watch]);
+    const isRefrigerated = methods.watch("spotEquipment.type") === "refrigerated";
 
     const dangerousGoodsCheckbox = methods.watch("dangerousGoodsCheckbox");
     useEffect(() => {

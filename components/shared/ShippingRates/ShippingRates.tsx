@@ -52,36 +52,6 @@ export default function ShippingRates({
   setGetRatesLoading: (value: boolean) => void;
   shipmentType: ShipmentOptions[keyof ShipmentOptions];
 }) {
-  // console.log("fromAddress", fromAddress);
-  // console.log("toAddress", toAddress);
-  // console.log("dimensions", dimensions);
-  // const fedexPayload = {
-  //     "from": {
-  //         "postalCode": fromAddress.address.postalCode,
-  //         "countryCode": fromAddress.address.country
-  //     },
-  //     "to": {
-  //         "postalCode": toAddress.address.postalCode,
-  //         "countryCode": toAddress.address.country
-  //     }
-  // }
-  // const tstPayload = {
-  //     "from": {
-  //         "name": fromAddress.contactName,
-  //         "address": fromAddress.address.address1,
-  //         "postalCode": fromAddress.address.postalCode,
-  //         "city": fromAddress.address.city,
-  //         "state": fromAddress.address.state
-  //     },
-  //     "to": {
-  //         "name": toAddress.contactName,
-  //         "address": toAddress.address.address1,
-  //         "postalCode": toAddress.address.postalCode,
-  //         "city": toAddress.address.city,
-  //         "state": toAddress.address.state
-  //     }
-  // }
-  // console.log("QUOTE ID:", quoteId);
   const dimensionsPayload = () => {
     if (dimensions?.lineItem?.units?.length === 0) {
       return [];
@@ -106,45 +76,12 @@ export default function ShippingRates({
       };
     });
   };
-  // const payload =
-  // {
-  //     "quoteType": "STANDARD",
-  //     "fedex": fedexPayload,
-  //     "tst": tstPayload,
-  //     "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-  //     "rateRequestType": ["LIST"],
-  //     "serviceType": "FEDEX_EXPRESS_SAVER",
-  //     // "packages": [{
-  //     //     "weightUnit": "LB",
-  //     //     "weight": 10,
-  //     //     "dimensionsUnit": "IN",
-  //     //     "length": 20,
-  //     //     "width": 20,
-  //     //     "height": 40,
-  //     //     "handlingUnits": 1,
-  //     //     "packaging": "BOX"
-  //     // }]
-  //     "packages": dimensionsPayload()
-  // }
-  // get id from search params
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  // console.log("FROM ADDRESS", fromAddress);
-  // console.log("TO ADDRESS", toAddress);
-  // console.log("DIMENSIONS", dimensions);
+  console.log("FROM ADDRESS", fromAddress);
+  console.log("TO ADDRESS", toAddress);
+
   const payload = {
     quoteType: "STANDARD",
     fedex: {
-      // "from": {
-      //     "postalCode": "38117",
-      //     "countryCode": "US",
-      //     "isResidential": true
-      // },
-      // "to": {
-      //     "postalCode": "M5V3A8",
-      //     "countryCode": "CA",
-      //     "isResidential": true
-      // }
       from: {
         postalCode: fromAddress?.address?.postalCode,
         countryCode: fromAddress?.address?.country,
@@ -157,27 +94,15 @@ export default function ShippingRates({
       },
     },
     tst: {
-      //   from: {
-      //     name: "ENorth Logistics",
-      //     address: "123 Main St",
-      //     postalCode: "M5V3A8",
-      //     city: "Toronto",
-      //     state: "ON",
-      //   },
-      //   to: {
-      //     name: "ENorth Logistics",
-      //     address: "456 Hollywood Blvd",
-      //     postalCode: "48226",
-      //     city: "Detroit",
-      //     state: "MI",
-      //   },
-
       from: {
         name: fromAddress?.contactName,
         address: fromAddress?.address?.address1,
         city: fromAddress?.address?.city,
         state: fromAddress?.address?.state,
         postalCode: fromAddress?.address?.postalCode,
+        ...(toAddress?.isResidential
+          ? { isResidential: toAddress?.isResidential }
+          : {}),
       },
       to: {
         name: toAddress?.contactName,
@@ -185,60 +110,65 @@ export default function ShippingRates({
         city: toAddress?.address?.city,
         state: toAddress?.address?.state,
         postalCode: toAddress?.address?.postalCode,
+        ...(toAddress?.isResidential
+          ? { isResidential: toAddress?.isResidential }
+          : {}),
       },
-
-      // "quoteId": id || 1,
-      // "carrier": "TST",
-      // "shipDate": "2026-07-24",
-      // "selectedRate": {
-      //     "serviceType": "ST",
-      //     "serviceName": "Standard LTL",
-      //     "packagingType": "SKD",
-      //     "totalCharge": 245.50,
-      //     "currency": "CAD",
-      //     "transitDays": 2
-      // }
     },
     tforce: {
-      //   quoteId: quoteId,
-      //   carrier: "TFORCE",
-      //   shipDate: "2026-07-24",
-      //   selectedRate: {
-      //     serviceType: "308", // 308=LTL US/CA | 309=Guaranteed | 349=US/MX
-      //     serviceName: "TForce Freight LTL",
-      //     totalCharge: 245.5,
-      //     currency: "USD",
-      //   },
-
       from: {
         city: fromAddress?.address?.city,
         state: fromAddress?.address?.state,
         postalCode: fromAddress?.address?.postalCode,
         countryCode: fromAddress?.address?.country,
-        isResidential: toAddress?.isResidential,
+        // isResidential: toAddress?.isResidential,
       },
       to: {
         city: toAddress?.address?.city,
         state: toAddress?.address?.state,
         postalCode: toAddress?.address?.postalCode,
         countryCode: toAddress?.address?.country,
-        isResidential: toAddress?.isResidential,
+        // isResidential: toAddress?.isResidential,
       },
     },
     xpo: {
-      "from": {
+      from: {
         city: fromAddress?.address?.city,
         postalCode: fromAddress?.address?.postalCode,
         countryCode: fromAddress?.address?.country,
         state: toAddress?.address?.state,
-
+        ...(toAddress?.isResidential
+          ? { isResidential: toAddress?.isResidential }
+          : {}),
       },
-      "to": {
+      to: {
         city: toAddress?.address?.city,
         postalCode: toAddress?.address?.postalCode,
         countryCode: toAddress?.address?.country,
         state: toAddress?.address?.state,
-
+        ...(toAddress?.isResidential
+          ? { isResidential: toAddress?.isResidential }
+          : {}),
+      },
+    },
+    minimax: {
+      from: {
+        city: fromAddress?.address?.city,
+        postalCode: fromAddress?.address?.postalCode,
+        countryCode: fromAddress?.address?.country,
+        state: toAddress?.address?.state,
+        ...(toAddress?.isResidential
+          ? { isResidential: toAddress?.isResidential }
+          : {}),
+      },
+      to: {
+        city: toAddress?.address?.city,
+        postalCode: toAddress?.address?.postalCode,
+        countryCode: toAddress?.address?.country,
+        state: toAddress?.address?.state,
+        ...(toAddress?.isResidential
+          ? { isResidential: toAddress?.isResidential }
+          : {}),
       },
     },
     pickupType: "DROPOFF_AT_FEDEX_LOCATION",
@@ -249,81 +179,13 @@ export default function ShippingRates({
       tradeShowDelivery: true,
       protectFromFreeze: true,
     },
-    // packages: [
-    //   {
-    //     weightUnit: "LB",
-    //     weight: 10,
-    //     dimensionsUnit: "IN",
-    //     length: 20,
-    //     width: 20,
-    //     height: 40,
-    //     handlingUnits: 2,
-    //     packaging: "BOX",
-    //   },
-    // ],
+
     packages: dimensionsPayload(),
     shipmentType: shipmentType === "COURIER_PAK" ? "COURIER" : shipmentType,
     stackable: false,
     // shipmentType: "",
   };
-  // const mutation = useMutation({
-  //     mutationFn: (payload: any) => getShipmentRates(payload),
-  //     // onSuccess: () => {
 
-  //     // },
-  //     onError: (error: AxiosError<ApiError>) => {
-  //         toast.error(error.response?.data.message)
-  //     }
-  // })
-  // async function streamRates(dto: any) {
-  //     const response = await fetch('/shipment-carrier/rates/stream', {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify(dto),
-  //     });
-
-  //     const reader = response?.body?.getReader() as any;
-  //     const decoder = new TextDecoder();
-
-  //     while (true) {
-  //         const { done, value } = await reader?.read();
-  //         if (done) break;
-
-  //         const chunk = decoder.decode(value);
-  //         const lines = chunk.split('\n').filter(l => l.startsWith('data:'));
-
-  //         for (const line of lines) {
-  //             const result = JSON.parse(line.replace('data: ', ''));
-
-  //             if (result.error) {
-  //                 console.error(`${result.carrier} failed:`, result.error);
-  //                 continue;
-  //             }
-
-  //             // Render as each arrives
-  //             //             if (result.carrier === 'fedex') {
-  //             //                 renderFedExQuote(result.quotes);
-  //             //             } else if (result.carrier === 'tst') {
-  //             //                 renderTSTQuote(result.quotes);
-  //             //             }
-  //             // print result
-  //             // console.log("result", result.quotes)
-  //         }
-  //     }
-  // }
-  // useEffect(() => {
-  //     if (openGetRates === "shippingRates") {
-  //         mutation.mutate(payload)
-  //         streamRates(payload)
-  //     }
-  // }, [openGetRates])
-  // const renderFedExQuote = (quotes: any[]) => {
-  //     // render fedex quotes here
-  //     {
-
-  // const renderTSTQuote = (quotes: any[]) => {
-  //     // render tst quotes here
-  // }
   return (
     <Accordion
       value={openGetRates}

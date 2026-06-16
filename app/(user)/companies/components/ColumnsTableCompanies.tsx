@@ -49,7 +49,6 @@ export const columns: ColumnDef<any>[] = [
     header: "Name",
     cell: ({ row }) => {
       const name = row.original.name || "";
-      console.log("ROW:", row.original);
       return (
         <div className="flex items-center gap-2">
           <div className="bg-primary/10 text-primary p-2 rounded-full">

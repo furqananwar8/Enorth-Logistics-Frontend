@@ -109,8 +109,6 @@ export default function AddUser({
   });
 
   // print roles and permissions
-  console.log("roles", roles);
-  console.log("permissions", permissions);
 
   // console.log(res.users)
   // const [roleId, setRoleId] = useState(1)
@@ -188,7 +186,6 @@ export default function AddUser({
   });
   // // console.log(isValid)
 
-  console.log("form.formState.errors", form.formState.errors);
   return (
     <>
       {isLoading ? (

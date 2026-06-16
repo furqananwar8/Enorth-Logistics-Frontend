@@ -120,10 +120,6 @@ const AdditionalServices = forwardRef(
     });
     useEffect(() => {
       if (cachedSingleQuote) {
-        console.log(
-          "cachedSingleQuote.quote.palletServices",
-          cachedSingleQuote.quote.palletServices,
-        );
         const services = cachedSingleQuote.quote.palletServices;
         if (services) {
           setValue("limitedAccess", true);

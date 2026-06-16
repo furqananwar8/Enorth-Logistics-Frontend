@@ -178,11 +178,6 @@ export default function ULSWalletSettings() {
   }
 
   // charge(chargePayload)
-
-  console.log(
-    "Last Card:",
-    user?.user?.company?.savedCards[user?.user?.company?.savedCards.length - 1],
-  );
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-xl font-semibold mb-6">

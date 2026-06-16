@@ -19,13 +19,6 @@ const DangerousGoodsForm = ({
   emergencyContactName,
   emergencyContactPhone
 }:fieldNameProps) => {
-  console.log("type, un", type,
-  un,
-  packagingGroup,
-  dgClass,
-  technicalName,
-  emergencyContactName,
-  emergencyContactPhone)
   return (
     <div className="border border-blue-100 p-6 rounded-sm">
       <p className="text-sm text-slate-700 mb-6">

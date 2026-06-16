@@ -23,7 +23,7 @@ interface Props {
     search: string;
     selectedPackaging: string[];
   };
-  setCount: (count: { all: number; saved: number; spot: number }) => void;
+  setCount: (count: { all: number; favorite: number; spot: number }) => void;
   quoteCategory: QuoteCategory;
 }
 export default function DynamicQuotesTable({
@@ -65,15 +65,19 @@ export default function DynamicQuotesTable({
             [dateFrom, dateTo],
             filters.selectedPackaging?.join(",") || "",
           );
-
-        case "saved":
-          return getSavedQuotes();
-
         case "spot":
-          return getSpotQuotes();
+          return getSpotQuotes(
+            debouncedSearch,
+            [dateFrom, dateTo],
+            filters.selectedPackaging?.join(",") || "",
+          );
 
         case "favorite":
-          return getFavoriteQuotes();
+          return getFavoriteQuotes(
+            debouncedSearch,
+            [dateFrom, dateTo],
+            filters.selectedPackaging?.join(",") || "",
+          );
 
         default:
           return getAllQuotes(
@@ -93,7 +97,7 @@ export default function DynamicQuotesTable({
     if (quotes) {
       setCount({
         all: quotes?.data?.length,
-        saved: quotes?.data?.length,
+        favorite: quotes?.data?.length,
         spot: quotes?.data?.length,
       });
     }

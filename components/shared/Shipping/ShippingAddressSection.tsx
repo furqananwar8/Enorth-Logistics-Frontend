@@ -53,6 +53,7 @@ import { parseTime12h } from "@/app/(user)/settings/(address-book)/mappers/conta
 import { COUNTRIES, PROVINCES } from "@/shared-data/geo.data";
 import { Loader } from "@/components/common/Loader";
 import { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
+import { usePostalCodeAutoFill } from "@/utils/common/useAddressAutoFill.hook";
 export const ShippingAddressSection = forwardRef(
   (
     {
@@ -68,6 +69,7 @@ export const ShippingAddressSection = forwardRef(
       setIsFetchedQuoteShipment,
       onChange,
       onValidityChange,
+      selectedCarrierName,
     }: {
       quoteType: keyof ShipmentOptions;
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
@@ -82,6 +84,7 @@ export const ShippingAddressSection = forwardRef(
       setStep: (step: number) => void;
       onChange?: (data: any) => void;
       onValidityChange?: (data: any) => void;
+      selectedCarrierName?: string;
     },
     ref,
   ) => {
@@ -206,58 +209,62 @@ export const ShippingAddressSection = forwardRef(
     // set ship date to today
     // make ship date undefined
 
-    const postalCodeWatch = methods.watch("address.postalCode") || "";
+    // const postalCodeWatch = methods.watch("address.postalCode") || "";
 
-    const countryCode = postalCodeWatch.match(/^\d{5}(-\d{4})?$/) ? "us" : "ca";
+    // const {
+    //   data: postalCodeData,
+    //   isLoading: postalCodeLoading,
+    //   isPending: postalCodeIsPending,
+    // } = useQuery({
+    //   queryKey: ["postalCode", postalCodeWatch],
+    //   queryFn: () => getAddressByPostalCode(postalCodeWatch),
+    //   retry: false,
+    // });
+    // const getProvinceCode = (provinceNumber: string): string => {
+    //   const provinceMap: Record<string, string> = {
+    //     "10": "NL",
+    //     "11": "PE",
+    //     "12": "NS",
+    //     "13": "NB",
+    //     "24": "QC",
+    //     "35": "ON",
+    //     "46": "MB",
+    //     "47": "SK",
+    //     "48": "AB",
+    //     "59": "BC",
+    //     "60": "YT",
+    //     "61": "NT",
+    //     "62": "NU",
+    //   };
 
-    const {
-      data: postalCodeData,
-      isLoading: postalCodeLoading,
-      isPending: postalCodeIsPending,
-    } = useQuery({
-      queryKey: ["postalCode", postalCodeWatch],
-      // queryFn: () => getAddressByPostalCode(postalCodeWatch, countryCode),
-      queryFn: () => getAddressByPostalCode(postalCodeWatch),
-      retry: false,
-      // enabled: postalCodeWatch.length === 5,
-    });
-    const getProvinceCode = (provinceNumber: string): string => {
-      console.log("provinceNumber", provinceNumber)
-      const provinceMap: Record<string, string> = {
-        "10": "NL",
-        "11": "PE",
-        "12": "NS",
-        "13": "NB",
-        "24": "QC",
-        "35": "ON",
-        "46": "MB",
-        "47": "SK",
-        "48": "AB",
-        "59": "BC",
-        "60": "YT",
-        "61": "NT",
-        "62": "NU",
-      };
+    //   return provinceMap[provinceNumber] ?? "";
+    // };
+    // useEffect(() => {
+    //   if (postalCodeData && !addressLocked && !isLoading) {
 
-      return provinceMap[provinceNumber] ?? "";
-    };
-    useEffect(() => {
-      if (postalCodeData) {
-        console.log("address.city", postalCodeData["placeName"]);
-        console.log("address.state", postalCodeData["country"]);
-        console.log("address.country", postalCodeData["fsa_province"]);
+    //     methods.setValue("address.city", postalCodeData["placeName"]);
+    //     // wrong mapping in DB, swapped values
+    //     if (postalCodeData["fsaProvince"] === "CA") {
+    //       methods.setValue(
+    //         "address.state",
+    //         getProvinceCode(postalCodeData["country"]),
+    //       );
+    //     } else {
+    //       methods.setValue("address.state", postalCodeData["country"]);
+    //     }
+    //     methods.setValue("address.country", postalCodeData["fsaProvince"]);
+    //   }
+    // }, [postalCodeData, postalCodeWatch, isLoading]);
 
-        methods.setValue("address.city", postalCodeData["placeName"]);
-        // wrong mapping in DB, swapped values
-        if (postalCodeData["fsaProvince"] === "CA") {
-          methods.setValue("address.state", getProvinceCode(postalCodeData["country"]));
-        }
-        else{
-          methods.setValue("address.state", postalCodeData["country"]);
-        }
-        methods.setValue("address.country", postalCodeData["fsaProvince"]);
-      }
-    }, [postalCodeData, postalCodeWatch]);
+    const { isLoading: postalCodeLoading, isPending: postalCodeIsPending } =
+      usePostalCodeAutoFill({
+        methods,
+        postalCodeField: "address.postalCode",
+        cityField: "address.city",
+        stateField: "address.state",
+        countryField: "address.country",
+        addressLocked,
+      });
 
     // on change of ship date setshipdate state coming from parent
 
@@ -322,13 +329,9 @@ export const ShippingAddressSection = forwardRef(
         });
       }
       if (shipmentType === "COURIER_PAK") {
-        methods.setValue(
-          "signatureId",
-          contact?.signatureId?.toString() || "",
-          {
-            shouldValidate: true,
-          },
-        );
+        methods.setValue("signatureId", contact?.signatureId || "", {
+          shouldValidate: true,
+        });
       }
       if (showLocationType) {
         methods.setValue(
@@ -642,10 +645,27 @@ export const ShippingAddressSection = forwardRef(
       setBillingRefs(updated);
     };
 
-    // console.log("values", methods.getValues());
+    const isWeekend = (date: Date) => {
+      const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+      return day === 0 || day === 6;
+    };
+    // const shipDate = methods.watch("shipDate") as Date;
 
-    // show form errors
-    // console.log("ADDRESS ERRORS", methods.formState.errors);
+    // useEffect(() => {
+    //   if (
+    //     selectedCarrierName?.toUpperCase() === "XPO" &&
+    //     shipDate &&
+    //     isWeekend(new Date(shipDate))
+    //   ) {
+    //     console.log("SHIPPING ADDRESS SHIP DATE ERROR")
+    //     methods.setError("shipDate", {
+    //       type: "manual",
+    //       message: "XPO shipments cannot be scheduled on weekends.",
+    //     });
+    //   } else {
+    //     methods.clearErrors("shipDate");
+    //   }
+    // }, [selectedCarrierName, shipDate, methods]);
     return (
       <>
         <div

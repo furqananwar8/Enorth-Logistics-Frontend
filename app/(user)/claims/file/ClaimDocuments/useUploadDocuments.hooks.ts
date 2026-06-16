@@ -14,7 +14,6 @@ export function useUploadDocuments(
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
-      console.log("documentType in mutationFn:", selectedDocumentType);
       formData.append("documentType", selectedDocumentType || "OTHERS");
       // const uploadDocumentPayload = {
       //   formData,

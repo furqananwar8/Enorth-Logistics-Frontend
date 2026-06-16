@@ -86,8 +86,7 @@ export function useDimensions(
     enabled: !!quoteId,
     staleTime: 1000 * 60 * 5,
   });
-  // print errors
-  console.log("DIMENSION ERRORS: ", errors);
+  // print error
   useEffect(() => {
     if (!cachedSingleQuote) return;
     const units = cachedSingleQuote.quote.lineItems?.units ?? [];
@@ -157,9 +156,6 @@ export function useDimensions(
     setValue("lineItem.type", shipmentType);
   }, [shipmentType]);
   // print special handling required
-  useEffect(() => {
-    console.log("DIMENSIONS values", getValues());
-  }, [getValues]);
   const handleAddPackage = () => {
     fieldArray.append({
       length: null,

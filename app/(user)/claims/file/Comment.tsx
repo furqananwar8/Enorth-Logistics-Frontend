@@ -62,7 +62,6 @@ export default function Comments({ claimId }: CommentsProps) {
   };
 
   const comments = data?.comments || data || [];
-  console.log("comments", comments);
   return (
     <div className="space-y-6">
       {/* Add Comment */}

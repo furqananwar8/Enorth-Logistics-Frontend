@@ -58,7 +58,7 @@ export function useClaimFile({
 
   useEffect(() => {
     if (claimData) {
-      console.log("Fetched Claim Data:", claimData);
+      
       // if (claim.quoteId) {
       //   setquoteId(claim.quoteId);
       // }
@@ -88,7 +88,7 @@ export function useClaimFile({
   useEffect(() => {
     if (action === "create") {
       if (quoteData) {
-        console.log("quoteData:", quoteData);
+        
         setShipmentDetails(quoteData.quote);
       }
     } else {
@@ -122,15 +122,7 @@ export function useClaimFile({
     try {
       const isContactValid = await contactInfoRef.current?.trigger();
       const isClaimDetailsValid = await claimDetailsRef.current?.trigger();
-      console.log(
-        "Contact Form Values:",
-        contactInfoRef.current?.getValues?.(),
-      );
-
-      console.log(
-        "Claim Details Values:",
-        claimDetailsRef.current?.getValues?.(),
-      );
+      
 
       if (
         isContactValid &&
@@ -138,7 +130,7 @@ export function useClaimFile({
         quoteId &&
         uploadedDocument
       ) {
-        console.log("All forms are valid");
+        
 
         const payload = {
           ...contactInfoRef.current?.getValues?.(),
@@ -149,7 +141,7 @@ export function useClaimFile({
           additionalInsurancePurchased,
         };
 
-        console.log("Final Payload:", payload);
+        
         if (action === "edit") {
           updateClaimMutation.mutate(payload);
         } else {

@@ -57,7 +57,7 @@ export function EditContactModal(
         mutation.mutate(payload)
     }
     if (mutation.isPending) {
-        return <Loader />
+        return <Loader className="absolute top-0 left-0 w-full h-full backdrop-blur-md rouned-xl"/>
     }
     return (
         <Dialog open={open} onOpenChange={setOpen}>

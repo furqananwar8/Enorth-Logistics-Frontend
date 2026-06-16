@@ -73,7 +73,7 @@ export default function DynamicCompaniesTable({
 
     return matchesSearch && matchesRole && matchesStatus;
   });
-  console.log("filteredCompanies", filteredCompanies)
+  
   // Calculate counts for parent tabs
   useEffect(() => {
     if (companyList) {

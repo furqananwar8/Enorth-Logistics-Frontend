@@ -37,6 +37,8 @@ export function getCarrierImg(carrierName: string) {
       );
     case "xpo":
       return <Image src="/carriers/xpo.svg" width={80} height={80} alt="XPO" />;
+    case "minimax":
+      return <Image src="/carriers/minimax.svg" width={80} height={80} alt="MiniMax" />;
 
     default:
       return <div className="border rounded-2xl p-3 flex justify-center items-center">{carrierName}</div>;
@@ -124,11 +126,12 @@ export function CarrierCard({
           ))
       ) : (
         // 🟡 Empty / loading state
-        <TableRow>
-          <TableCell colSpan={5} className="text-center py-6">
-            No rates available
-          </TableCell>
-        </TableRow>
+        // <TableRow>
+        //   <TableCell colSpan={5} className="text-center py-6">
+        //     No rates available
+        //   </TableCell>
+        // </TableRow>
+        ""
       )}
     </>
   );

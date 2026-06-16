@@ -64,10 +64,6 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "carrier",
     header: "Carrier",
     cell: ({ row }) => {
-      console.log(
-        "row.original.shipment.carrier",
-        row.original.shipment?.carrier,
-      );
       return (
         <div className="h-24 w-24 p-2 flex justify-center items-center">
           {/* <Image src={"/FedExFreight.svg"} width={100} height={100} alt="Carrier Logo" /> */}

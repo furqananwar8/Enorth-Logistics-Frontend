@@ -134,7 +134,6 @@ export default function DynamicQuote({
     setRealTimeData(getMergedPayload());
   }, []);
 
-
   const scrollToSection = (id: string, offset = 100) => {
     console.log(id);
     const element = document.getElementById(id);
@@ -156,18 +155,12 @@ export default function DynamicQuote({
 
     let valid = fromValid && toValid && dimValid;
 
-    // print all valid with false value
-    console.log("FROM VALID:", fromValid);
-    console.log("TO VALID:", toValid);
-    console.log("DIM VALID:", dimValid);
-
     if (quoteType === "SPOT") {
-      console.log("SPOT QUOTE BLOCK");
+      
       const contactValid = await contactRef.current?.trigger();
       const equipmentValid = await equipmentRef.current?.trigger();
       valid = valid && contactValid && equipmentValid;
-      console.log("contactValid", contactValid);
-      console.log("equipmentValid", equipmentValid);
+      
     }
 
     if (!valid) {
@@ -241,6 +234,8 @@ export default function DynamicQuote({
       return;
     }
 
+    
+
     const { finalQuotePayload } = buildPayloads();
     const newShipmentPayload = {
       mode: "SHIPMENT",
@@ -289,12 +284,27 @@ export default function DynamicQuote({
           packagingType: selectedCarrier.packagingType || "BOX",
           transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
         }),
+
+        ...(selectedCarrier.carrier === "XPO" && {
+          totalSurcharges: selectedCarrier.totalSurcharges,
+          surcharges: selectedCarrier.surcharges || [],
+          confirmationNumber: selectedCarrier.confirmationNumber,
+          totalDiscount: selectedCarrier.totalDiscount,
+        }),
       },
     };
-    // console.log("BOOK SHIPMENT SHIPDATE ALREADY CREATED QUOTE CASE: ", singleQuote?.quote?.shipment?.shipDate)
-    // console.log("BOOK SHIPMENT SHIPDATE NEW QUOTE CASE: ", res?.quote?.shipment?.shipDate)
-    // console.log("BOOK SHIPMENT PAYLOAD:", bookShipmentPayload);
-    // console.log("SELECTED CARRIER: ", selectedCarrier);
+
+    if (selectedCarrier?.carrier?.toUpperCase() === "XPO" && bookShipmentPayload.shipDate) {
+      const day = new Date(bookShipmentPayload.shipDate).getDay();
+      if (day === 0 || day === 6) {
+        scrollToSection(`shippingAddressSectionFROM`);
+        toast.error("XPO shipments cannot be scheduled on weekends.");
+        return;
+      }
+    }
+
+    if (!valid) return;
+
     bookShipmentMutation.mutate(bookShipmentPayload);
   };
 
@@ -305,7 +315,6 @@ export default function DynamicQuote({
 
     const { finalQuotePayload } = buildPayloads();
 
-    // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
     createQuoteAndConvertToShipmentMutation.mutate(finalQuotePayload);
   };
   //   const selectedCarrierDetails = useMemo(() => {
@@ -317,8 +326,6 @@ export default function DynamicQuote({
   //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
 
   const [step, setStep] = useState(1);
-  console.log("quoteType", quoteType);
-  console.log("isSpotEditPage", isSpotEditPage);
   return (
     <>
       <AddFundsModal
@@ -361,6 +368,9 @@ export default function DynamicQuote({
                     title="Shipping From"
                     onChange={syncRealTimeData}
                     onValidityChange={setIsFromAddressValid}
+                    selectedCarrierName={
+                      selectedCarrier ? selectedCarrier.carrier : ""
+                    }
                   />
                 </div>
                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">

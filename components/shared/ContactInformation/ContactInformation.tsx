@@ -37,10 +37,12 @@ const ContactInformation = forwardRef(
       quoteType,
       onChange,
       quoteDetails,
+      viewOnly,
     }: {
       quoteType: QuoteTypes;
       onChange?: (data: any) => void;
       quoteDetails: any;
+      viewOnly: boolean;
     },
     ref: any,
   ) => {
@@ -91,7 +93,7 @@ const ContactInformation = forwardRef(
       <Accordion
         type="single"
         collapsible
-        value={isOpen ? "insurance" : ""}
+        value={isOpen || viewOnly ? "insurance" : ""}
         onValueChange={(val) => setIsOpen(!!val)}
         className="shadow-lg border border-border rounded-md bg-white dark:bg-card"
       >
@@ -114,12 +116,15 @@ const ContactInformation = forwardRef(
                       label: "Contact Name *",
                       type: "text",
                       placeholder: "Contact Name",
+                      disabled: viewOnly,
                     },
                     {
                       name: "spotContact.phoneNumber",
                       label: "Phone Number*",
                       type: "phone",
                       placeholder: "Phone Number",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "spotContact.shipDate",
@@ -127,18 +132,24 @@ const ContactInformation = forwardRef(
                       type: "date",
                       placeholder: "Ship Date",
                       futureDatesOnly: true,
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "spotContact.email",
                       label: "Email Address*",
                       type: "email",
                       placeholder: "Email Address",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "spotContact.spotQuoteName",
                       label: "Spot Quote Name (optional)",
                       type: "text",
                       placeholder: "Spot Quote Name",
+                      disabled: viewOnly,
+
                     },
                   ]}
                 />

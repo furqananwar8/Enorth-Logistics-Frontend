@@ -29,10 +29,12 @@ const AdditionalServices = forwardRef(
       shipmentType,
       quoteType,
       onChange,
+      viewOnly,
     }: {
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
       quoteType: "SPOT" | "STANDARD";
       onChange?: (data: any) => void;
+      viewOnly?: boolean;
     },
     ref,
   ) => {
@@ -169,7 +171,7 @@ const AdditionalServices = forwardRef(
         <Accordion
           type="single"
           collapsible
-          value={isOpen ? "insurance" : ""}
+          value={isOpen || viewOnly ? "insurance" : ""}
           onValueChange={(val) => setIsOpen(!!val)}
           className="shadow-lg border border-border rounded-md bg-white dark:bg-card"
         >
@@ -206,6 +208,7 @@ const AdditionalServices = forwardRef(
                           icon: <Info size={16} />,
                           show: quoteType === "SPOT",
                           wrapperClassName: "col-span-full",
+                          disabled: viewOnly,
                         },
                         {
                           type: "non-input",
@@ -231,6 +234,7 @@ const AdditionalServices = forwardRef(
                           defaultValue: false,
                           icon: <Info size={16} />,
                           show: quoteType !== "SPOT",
+                          disabled: viewOnly,
                         },
                         {
                           name: "services.limitedAccess",
@@ -240,6 +244,7 @@ const AdditionalServices = forwardRef(
                           wrapperClassName: " col-span-full",
                           className: "grid grid-cols-2 gap-4 mt-4",
                           show: quoteType !== "SPOT" && watch("limitedAccess"),
+                          disabled: viewOnly,
                         },
                         {
                           name: "limitedAccessDescription",
@@ -249,6 +254,7 @@ const AdditionalServices = forwardRef(
                           className: "w-1/3 ml-[50%]",
                           show: watch("services.limitedAccess") === "other",
                           wrapperClassName: "col-span-full",
+                          disabled: viewOnly,
                         },
                         // services.appointmentDelivery
                         {
@@ -257,6 +263,7 @@ const AdditionalServices = forwardRef(
                           type: "checkbox",
                           defaultValue: false,
                           icon: <Info size={16} />,
+                          disabled: viewOnly,
                         },
                         // services.thresholdDelivery
                         {
@@ -265,6 +272,7 @@ const AdditionalServices = forwardRef(
                           type: "checkbox",
                           defaultValue: false,
                           icon: <Info size={16} />,
+                          disabled: viewOnly,
                         },
                         // services.thresholdPickup
                         {
@@ -273,6 +281,7 @@ const AdditionalServices = forwardRef(
                           type: "checkbox",
                           defaultValue: false,
                           icon: <Info size={16} />,
+                          disabled: viewOnly,
                         },
                         // services.protectFromFreeze
                         {
@@ -282,6 +291,7 @@ const AdditionalServices = forwardRef(
                           defaultValue: false,
                           icon: <Info size={16} />,
                           show: quoteType !== "SPOT",
+                          disabled: viewOnly,
                         },
                         // services.tradeShowDelivery
                         {
@@ -290,6 +300,7 @@ const AdditionalServices = forwardRef(
                           type: "checkbox",
                           defaultValue: false,
                           icon: <Info size={16} />,
+                          disabled: viewOnly,
                         },
                         // services.amazonOrFbaDelivery
                         {
@@ -298,6 +309,7 @@ const AdditionalServices = forwardRef(
                           type: "checkbox",
                           defaultValue: false,
                           icon: <Info size={16} />,
+                          disabled: viewOnly,
                         },
                         // services.refrigeratedServices
                         {
@@ -307,6 +319,7 @@ const AdditionalServices = forwardRef(
                           defaultValue: false,
                           icon: <Info size={16} />,
                           show: quoteType !== "SPOT",
+                          disabled: viewOnly,
                         },
                         // Grocery/Retail Distribution Center
                         {
@@ -316,6 +329,7 @@ const AdditionalServices = forwardRef(
                           defaultValue: false,
                           icon: <Info size={16} />,
                           show: quoteType === "SPOT",
+                          disabled: viewOnly,
                         },
                         // services.looseFreight
                       ]}

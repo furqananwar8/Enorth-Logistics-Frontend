@@ -146,7 +146,7 @@ export default function TrackingDashboardPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {shipmentStatuses.map((status) => (
-                    <SelectItem value={status.value}>{status.name}</SelectItem>
+                    <SelectItem key={status.value} value={status.value}>{status.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

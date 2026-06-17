@@ -71,6 +71,7 @@ export default function DynamicTrackingTable({
         filters.selectedOrderSource || "",
         filters.originPostal || "",
         filters.destinationPostal || "",
+        page
       );
     },
     retry: 1,
@@ -125,7 +126,7 @@ export default function DynamicTrackingTable({
         </Button>
         <DataTablePagination
           page={page}
-          totalPages={1} // Static totalPages for now, based on mock data
+          totalPages={trackings.meta.totalPages} // Static totalPages for now, based on mock data
           setPage={setPage}
         />
       </div>

@@ -31,6 +31,7 @@ import {
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
+import { useAuth } from "@/context/auth.context";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -69,7 +70,7 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
         <span className="text-primary dark:text-white font-medium whitespace-nowrap">
-          {row.original.quoteId}
+          {row.original.quoteId ? row.original.quoteId : row.original.quote.quoteId}
         </span>
       );
     },
@@ -119,15 +120,9 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "shipFrom",
     header: "Ship From",
     cell: ({ row }) => {
-      // const fromAddressQuote = row.original.addresses?.find(
-      //   (item: any) => item.type === "FROM",
-      // );
+      
 
-      // const fromAddressFavQuote = row.original.addresses?.find(
-      //   (item: any) => item.type === "FROM",
-      // );
-
-      const fromAddress = row.original.addresses?.find(
+      const fromAddress = (row.original.addresses ? row.original.addresses : row.original.quote.addresses).find(
         (item: any) => item.type === "FROM",
       );
 
@@ -140,6 +135,8 @@ export const columns: ColumnDef<any>[] = [
       const state = address?.state;
       const country = address?.country;
 
+      console.log("address1", row.original)
+
       return (
         <span className="text-primary font-medium whitespace-nowrap">
           {address1}
@@ -149,11 +146,11 @@ export const columns: ColumnDef<any>[] = [
       );
     },
   },
-    {
+  {
     accessorKey: "shipTo",
     header: "Ship To",
     cell: ({ row }) => {
-      const fromAddress = row.original.addresses?.find(
+      const fromAddress = (row.original.addresses ? row.original.addresses : row.original.quote.addresses).find(
         (item: any) => item.type === "TO",
       );
 
@@ -180,7 +177,10 @@ export const columns: ColumnDef<any>[] = [
     header: "Packaging Details",
     cell: ({ row }) => {
       const totalUnits = row?.original?.lineItems?.units?.length;
-      const totalWeight = row?.original?.lineItems?.units?.reduce((sum:number, u: { weight?: number }) => sum + (u.weight || 0), 0);
+      const totalWeight = row?.original?.lineItems?.units?.reduce(
+        (sum: number, u: { weight?: number }) => sum + (u.weight || 0),
+        0,
+      );
       return (
         <div className="leading-tight capitalize">
           {totalUnits} {totalUnits === 1 ? "Pallet" : "Pallets"}
@@ -235,57 +235,91 @@ export const columns: ColumnDef<any>[] = [
         mutationRemoveFromFavorite.mutate(id);
       };
       const isFavorite = true;
-      const isSpotQuote = row?.original?.shipmentType?.includes("SPOT") || row?.original?.shipmentType?.includes("TIME_CRITICAL")
+      const { isAdmin } = useAuth();
+      const isSpotQuote =
+        row?.original?.shipmentType?.includes("SPOT") ||
+        row?.original?.shipmentType?.includes("TIME_CRITICAL");
       return (
         <div className="flex items-center gap-4 w-max">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <MoreVertical size={16} className="cursor-pointer" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-max">
-              {!isSpotQuote ? <DropdownMenuItem className="cursor-pointer">
-                <Link
-                  className="flex gap-2 items-center w-full"
-                  href={
-                    row.original.shipment
-                      ? `/shipment?id=${row.original.id}`
-                      : `/shipment?id=${row.original.id}&mode=conversion`
-                  }
-                >
-                  <CircleCheck size={14} /> Book Now
-                </Link>
-              </DropdownMenuItem> : ""}
+            {isAdmin ? (
+              <DropdownMenuContent align="end" className="w-max">
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link
+                    className="flex gap-2 items-center w-full"
+                    href={
+                      `/quote?id=${row.original.id}&isSpotQuote=true`
+                    }
+                  >
+                    <CircleCheck size={14} /> View
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            ) : (
+              <DropdownMenuContent align="end" className="w-max">
+                {!isSpotQuote ? (
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Link
+                      className="flex gap-2 items-center w-full"
+                      href={
+                        row.original.shipment
+                          ? `/shipment?id=${row.original.id}`
+                          : `/shipment?id=${row.original.id}&mode=conversion`
+                      }
+                    >
+                      <CircleCheck size={14} /> Book Now
+                    </Link>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Link
+                      className="flex gap-2 items-center w-full"
+                      href={
+                        row.original.shipment
+                          ? `/shipment?id=${row.original.id}`
+                          : `/shipment?id=${row.original.id}&mode=conversion`
+                      }
+                    >
+                      <CircleCheck size={14} /> View
+                    </Link>
+                  </DropdownMenuItem>
+                )}
 
-              <DropdownMenuItem
-                className="cursor-pointer w-max"
-                onClick={() => {
-                  handleAddToFavorite(row.original.id);
-                }}
-              >
-                <Heart size={14} /> Add to Favorites
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem className="cursor-pointer">
-                <Link
-                  className="flex gap-2 items-center w-full"
-                  href={
-                    isSpotQuote ? `/quote?id=${row.original.id}&mode=edit&isSpotQuote=${isSpotQuote}` :
-                    (row.original.shipment
-                      ? `/shipment?id=${row.original.id}&mode=edit`
-                      : `/quote?id=${row.original.id}&mode=edit`)
-                  }
+                <DropdownMenuItem
+                  className="cursor-pointer w-max"
+                  onClick={() => {
+                    handleAddToFavorite(row.original.id);
+                  }}
                 >
-                  <Edit size={14} /> Edit
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-red-500 cursor-pointer"
-                onClick={() => handleDeleteQuote(row.original.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+                  <Heart size={14} /> Add to Favorites
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link
+                    className="flex gap-2 items-center w-full"
+                    href={
+                      isSpotQuote
+                        ? `/quote?id=${row.original.id}&mode=edit&isSpotQuote=${isSpotQuote}`
+                        : row.original.shipment
+                          ? `/shipment?id=${row.original.id}&mode=edit`
+                          : `/quote?id=${row.original.id}&mode=edit`
+                    }
+                  >
+                    <Edit size={14} /> Edit
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => handleDeleteQuote(row.original.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            )}
           </DropdownMenu>
         </div>
       );

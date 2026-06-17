@@ -121,14 +121,14 @@ export default function ShippingRates({
         state: fromAddress?.address?.state,
         postalCode: fromAddress?.address?.postalCode,
         countryCode: fromAddress?.address?.country,
-        // isResidential: toAddress?.isResidential,
+        isResidential: toAddress?.isResidential,
       },
       to: {
         city: toAddress?.address?.city,
         state: toAddress?.address?.state,
         postalCode: toAddress?.address?.postalCode,
         countryCode: toAddress?.address?.country,
-        // isResidential: toAddress?.isResidential,
+        isResidential: toAddress?.isResidential,
       },
     },
     xpo: {
@@ -157,20 +157,21 @@ export default function ShippingRates({
         postalCode: fromAddress?.address?.postalCode,
         countryCode: fromAddress?.address?.country,
         state: toAddress?.address?.state,
-        ...(toAddress?.isResidential
-          ? { isResidential: toAddress?.isResidential }
-          : {}),
+        // ...(toAddress?.isResidential
+        //   ? { isResidential: toAddress?.isResidential }
+        //   : {}),
       },
       to: {
         city: toAddress?.address?.city,
         postalCode: toAddress?.address?.postalCode,
         countryCode: toAddress?.address?.country,
         state: toAddress?.address?.state,
-        ...(toAddress?.isResidential
-          ? { isResidential: toAddress?.isResidential }
-          : {}),
+        // ...(toAddress?.isResidential
+        //   ? { isResidential: toAddress?.isResidential }
+        //   : {}),
       },
     },
+    polaris:{},
     pickupType: "DROPOFF_AT_FEDEX_LOCATION",
     rateRequestType: ["LIST"],
     serviceType: "FEDEX_EXPRESS_SAVER",

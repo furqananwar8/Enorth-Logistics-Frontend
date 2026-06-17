@@ -10,7 +10,14 @@ import { SelectAddressBookModal } from "./SelectAddressBookModal";
 import { useQuery } from "@tanstack/react-query";
 import { useMarkContactAsRecent } from "../../../app/(user)/quote/hooks";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftRight, BookUser, InfoIcon, Plus, X } from "lucide-react";
+import {
+  ArrowLeftRight,
+  BookUser,
+  InfoIcon,
+  NotebookText,
+  Plus,
+  X,
+} from "lucide-react";
 // import { ShipmentOptions } from "../DynamicQuote/DynamicQuote"
 import z, { ZodType } from "zod";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -70,6 +77,7 @@ export const ShippingAddressSection = forwardRef(
       onChange,
       onValidityChange,
       selectedCarrierName,
+      viewOnly,
     }: {
       quoteType: keyof ShipmentOptions;
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
@@ -85,6 +93,7 @@ export const ShippingAddressSection = forwardRef(
       onChange?: (data: any) => void;
       onValidityChange?: (data: any) => void;
       selectedCarrierName?: string;
+      viewOnly?: boolean;
     },
     ref,
   ) => {
@@ -627,6 +636,7 @@ export const ShippingAddressSection = forwardRef(
       type,
       signatures,
       isLoadingSignatures,
+      viewOnly
     });
     const addBillingRef = () => {
       if (billingRefs.length < 3) {
@@ -678,11 +688,17 @@ export const ShippingAddressSection = forwardRef(
               variant="destructive"
               type="button"
               onClick={handleClearAddress}
+              disabled={viewOnly}
             >
               <X />
               Clear
             </Button>
-            <Button variant="outline" type="button" onClick={handleSwap}>
+            <Button
+              disabled={viewOnly}
+              variant="outline"
+              type="button"
+              onClick={handleSwap}
+            >
               <ArrowLeftRight />
               Swap
             </Button>
@@ -695,7 +711,22 @@ export const ShippingAddressSection = forwardRef(
           >
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-medium">Select Address</p>
-              <SelectAddressBookModal onSelect={handleAddressSelect} />
+              <SelectAddressBookModal
+                triggerButton={
+                  <Button
+                    disabled={viewOnly}
+                    variant="outline"
+                    type="button"
+                    className="text-sm text-primary dark:text-white flex items-center gap-1 hover:underline"
+                  >
+                    <span>
+                      <NotebookText />
+                    </span>
+                    Address Book
+                  </Button>
+                }
+                onSelect={handleAddressSelect}
+              />
             </div>
             <GlobalForm
               formWrapperClassName="grid grid-cols-1 sm:grid-cols-2 gap-6"

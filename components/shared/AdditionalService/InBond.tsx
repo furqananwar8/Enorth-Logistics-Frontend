@@ -1,9 +1,10 @@
 "use client";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
+import { useAuth } from "@/context/auth.context";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
-export default function InBond() {
+export default function InBond({ viewOnly }: { viewOnly: boolean }) {
   const methods = useFormContext();
   const contactType = methods
     .watch("services.inBound.contactKey")
@@ -45,6 +46,7 @@ export default function InBond() {
             ],
 
             wrapperClassName: "col-span-2 flex flex-col gap-4",
+            disabled: viewOnly,
           },
           {
             name: "services.inBound.bondCancler",
@@ -52,6 +54,7 @@ export default function InBond() {
             type: "text",
             placeholder: "",
             inputClassName: "bg-white",
+            disabled: viewOnly,
           },
           {
             name: "services.inBound.address",
@@ -59,6 +62,7 @@ export default function InBond() {
             type: "text",
             placeholder: "123 Address",
             inputClassName: "bg-white",
+            disabled: viewOnly,
           },
           {
             name: "services.inBound.contactKey",
@@ -69,6 +73,7 @@ export default function InBond() {
             ],
             type: "radio",
             className: "mb-4",
+            disabled: viewOnly,
           },
           {
             name: "services.inBound.contactValue",
@@ -78,6 +83,7 @@ export default function InBond() {
             wrapperClassName: "col-span-2",
             type: "text",
             labelClassName: "capitalize",
+            disabled: viewOnly,
           },
         ]}
       />

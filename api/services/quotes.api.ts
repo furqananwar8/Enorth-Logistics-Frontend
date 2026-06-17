@@ -44,14 +44,14 @@ export const getAllQuotes = async (
   search: string = "",
   dateRange: string[] = ["", ""],
   packaging: string = "",
-  status: string = "",
+  page: number = 1,
 ) => {
   const query = new URLSearchParams();
   if (search) query.append("quoteNumber", search);
   if (dateRange[0]) query.append("dateFrom", dateRange[0]);
   if (dateRange[1]) query.append("dateTo", dateRange[1]);
   if (packaging) query.append("shipmentType", packaging);
-  if (status) query.append("status", status);
+  if (page) query.append("page", page.toString());
 
   const response = await apiClient.get(`/quotes?${query.toString()}`);
   return response.data;
@@ -60,14 +60,14 @@ export const getFavoriteQuotes = async (
   search: string = "",
   dateRange: string[] = ["", ""],
   packaging: string = "",
-  status: string = "",
+  page: number = 1,
 ) => {
   const query = new URLSearchParams();
   if (search) query.append("quoteNumber", search);
   if (dateRange[0]) query.append("dateFrom", dateRange[0]);
   if (dateRange[1]) query.append("dateTo", dateRange[1]);
   if (packaging) query.append("shipmentType", packaging);
-  if (status) query.append("status", status);
+  if (page) query.append("page", page.toString());
 
   const response = await apiClient.get(`/quotes/favorites?${query.toString()}`);
   return response.data;
@@ -88,7 +88,9 @@ export const getSpotQuotes = async (
   if (dateRange[1]) query.append("dateTo", dateRange[1]);
   if (packaging) query.append("shipmentType", packaging);
   if (status) query.append("status", status);
-    console.log("packaging", packaging)
-  const response = await apiClient.get(`/quotes/?quoteType=SPOT&${query.toString()}`);
+  console.log("packaging", packaging);
+  const response = await apiClient.get(
+    `/quotes/?quoteType=SPOT&${query.toString()}`,
+  );
   return response.data;
 };

@@ -21,7 +21,10 @@ export function getCarrierImg(carrierName: string) {
   switch (carrierName?.toLowerCase()) {
     case "fedex":
       return (
-        <Image src="/carriers/fedex.svg" width={80} height={80} alt="FedEx" />
+        <Image 
+          className="mix-blend-multiply dark:mix-blend-normal"
+        
+        src="/carriers/fedex-express.png" width={80} height={80} alt="FedEx" />
       );
     case "tst":
       return <Image src="/carriers/tst.png" width={80} height={80} alt="TST" />;

@@ -1,14 +1,15 @@
 import { Info } from "lucide-react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 
-interface fieldNameProps{
-  type:string,
-  un:string,
-  packagingGroup:string,
-  dgClass:string,
-  technicalName:string,
-  emergencyContactName:string,
-  emergencyContactPhone:string
+interface fieldNameProps {
+  type: string;
+  un: string;
+  packagingGroup: string;
+  dgClass: string;
+  technicalName: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  viewOnly?: boolean;
 }
 const DangerousGoodsForm = ({
   type,
@@ -17,8 +18,9 @@ const DangerousGoodsForm = ({
   dgClass,
   technicalName,
   emergencyContactName,
-  emergencyContactPhone
-}:fieldNameProps) => {
+  emergencyContactPhone,
+  viewOnly,
+}: fieldNameProps) => {
   return (
     <div className="border border-blue-100 p-6 rounded-sm">
       <p className="text-sm text-slate-700 mb-6">
@@ -52,7 +54,8 @@ const DangerousGoodsForm = ({
               },
             ],
             wrapperClassName: "col-span-3",
-            className:"mt-4"
+            className: "mt-4",
+            disabled: viewOnly,
           },
           {
             name: un,
@@ -61,6 +64,8 @@ const DangerousGoodsForm = ({
             placeholder: "Enter UN #",
             wrapperClassName: "md:col-span-",
             className: "bg-white dark:bg-card",
+            disabled: viewOnly,
+
           },
           {
             name: packagingGroup,
@@ -74,6 +79,8 @@ const DangerousGoodsForm = ({
               { value: "none", label: "N/A" },
             ],
             className: "bg-white dark:bg-card",
+            disabled: viewOnly,
+
           },
           {
             name: dgClass,
@@ -92,6 +99,8 @@ const DangerousGoodsForm = ({
               { value: "CLASS_9", label: "Class 9" },
             ],
             className: "bg-white dark:bg-card",
+            disabled: viewOnly,
+
           },
           {
             name: technicalName,
@@ -100,6 +109,8 @@ const DangerousGoodsForm = ({
             placeholder: "Enter Technical Name or Description",
             wrapperClassName: "md:col-span-3",
             className: "bg-white dark:bg-card",
+            disabled: viewOnly,
+
           },
           {
             name: emergencyContactName,
@@ -107,6 +118,8 @@ const DangerousGoodsForm = ({
             type: "text",
             placeholder: "Enter Emergency Contact Name",
             className: "bg-white dark:bg-card",
+            disabled: viewOnly,
+
           },
           {
             name: emergencyContactPhone,
@@ -114,6 +127,8 @@ const DangerousGoodsForm = ({
             type: "phone",
             placeholder: "Enter Contact Phone Number",
             className: "bg-white dark:bg-card",
+            disabled: viewOnly,
+
           },
         ]}
       />

@@ -142,7 +142,7 @@ export const columns: ColumnDef<any>[] = [
       const country = address?.country;
 
       return (
-        <span className="text-primary font-medium whitespace-nowrap">
+        <span className=" font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}
@@ -168,7 +168,7 @@ export const columns: ColumnDef<any>[] = [
       const country = address?.country;
 
       return (
-        <span className="text-primary font-medium whitespace-nowrap">
+        <span className=" font-medium whitespace-nowrap">
           {address1}
           <br />
           {city}, {state}, {country}

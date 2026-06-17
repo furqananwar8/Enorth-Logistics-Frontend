@@ -57,6 +57,7 @@ interface SendRequestProps {
   onPrevious?: () => void;
   onSubmit: () => void;
   setSpotDetailsValidConfirmation: (value: boolean) => void;
+  viewOnly?: boolean;
 }
 
 const SendRequest = forwardRef(
@@ -71,6 +72,7 @@ const SendRequest = forwardRef(
       onPrevious,
       onSubmit,
       setSpotDetailsValidConfirmation,
+      viewOnly,
     }: SendRequestProps,
     ref,
   ) => {
@@ -283,6 +285,7 @@ const SendRequest = forwardRef(
                       type: "input",
                       placeholder: "$ 0",
                       className: "max-w-[200px]",
+                      disabled: viewOnly,
                     },
                     {
                       name: "preferredBudget.currency",
@@ -293,6 +296,8 @@ const SendRequest = forwardRef(
                         { value: "USD", label: "USD" },
                       ],
                       wrapperClassName: "flex flex-col gap-4",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "confirmation",
@@ -301,6 +306,8 @@ const SendRequest = forwardRef(
                         "I am confirming that all the above information is correct. I understand and accept that any rates received are based on the information that has been provided.",
                       labelClassName: "leading-normal",
                       wrapperClassName: "flex items-start",
+                      disabled: viewOnly,
+
                     },
                   ]}
                 />

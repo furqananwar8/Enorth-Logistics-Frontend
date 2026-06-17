@@ -156,11 +156,9 @@ export default function DynamicQuote({
     let valid = fromValid && toValid && dimValid;
 
     if (quoteType === "SPOT") {
-      
       const contactValid = await contactRef.current?.trigger();
       const equipmentValid = await equipmentRef.current?.trigger();
       valid = valid && contactValid && equipmentValid;
-      
     }
 
     if (!valid) {
@@ -234,8 +232,6 @@ export default function DynamicQuote({
       return;
     }
 
-    
-
     const { finalQuotePayload } = buildPayloads();
     const newShipmentPayload = {
       mode: "SHIPMENT",
@@ -294,7 +290,10 @@ export default function DynamicQuote({
       },
     };
 
-    if (selectedCarrier?.carrier?.toUpperCase() === "XPO" && bookShipmentPayload.shipDate) {
+    if (
+      selectedCarrier?.carrier?.toUpperCase() === "XPO" &&
+      bookShipmentPayload.shipDate
+    ) {
       const day = new Date(bookShipmentPayload.shipDate).getDay();
       if (day === 0 || day === 6) {
         scrollToSection(`shippingAddressSectionFROM`);
@@ -326,6 +325,8 @@ export default function DynamicQuote({
   //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
 
   const [step, setStep] = useState(1);
+  const { isAdmin } = useAuth();
+  const viewOnly = isAdmin;
   return (
     <>
       <AddFundsModal
@@ -336,16 +337,18 @@ export default function DynamicQuote({
         {!isShipment ? (
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold capitalize">
-              {isEditing
-                ? `Edit ${quoteType.toLowerCase()} Quote`
-                : `Create New ${quoteType.toLowerCase()} Quote`}
+              {isAdmin
+                ? "Quote Detail"
+                : isEditing
+                  ? `Edit ${quoteType.toLowerCase()} Quote`
+                  : `Create New ${quoteType.toLowerCase()} Quote`}
             </h1>
           </div>
         ) : (
           ""
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className={!viewOnly ? "grid grid-cols-1 lg:grid-cols-4 gap-8" : ""}>
           <div className="lg:col-span-3">
             <div className="space-y-6">
               <ShippingTypeSelector
@@ -371,6 +374,7 @@ export default function DynamicQuote({
                     selectedCarrierName={
                       selectedCarrier ? selectedCarrier.carrier : ""
                     }
+                    viewOnly={viewOnly}
                   />
                 </div>
                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
@@ -387,6 +391,7 @@ export default function DynamicQuote({
                     title="Shipping To"
                     onChange={syncRealTimeData}
                     onValidityChange={setIsToAddressValid}
+                    viewOnly={viewOnly}
                   />
                 </div>
               </div>
@@ -402,6 +407,7 @@ export default function DynamicQuote({
                     shipmentType={shipmentType}
                     onChange={syncRealTimeData}
                     quoteDetails={singleQuote}
+                    viewOnly={viewOnly}
                   />
                 </div>
               ) : (
@@ -414,6 +420,7 @@ export default function DynamicQuote({
                     ref={contactRef}
                     onChange={syncRealTimeData}
                     quoteDetails={singleQuote}
+                    viewOnly={viewOnly}
                   />
                 </div>
               ) : (
@@ -426,6 +433,7 @@ export default function DynamicQuote({
                   onChange={syncRealTimeData}
                   quoteType={quoteType}
                   setIsDimensionsValid={setIsDimensionsValid}
+                  viewOnly={viewOnly}
                 />
               </div>
               {shipmentType !== "STANDARD_FTL" ? (
@@ -435,6 +443,7 @@ export default function DynamicQuote({
                     ref={servicesRef}
                     shipmentType={shipmentType}
                     onChange={syncRealTimeData}
+                    viewOnly={viewOnly}
                   />
                 </div>
               ) : (
@@ -442,7 +451,7 @@ export default function DynamicQuote({
               )}
             </div>
             <div className="mt-6">
-              <AdditionalInsurance ref={insuranceRef} />
+              <AdditionalInsurance viewOnly={viewOnly} ref={insuranceRef} />
             </div>
             {(shipmentType === "PACKAGE" ||
               shipmentType === "COURIER_PAK" ||
@@ -466,6 +475,7 @@ export default function DynamicQuote({
                   setSpotDetailsValidConfirmation={
                     setSpotDetailsValidConfirmation
                   }
+                  viewOnly={viewOnly}
                 />
               </div>
             )}
@@ -490,73 +500,77 @@ export default function DynamicQuote({
               ""
             )}
 
-            <div className="w-full z-10 flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
-              <div className="flex gap-4">
-                {!isSpotEditPage && !isSpotQuotePage && (
-                  <Button
-                    variant={"secondary"}
-                    disabled={getRatesLoading}
-                    onClick={handleGetRates}
-                    className="border border-primary/50"
-                  >
-                    {getRatesLoading ? (
-                      <LoaderCircle className="animate-spin mr-2" size={16} />
-                    ) : (
-                      ""
-                    )}
-                    Get Rates
-                  </Button>
-                )}
-                {isShipment ? (
-                  <Button
-                    onClick={handleBookShipment}
-                    disabled={bookShipmentMutation.isPending}
-                  >
-                    {bookShipmentMutation.isPending ? (
-                      <LoaderCircle className="animate-spin mr-2" size={16} />
-                    ) : (
-                      ""
-                    )}
-                    Book Shipment
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      // onSubmit()
-                      handleConvertToShipment();
-                    }}
-                    disabled={
-                      createQuoteAndConvertToShipmentMutation.isPending ||
-                      (quoteType !== "STANDARD" || isSpotEditPage
-                        ? !spotDetailsValidConfirmation
-                        : false)
-                    }
-                  >
-                    {createQuoteAndConvertToShipmentMutation.isPending ? (
-                      <LoaderCircle className="animate-spin mr-2" size={16} />
-                    ) : (
-                      ""
-                    )}
-                    {quoteType === "STANDARD" && !isSpotEditPage
-                      ? "Convert to Shipment"
-                      : "Request Quote"}
-                  </Button>
-                )}
+            {!viewOnly && (
+              <div className="w-full z-10 flex justify-end pt-8 sticky bottom-0 bg-white/10 backdrop-blur-md p-5 rounded-lg mt-2">
+                <div className="flex gap-4">
+                  {!isSpotEditPage && !isSpotQuotePage && (
+                    <Button
+                      variant={"secondary"}
+                      disabled={getRatesLoading}
+                      onClick={handleGetRates}
+                      className="border border-primary/50"
+                    >
+                      {getRatesLoading ? (
+                        <LoaderCircle className="animate-spin mr-2" size={16} />
+                      ) : (
+                        ""
+                      )}
+                      Get Rates
+                    </Button>
+                  )}
+                  {isShipment ? (
+                    <Button
+                      onClick={handleBookShipment}
+                      disabled={bookShipmentMutation.isPending}
+                    >
+                      {bookShipmentMutation.isPending ? (
+                        <LoaderCircle className="animate-spin mr-2" size={16} />
+                      ) : (
+                        ""
+                      )}
+                      Book Shipment
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        // onSubmit()
+                        handleConvertToShipment();
+                      }}
+                      disabled={
+                        createQuoteAndConvertToShipmentMutation.isPending ||
+                        (quoteType !== "STANDARD" || isSpotEditPage
+                          ? !spotDetailsValidConfirmation
+                          : false)
+                      }
+                    >
+                      {createQuoteAndConvertToShipmentMutation.isPending ? (
+                        <LoaderCircle className="animate-spin mr-2" size={16} />
+                      ) : (
+                        ""
+                      )}
+                      {quoteType === "STANDARD" && !isSpotEditPage
+                        ? "Convert to Shipment"
+                        : "Request Quote"}
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
-          <SideBar
-            isPending={
-              createQuoteMutation.isPending || updateQuoteMutation.isPending
-            }
-            onSubmit={onSubmit}
-            setQuoteStatus={setQuoteStatus}
-            currentStep={currentStep}
-            setCurrentStep={setCurrentStep}
-            isFromAddressValid={isFromAddressValid}
-            isToAddressValid={isToAddressValid}
-            isDimensionsValid={isDimensionsValid}
-          />
+          {!isAdmin && (
+            <SideBar
+              isPending={
+                createQuoteMutation.isPending || updateQuoteMutation.isPending
+              }
+              onSubmit={onSubmit}
+              setQuoteStatus={setQuoteStatus}
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
+              isFromAddressValid={isFromAddressValid}
+              isToAddressValid={isToAddressValid}
+              isDimensionsValid={isDimensionsValid}
+            />
+          )}
         </div>
       </div>
     </>

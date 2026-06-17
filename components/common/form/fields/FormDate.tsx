@@ -44,6 +44,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
                         type="button"
                         variant="outline"
                         data-empty={!field.value}
+                        disabled={config.disabled}
                         className={`w-full justify-between text-left font-normal bg-white ${error ? "border-red-500 text-red-500 bg-red-50" : ""
                             }`}
                     >
@@ -70,7 +71,7 @@ const FormDate = memo(({ field: config }: { field: any }) => {
 
                         disabled={(date) => {
                             if (!config.futureDatesOnly || config.isEditing) return false;
-                            return date < minDate;
+                            return date < minDate ;
                         }}
                     />
                 </PopoverContent>

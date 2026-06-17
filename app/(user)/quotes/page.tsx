@@ -68,6 +68,7 @@ export default function QuotesDashboardPage() {
           count: count.favorite,
         },
       ];
+  const [activeTab, setActiveTab] = useState("all");
   return (
     <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
       <div className="mb-6">
@@ -159,7 +160,7 @@ export default function QuotesDashboardPage() {
       )}
 
       {/* Tabs */}
-      <Tabs defaultValue={tabs[0].value}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue={tabs[0].value}>
         <TabsList className="gap-2 w-max overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1">
           {tabs.map((tab) => (
             <TabsTrigger
@@ -167,7 +168,11 @@ export default function QuotesDashboardPage() {
               value={tab.value}
               className="data-[state=active]:bg-primary data-[state=active]:text-white py-2 cursor-pointer"
             >
-              <tab.icon /> {tab.label} ({tab.count})
+              <tab.icon />
+              {tab.label}
+              {activeTab === tab.value && tab.count ? (
+                <span> ({tab.count})</span>
+              ) : null}
             </TabsTrigger>
           ))}
         </TabsList>

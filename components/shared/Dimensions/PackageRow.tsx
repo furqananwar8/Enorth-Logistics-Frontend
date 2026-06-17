@@ -22,6 +22,7 @@ type Props = {
   onClear: (index: number) => void;
   open: boolean;
   setOpen: (v: boolean) => void;
+  viewOnly?: boolean;
 };
 
 export function PackageRow({
@@ -34,6 +35,7 @@ export function PackageRow({
   open,
   setOpen,
   quoteType,
+  viewOnly,
 }: Props & { quoteType: keyof ShipmentOptions }) {
   const {
     register,
@@ -42,12 +44,13 @@ export function PackageRow({
     setError,
     clearErrors,
     trigger,
+
     formState: { errors },
   } = useFormContext<any>();
 
   const measurementUnit = useWatch({ name: "lineItem.measurementUnit" });
-    const searchParams = useSearchParams();
-    const isSpotEditPage = searchParams.get("isSpotQuote")!
+  const searchParams = useSearchParams();
+  const isSpotEditPage = searchParams.get("isSpotQuote")!;
   //   const watchedWeight = useWatch({ name: `lineItem.units.${index}.weight` });
   const isImperial = measurementUnit === "IMPERIAL";
   const lengthUnit = isImperial ? "in" : "cm";
@@ -260,6 +263,7 @@ export function PackageRow({
                 ? "text-xs text-muted-foreground text-red-400"
                 : "text-xs text-muted-foreground",
               show: !(shipmentType === "COURIER_PAK"),
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.width`,
@@ -272,6 +276,7 @@ export function PackageRow({
                 : "text-xs text-muted-foreground",
               className: rowErrors?.width ? "border-red-500" : "",
               show: !(shipmentType === "COURIER_PAK"),
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.height`,
@@ -284,6 +289,7 @@ export function PackageRow({
                 : "text-xs text-muted-foreground",
               className: rowErrors?.height ? "border-red-500" : "",
               show: !(shipmentType === "COURIER_PAK"),
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.weight`,
@@ -295,6 +301,7 @@ export function PackageRow({
                 ? "text-xs text-muted-foreground text-red-400"
                 : "text-xs text-muted-foreground",
               className: rowErrors?.weight ? "border-red-500" : "",
+              disabled: viewOnly,
             },
             {
               label: "Freight Class",
@@ -304,6 +311,7 @@ export function PackageRow({
               labelClassName: "text-xs text-muted-foreground",
               placeholder: "Select Freight Class",
               show: shipmentType === "PALLET" || shipmentType === "SPOT_LTL",
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.nmfc`,
@@ -312,6 +320,7 @@ export function PackageRow({
               placeholder: "NMFC",
               labelClassName: "text-xs text-muted-foreground",
               show: shipmentType === "PALLET",
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.palletUnitType`,
@@ -339,6 +348,7 @@ export function PackageRow({
                 shipmentType === "SPOT_LTL" ||
                 shipmentType === "SPOT_FTL" ||
                 shipmentType === "TIME_CRITICAL",
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.unitsOnPallet`,
@@ -352,6 +362,7 @@ export function PackageRow({
                 shipmentType === "SPOT_LTL" ||
                 shipmentType === "SPOT_FTL" ||
                 shipmentType === "TIME_CRITICAL",
+              disabled: viewOnly,
             },
             {
               name: `lineItem.units.${index}.description`,
@@ -360,6 +371,7 @@ export function PackageRow({
               placeholder: "Description",
               labelClassName: "text-xs text-muted-foreground",
               wrapperClassName: `col-span-1 sm:col-span-2 ${shipmentType === "STANDARD_FTL" || shipmentType === "COURIER_PAK" ? "md:col-span-3" : "md:col-span-4"}`,
+              disabled: viewOnly,
             },
             // specialHandlingRequired
             {
@@ -370,9 +382,10 @@ export function PackageRow({
               labelClassName: "text-xs text-muted-foreground",
               wrapperClassName: "col-span-8",
               show: shipmentType === "PACKAGE",
+              disabled: viewOnly,
             },
           ]}
-          extra={
+          extra={!viewOnly &&
             <div className="flex items-center gap-4 text-sm mt-6">
               <PackageSelectionModal
                 selectedPackage={shipmentType}
@@ -390,6 +403,7 @@ export function PackageRow({
                   variant="link"
                   type="button"
                   className="text-primary dark:text-accent"
+                  disabled={viewOnly}
                 >
                   <Save /> Save Package
                 </Button>

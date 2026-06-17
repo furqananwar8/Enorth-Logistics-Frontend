@@ -32,10 +32,12 @@ export const EquimentTypeSelector = forwardRef(
       shipmentType,
       onChange,
       quoteDetails,
+      viewOnly,
     }: {
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
       onChange?: (data: any) => void;
       quoteDetails: any;
+      viewOnly: boolean;
     },
     ref,
   ) => {
@@ -179,7 +181,8 @@ export const EquimentTypeSelector = forwardRef(
         },
       });
     }, [quoteDetails, methods]);
-    const isRefrigerated = methods.watch("spotEquipment.type") === "refrigerated";
+    const isRefrigerated =
+      methods.watch("spotEquipment.type") === "refrigerated";
 
     const dangerousGoodsCheckbox = methods.watch("dangerousGoodsCheckbox");
     useEffect(() => {
@@ -214,7 +217,7 @@ export const EquimentTypeSelector = forwardRef(
         <Accordion
           type="single"
           collapsible
-          value={isOpen ? "equipment" : ""}
+          value={isOpen || viewOnly ? "equipment" : ""}
           onValueChange={(val) => setIsOpen(!!val)}
           className="shadow-lg border border-border rounded-md bg-white dark:bg-card"
         >
@@ -243,6 +246,7 @@ export const EquimentTypeSelector = forwardRef(
                             ? ftlOptions
                             : timeCriticalOptions,
                       wrapperClassName: "col-span-full flex flex-col gap-4",
+                      disabled: viewOnly,
                     },
                     {
                       name: "spotEquipment.refrigerated.type",
@@ -256,6 +260,8 @@ export const EquimentTypeSelector = forwardRef(
                       selectedClassName: "text-amber-500 border-amber-500",
                       show: isRefrigerated,
                       wrapperClassName: "col-span-full flex flex-col gap-4",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "spotEquipment.isKnownShipper",
@@ -268,6 +274,8 @@ export const EquimentTypeSelector = forwardRef(
                       ],
                       selectedClassName: "text-amber-500 border-amber-500",
                       show: equipmentType === "nextFlightOut",
+                      disabled: viewOnly,
+
                     },
                     {
                       type: "non-input",
@@ -277,6 +285,8 @@ export const EquimentTypeSelector = forwardRef(
                         </p>
                       ),
                       wrapperClassName: "col-span-full",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "services.inBondCheckbox",
@@ -284,6 +294,8 @@ export const EquimentTypeSelector = forwardRef(
                       label: "In-Bond",
                       show: shipmentType === "SPOT_LTL",
                       wrapperClassName: "col-span-1",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "spotEquipment.protectFromFreeze",
@@ -291,6 +303,8 @@ export const EquimentTypeSelector = forwardRef(
                       labelClassName: "whitespace-nowrap",
                       label: "Protect from Freeze",
                       show: shipmentType === "SPOT_LTL",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "services.limitedAccessCheckbox",
@@ -298,6 +312,8 @@ export const EquimentTypeSelector = forwardRef(
                       labelClassName: "whitespace-nowrap",
                       label: "Limited Access",
                       show: shipmentType === "SPOT_LTL",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "dangerousGoodsCheckbox",
@@ -305,6 +321,8 @@ export const EquimentTypeSelector = forwardRef(
                       labelClassName: "whitespace-nowrap",
                       label: "Dangerous Goods",
                       show: shipmentType === "SPOT_FTL",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "allPalletsStackable",
@@ -312,6 +330,8 @@ export const EquimentTypeSelector = forwardRef(
                       labelClassName: "whitespace-nowrap",
                       label: "All Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
+                      disabled: viewOnly,
+
                     },
                     {
                       name: "somePalletsStackable",
@@ -319,17 +339,20 @@ export const EquimentTypeSelector = forwardRef(
                       labelClassName: "whitespace-nowrap",
                       label: "Some Pallets Stackable",
                       show: shipmentType === "SPOT_FTL",
+                      disabled: viewOnly,
+
                     },
                   ]}
                 />
                 {methods.watch("services.inBondCheckbox") && (
                   <div className="my-4">
-                    <InBond />
+                    <InBond viewOnly={viewOnly} />
                   </div>
                 )}
                 {methods.watch("dangerousGoodsCheckbox") && (
                   <div className="my-4">
                     <DangerousGoodsForm
+                      viewOnly={viewOnly}
                       type="services.dangerousGoods.type"
                       un="services.dangerousGoods.un"
                       packagingGroup="services.dangerousGoods.packagingGroup"

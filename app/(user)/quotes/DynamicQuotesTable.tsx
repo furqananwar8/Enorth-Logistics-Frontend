@@ -48,6 +48,7 @@ export default function DynamicQuotesTable({
       debouncedSearch,
       filters.dateRange,
       filters.selectedPackaging,
+      page,
     ],
     queryFn: () => {
       const dateFrom = filters.dateRange?.from
@@ -64,6 +65,8 @@ export default function DynamicQuotesTable({
             debouncedSearch,
             [dateFrom, dateTo],
             filters.selectedPackaging?.join(",") || "",
+            //@ts-ignore
+            page,
           );
         case "spot":
           return getSpotQuotes(
@@ -72,12 +75,12 @@ export default function DynamicQuotesTable({
             filters.selectedPackaging?.join(",") || "",
           );
 
-        case "favorite":
+       case "favorite":
           return getFavoriteQuotes(
             debouncedSearch,
             [dateFrom, dateTo],
             filters.selectedPackaging?.join(",") || "",
-          );
+          ); 
 
         default:
           return getAllQuotes(
@@ -91,20 +94,44 @@ export default function DynamicQuotesTable({
     // dependency
     enabled: true,
   });
+  const { data: favoriteQuotes } = useQuery({
+    queryKey: ["favoriteQuotes", debouncedSearch],
+    queryFn: () => {
+      const dateFrom = filters.dateRange?.from
+        ? new Date(filters.dateRange.from).toISOString().split("T")[0]
+        : "";
+
+      const dateTo = filters.dateRange?.to
+        ? new Date(filters.dateRange.to).toISOString().split("T")[0]
+        : "";
+      return getFavoriteQuotes(
+        debouncedSearch,
+        [dateFrom, dateTo],
+        filters.selectedPackaging?.join(",") || "",
+        page,
+      );
+    },
+  });
   // console.log({ quoteCategory, dateRange: filters.dateRange, search: filters.search, selectedPackaging: filters.selectedPackaging })
   // console.log("quotes", quotes)
   useEffect(() => {
     if (quotes) {
       setCount({
         all: quotes?.data?.length,
-        favorite: quotes?.data?.length,
-        spot: quotes?.data?.length,
+        favorite: favoriteQuotes?.data?.length,
+        spot: quotes?.data?.filter((quote: any) => quote.quoteType === "SPOT")
+          .length,
       });
     }
-  }, [quotes]);
+  }, [quotes, favoriteQuotes]);
   const refetch = () => {
     queryClient.invalidateQueries({
       queryKey: ["quotes", quoteCategory, debouncedSearch],
+      refetchType: "active",
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: ["favoriteQuotes", quoteCategory, debouncedSearch],
       refetchType: "active",
     });
   };
@@ -155,7 +182,7 @@ export default function DynamicQuotesTable({
         </Button>
         <DataTablePagination
           page={page}
-          totalPages={1} // Static totalPages for now, based on mock data
+          totalPages={quotes.meta.totalPages} // Static totalPages for now, based on mock data
           setPage={setPage}
         />
       </div>

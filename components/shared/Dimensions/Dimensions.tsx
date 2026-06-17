@@ -26,11 +26,13 @@ const Dimensions = forwardRef(
       onChange,
       quoteType,
       setIsDimensionsValid,
+      viewOnly
     }: {
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
       onChange?: (data: any) => void;
       quoteType: keyof ShipmentOptions;
       setIsDimensionsValid: (value: boolean) => void;
+      viewOnly?:boolean;
     },
     ref,
   ) => {
@@ -114,7 +116,7 @@ const Dimensions = forwardRef(
           <Accordion
             type="single"
             collapsible
-            value={isOpen ? "dimensions" : ""}
+            value={isOpen || viewOnly ? "dimensions" : ""}
             onValueChange={(val) => setIsOpen(!!val)}
             className="shadow-lg border border-border rounded-md bg-white dark:bg-card"
           >
@@ -132,6 +134,7 @@ const Dimensions = forwardRef(
                   shipmentType={shipmentType}
                   fieldCount={fields.length}
                   onQuantityChange={handleQuantityChange}
+                  viewOnly={viewOnly}
                 />
                 {shipmentType !== "STANDARD_FTL" ? (
                   <div className="space-y-6 flex flex-col">
@@ -147,12 +150,14 @@ const Dimensions = forwardRef(
                         open={packageDialogOpen}
                         setOpen={setPackageDialogOpen}
                         quoteType={quoteType}
+                        viewOnly={viewOnly}
+
                       />
                     ))}
-                    <DimensionsFooter
+                    {!viewOnly && <DimensionsFooter
                       shipmentType={shipmentType}
                       onAddPackage={handleAddPackage}
-                    />
+                    />}
                   </div>
                 ) : (
                   <FTLPackageDimensions />

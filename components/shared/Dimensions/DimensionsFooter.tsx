@@ -32,7 +32,10 @@ export function DimensionsFooter({ shipmentType, onAddPackage }: Props) {
                     </Label>
                 </div>
             )} */}
-            {shipmentType !== "COURIER_PAK" && <Button type="button" variant="outline" onClick={onAddPackage}>
+            {shipmentType !== "COURIER_PAK" &&
+             <Button 
+             
+             type="button" variant="outline" onClick={onAddPackage}>
                 <Plus size={16} className="mr-1" /> Add Package
             </Button>}
         </div>

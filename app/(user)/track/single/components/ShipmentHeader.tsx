@@ -7,7 +7,9 @@ import {
   Truck,
   X,
   CircleDollarSign,
+  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth.context";
 import { AddSurchargesModal } from "../../(AdditionalSurcharges)/AddSurchargesModal";
@@ -17,7 +19,22 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
   if (!quote) return null;
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
-
+  const getCarrierLink = () => {
+    switch (quote?.shipment?.carrier.toLowerCase()) {
+      case "fedex":
+        return "https://www.fedex.com/en-us/tracking.html";
+      case "tst":
+        return "https://www.tst-cfexpress.com/home"
+      case "tforce":
+        return "https://www.tforcefreight.com/ltl/apps/Tracking"
+      case "xpo":
+        return "https://www.xpo.com/track"
+      case "minimax":
+        return "https://tracking.carrierlogistics.com/scripts/mnme.pol/web-login2.htm"
+      default:
+        return "/"
+    }
+  };
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
       <div>
@@ -76,6 +93,17 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
             <X className="w-4 h-4" />
             Cancel Shipment
           </Button>
+
+          {quote.shipment.carrier && (
+            <Button asChild>
+              <Link
+              target="_blank"
+              href={getCarrierLink()}>
+                <ExternalLink />
+                Track Shipment
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
       <AddSurchargesModal

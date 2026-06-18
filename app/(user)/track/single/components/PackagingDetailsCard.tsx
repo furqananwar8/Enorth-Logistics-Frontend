@@ -22,7 +22,7 @@ export function PackagingDetailsCard({ quote }: { quote?: any }) {
       <CardContent className="p-4 text-sm">
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="space-y-1">
-            <div className="flex justify-between"><span className="text-muted-foreground">Packaging Type:</span> <span className="font-medium text-foreground capitalize">{lineItems?.type?.toLowerCase() || 'N/A'}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Packaging Type:</span> <span className="font-medium text-foreground capitalize">{lineItems?.type?.toLowerCase().replaceAll("_", " ") || 'N/A'}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Total # of units on pallets:</span> <span className="font-medium text-foreground">{lineItems?.quantity || 0} Unit(s)</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Total Units:</span> <span className="font-medium text-foreground">{units.length} Unit(s)</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Dangerous Goods:</span> <span className="font-medium text-foreground">{lineItems?.dangerousGoods ? 'Yes' : 'None'}</span></div>
@@ -62,13 +62,13 @@ export function PackagingDetailsCard({ quote }: { quote?: any }) {
                 <TableCell className="text-center">{unit.width || 'N/A'}</TableCell>
                 <TableCell className="text-center">{unit.height || 'N/A'}</TableCell>
                 <TableCell className="text-center">{unit.weight || 'N/A'}</TableCell>
-                <TableCell>{lineItems?.type || 'N/A'}</TableCell>
+                <TableCell className="capitalize">{lineItems?.type.toLowerCase().replaceAll("_", " ") || 'N/A'}</TableCell>
                 <TableCell className="text-right">{unit.unitsOnPallet || 1}</TableCell>
               </TableRow>
             ))}
             <TableRow>
               <TableCell colSpan={7} className="pt-0 text-muted-foreground font-medium border-t-0">
-                <p> <b>Description:</b> {quote.description || lineItems?.type || 'N/A'}</p>
+                <p className="capitalize"> <b>Description:</b> {quote.description || lineItems?.type.toLowerCase().replaceAll("_", " ") || 'N/A'}</p>
               </TableCell>
             </TableRow>
           </TableBody>

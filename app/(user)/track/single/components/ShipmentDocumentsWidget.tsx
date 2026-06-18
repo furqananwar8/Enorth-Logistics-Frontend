@@ -2,67 +2,99 @@ import { Mail, Download, Heart, RotateCcw, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { getShippingLabelDocument } from "@/api/services/tracking.api";
+import { AxiosError } from "axios";
+import { ApiError } from "next/dist/server/api-utils";
+import { useEffect, useState } from "react";
 
 export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
   if (!quote) return null;
+  // const getShippingLabelDocumentMutation = useMutation({
+  //   mutationFn: (data: any) => getShippingLabelDocument(quote.shipment.id),
+  //   onSuccess: async (data) => {
+  //     console.log("SHIPPING LABEL", data)
+  //   },
+  //   onError: (error: AxiosError<ApiError>) => {
+  //     console.log(error);
+  //   },
+  // });
+  // const [shippingLabelDocument, setShippingLabelDocument] = useState();
+  // useEffect(() => {
+  //   if (getShippingLabelDocumentMutation.data) {
+  //     setShippingLabelDocument(getShippingLabelDocumentMutation.data)
+  //   }
+  // }, [getShippingLabelDocumentMutation]);
+  const normalizeUrl = (url: string) => {
+    if (!url) return url;
 
+    if (url.startsWith("/uploads")) {
+      return `${process.env.NEXT_PUBLIC_BASE_URL}${url}`;
+    }
+
+    if (url.startsWith("http")) {
+      return url;
+    }
+
+    return url; // fallback
+  };
   return (
     <Card className="rounded-sm pt-0 shadow-sm border-slate-200">
       <CardHeader className="bg-slate-50 dark:bg-gray-900 py-3 px-4 border-b">
-        <CardTitle className="text-xl">
-          Shipment Documents
-        </CardTitle>
+        <CardTitle className="text-xl">Shipment Documents</CardTitle>
       </CardHeader>
       <CardContent className="p-4 text-sm">
         <p className="text-muted-foreground text-xs mb-6">
-          Print and attach the shipping label to each pallet.<br />
-          Please also ensure to provide one copy to the driver at time of pick up.
+          Print and attach the shipping label to each pallet.
+          <br />
+          Please also ensure to provide one copy to the driver at time of pick
+          up.
         </p>
 
         <div className="space-y-4 mb-6">
-          <div className="flex items-center justify-between">
+          {quote?.shipment?.shippingLabels && <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Checkbox id="shipping-label" disabled />
-              <label
-                htmlFor="shipping-label"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Shipping Label
-              </label>
+              <p>Shipping Label</p>
             </div>
-            <Button variant="link" disabled>
-              View/Download
+            <Button asChild>
+              <Link
+                href={normalizeUrl(quote.shipment.shippingLabels)}
+                download={"file"}
+                target="_blank"
+              >
+                View/Download
+              </Link>
             </Button>
-          </div>
+          </div>}
+          {quote?.shipment?.bolPdf && <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <p>BOL</p>
+            </div>
+            <Button asChild>
+              <Link
+                href={normalizeUrl(quote.shipment.bolPdf)}
+                download={"file"}
+                target="_blank"
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="order-summary" />
-              <label
-                htmlFor="order-summary"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Order Summary
-              </label>
-            </div>
-            <Button variant="link">
-              View/Download
+                View/Download
+              </Link>
             </Button>
-          </div>
+          </div>}
         </div>
 
-        <div className="flex gap-2 mb-8">
-          <Button variant="outline" className="flex-1 text-slate-700 h-9 rounded-sm font-semibold">
-            <Mail className="w-4 h-4 mr-2" />
-            Email
-          </Button>
-          <Button variant="outline" className="flex-1 text-primary border-blue-200 hover:bg-blue-50 hover:text-blue-700 h-9 rounded-sm font-semibold">
+        {/* <div className="flex gap-2 mb-8">
+          <Button
+            variant="outline"
+            className="flex-1 text-primary border-blue-200 hover:bg-blue-50 hover:text-blue-700 h-9 rounded-sm font-semibold"
+          >
             <Download className="w-4 h-4 mr-2" />
             Download
           </Button>
-        </div>
+        </div> */}
 
-        <div className="space-y-2.5">
+        {/* <div className="space-y-2.5">
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2 cursor-pointer hover:underline">
               <Checkbox id="watchlist" className="rounded-sm w-4 h-4 border-slate-300 pointer-events-none" />
@@ -82,7 +114,7 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
             <RotateCcw className="w-4 h-4" />
             Repeat this Shipment
           </a>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

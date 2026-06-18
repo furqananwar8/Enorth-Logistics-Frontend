@@ -36,3 +36,8 @@ export const getShipmentTrackingEvents = async (payload: any) => {
   const response = await apiClient.post(`/shipment-carriers/track`, payload);
   return response.data;
 };
+
+export const getShippingLabelDocument = async (id: string) => {
+  const response = await apiClient.post(`/shipments/${id}/shipping-labels`);
+  return response.data;
+};

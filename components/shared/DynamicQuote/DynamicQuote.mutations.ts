@@ -14,10 +14,12 @@ export function useDynamicQuoteMutations({
   shipmentId,
   quoteId,
   quoteType,
+  setStaticLoading,
 }: {
   shipmentId?: string;
   quoteId?: string;
   quoteType?: "STANDARD" | "SPOT";
+  setStaticLoading: (state: boolean) => void;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -35,11 +37,13 @@ export function useDynamicQuoteMutations({
   const createQuoteAndConvertToShipmentMutation = useMutation({
     mutationFn: (data: unknown) => createQuote(data),
     onSuccess: (res) => {
-      if(quoteType === "STANDARD"){
+      if (quoteType === "STANDARD") {
         router.push(`/shipment/?id=${res.quote.id}&mode=conversion`);
       }
-      if(quoteType === "SPOT"){
-        toast("Spot quote created successfully! Our team will contact you soon.")
+      if (quoteType === "SPOT") {
+        toast(
+          "Spot quote created successfully! Our team will contact you soon.",
+        );
       }
     },
     onError: (error: AxiosError<ApiError>) => {
@@ -89,9 +93,11 @@ export function useDynamicQuoteMutations({
       queryClient.invalidateQueries({
         queryKey: ["user"],
       });
+      setStaticLoading(false);
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error.response?.data.message);
+      setStaticLoading(false);
     },
   });
   return {

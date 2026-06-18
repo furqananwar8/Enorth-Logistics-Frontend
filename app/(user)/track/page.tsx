@@ -135,7 +135,7 @@ export default function TrackingDashboardPage() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">
                 Filter by Shipment Status:
@@ -146,13 +146,13 @@ export default function TrackingDashboardPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {shipmentStatuses.map((status) => (
-                    <SelectItem key={status.value} value={status.value}>{status.name}</SelectItem>
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
-            
 
             <div className="space-y-1">
               <label className="text-sm text-muted-foreground block">
@@ -178,8 +178,6 @@ export default function TrackingDashboardPage() {
               />
             </div>
           </div>
-
-          
         </div>
       ) : (
         <div className="mb-6 flex justify-end">
@@ -195,7 +193,7 @@ export default function TrackingDashboardPage() {
       )}
 
       {/* Tabs */}
-      <Tabs defaultValue={tabParam || "all"}>
+      {/* <Tabs defaultValue={tabParam || "all"}>
         <TabsList className="w-full gap-2 bg-white dark:bg-slate-800 border border-blue-200 p-1 group-data-[orientation=horizontal]/tabs:h-fit max-w-full overflow-x-scroll no-scrollbar">
           {[
             {
@@ -329,7 +327,24 @@ export default function TrackingDashboardPage() {
             quoteCategory="all"
           />
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
+
+      <DynamicTrackingTable
+        filters={{
+          dateRange,
+          search,
+          selectedPackaging: selectedPackaging ? [selectedPackaging] : [],
+          selectedCarrier,
+          selectedService,
+          selectedStatus,
+          selectedUsername,
+          selectedOrderSource,
+          originPostal,
+          destinationPostal,
+        }}
+        setCount={setCount}
+        quoteCategory="all"
+      />
     </div>
   );
 }

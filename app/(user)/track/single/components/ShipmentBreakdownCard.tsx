@@ -49,7 +49,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
 
   if (trackingEventsMutation.isPending) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center pb-5">
         <Loader />
       </div>
     );

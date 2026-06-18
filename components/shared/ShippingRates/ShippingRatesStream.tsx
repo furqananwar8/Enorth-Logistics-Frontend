@@ -107,7 +107,9 @@ export const ShippingRatesStream = forwardRef(({ payload, selectedCarrier, setSe
 
                 {/* ✅ Body */}
                 <TableBody>
-                    {results.map((r, i) => (
+                    {results
+                    
+                    .map((r, i) => (
                         <CarrierCard
                             selectedCarrier={selectedCarrier}
                             setSelectedCarrier={setSelectedCarrier}

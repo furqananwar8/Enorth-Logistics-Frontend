@@ -64,6 +64,7 @@ export default function DynamicQuote({
   const [currentStep, setCurrentStep] = useState(1);
   const [openGetRates, setOpenGetRates] = useState("");
   const [selectedCarrier, setSelectedCarrier] = useState<any>(null);
+  const [staticLoading, setStaticLoading] = useState(false)
   const { user } = useAuth();
   const [inSufficientModal, setInSufficientModal] = useState(false);
   const {
@@ -88,6 +89,7 @@ export default function DynamicQuote({
     shipmentId: shipmentId!,
     quoteId: quoteId!,
     quoteType: quoteType,
+    setStaticLoading
   });
   const { buildPayloads, payloadTransformer, getMergedPayload } =
     useDynamicQuotePayloads({
@@ -218,17 +220,21 @@ export default function DynamicQuote({
     const match = str?.match(/\d+/);
     return match ? parseInt(match[0], 10) : null;
   }
+  
   const handleBookShipment = async () => {
+    setStaticLoading(true)
     // if (!singleQuote?.quote?.id) {
     //     toast.error("Quote not found")
     //     return
     // }
     const valid = await validateAllForms();
 
-    if (!valid) return;
+    
+    if (!valid) setStaticLoading(false);
 
     if (!selectedCarrier) {
       toast.error("Please select a carrier");
+      setStaticLoading(false)
       return;
     }
 
@@ -521,9 +527,9 @@ export default function DynamicQuote({
                   {isShipment ? (
                     <Button
                       onClick={handleBookShipment}
-                      disabled={bookShipmentMutation.isPending}
+                      disabled={bookShipmentMutation.isPending || staticLoading}
                     >
-                      {bookShipmentMutation.isPending ? (
+                      {bookShipmentMutation.isPending || staticLoading ? (
                         <LoaderCircle className="animate-spin mr-2" size={16} />
                       ) : (
                         ""

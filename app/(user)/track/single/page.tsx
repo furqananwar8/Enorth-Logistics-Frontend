@@ -56,7 +56,7 @@ export default function SingleShipmentTrackingPage() {
             {/* Right Sidebar Column */}
             <div className="lg:col-span-4 flex flex-col">
               <StatusUpdatesWidget quote={quote?.quote} />
-              {/* <ShipmentDocumentsWidget quote={quote?.quote} /> */}
+              <ShipmentDocumentsWidget quote={quote?.quote} />
             </div>
           </div>
         </div>

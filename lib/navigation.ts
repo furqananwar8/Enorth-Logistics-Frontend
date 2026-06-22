@@ -42,5 +42,5 @@ export const superAdminNavItems = [
   { title: "Claims", href: "/claims" },
   { title: "Users", href: "/users" },
   { title: "Companies", href: "/companies" },
-  { title: "Spot Quotes", href: "/quotes" },
+  { title: "Spot Quote Requests", href: "/quotes" },
 ];

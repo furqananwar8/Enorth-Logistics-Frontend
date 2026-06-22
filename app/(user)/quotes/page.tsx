@@ -56,23 +56,21 @@ export default function QuotesDashboardPage() {
     favorite: 0,
   });
   const { isAdmin } = useAuth();
-  const tabs = isAdmin
-    ? [{ icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot }]
-    : [
-        { icon: Heart, label: "All Quotes", value: "all", count: count.all },
-        { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },
-        {
-          icon: Truck,
-          label: "Favorite Quotes",
-          value: "favorite",
-          count: count.favorite,
-        },
-      ];
+  const tabs = [
+    { icon: Heart, label: "All Quotes", value: "all", count: count.all },
+    { icon: Truck, label: "Spot Quotes", value: "spot", count: count.spot },
+    {
+      icon: Truck,
+      label: "Favorite Quotes",
+      value: "favorite",
+      count: count.favorite,
+    },
+  ];
   const [activeTab, setActiveTab] = useState("all");
   return (
     <div className="container mx-auto pb-8 pt-20 px-4 max-w-7xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1">Quotes Dashboard</h1>
+        <h1 className="text-2xl font-bold mb-1">{isAdmin ? "Spot Quote Requests" : "Quotes Dashboard"}</h1>
         {/* <p className="text-sm">
           <span className="text-primary font-semibold flex items-center gap-1 cursor-pointer hover:underline">
             <span className="bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">?</span>
@@ -160,47 +158,59 @@ export default function QuotesDashboardPage() {
       )}
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue={tabs[0].value}>
-        <TabsList className="gap-2 w-max overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1">
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="data-[state=active]:bg-primary data-[state=active]:text-white py-2 cursor-pointer"
-            >
-              <tab.icon />
-              {tab.label}
-              {activeTab === tab.value && tab.count ? (
-                <span> ({tab.count})</span>
-              ) : null}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="all">
-          <DynamicQuotesTable
-            filters={{ dateRange, search, selectedPackaging }}
-            setCount={setCount}
-            quoteCategory="all"
-          />
-        </TabsContent>
-        {/* <TabsContent value="saved">
+      {!isAdmin ? (
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          defaultValue={tabs[0].value}
+        >
+          <TabsList className="gap-2 w-max overflow-scroll no-scrollbar bg-white dark:bg-slate-800 border border-blue-200 p-1">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="data-[state=active]:bg-primary data-[state=active]:text-white py-2 cursor-pointer"
+              >
+                <tab.icon />
+                {tab.label}
+                {activeTab === tab.value && tab.count ? (
+                  <span> ({tab.count})</span>
+                ) : null}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <TabsContent value="all">
+            <DynamicQuotesTable
+              filters={{ dateRange, search, selectedPackaging }}
+              setCount={setCount}
+              quoteCategory="all"
+            />
+          </TabsContent>
+          {/* <TabsContent value="saved">
           <DynamicQuotesTable filters={{ dateRange, search, selectedPackaging }} setCount={setCount} quoteCategory="saved" />
         </TabsContent> */}
-        <TabsContent value="spot">
-          <DynamicQuotesTable
-            filters={{ dateRange, search, selectedPackaging }}
-            setCount={setCount}
-            quoteCategory="spot"
-          />
-        </TabsContent>
-        <TabsContent value="favorite">
-          <DynamicQuotesTable
-            filters={{ dateRange, search, selectedPackaging }}
-            setCount={setCount}
-            quoteCategory="favorite"
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="spot">
+            <DynamicQuotesTable
+              filters={{ dateRange, search, selectedPackaging }}
+              setCount={setCount}
+              quoteCategory="spot"
+            />
+          </TabsContent>
+          <TabsContent value="favorite">
+            <DynamicQuotesTable
+              filters={{ dateRange, search, selectedPackaging }}
+              setCount={setCount}
+              quoteCategory="favorite"
+            />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <DynamicQuotesTable
+          filters={{ dateRange, search, selectedPackaging }}
+          setCount={setCount}
+          quoteCategory="spot"
+        />
+      )}
     </div>
   );
 }

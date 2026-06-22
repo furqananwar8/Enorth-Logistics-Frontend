@@ -14,6 +14,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth.context";
 import { AddSurchargesModal } from "../../(AdditionalSurcharges)/AddSurchargesModal";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { cancelShipment } from "@/api/services/tracking.api";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { ApiError } from "next/dist/server/api-utils";
 
 export function ShipmentHeader({ quote }: { quote?: any }) {
   if (!quote) return null;
@@ -24,17 +29,33 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
       case "fedex":
         return "https://www.fedex.com/en-us/tracking.html";
       case "tst":
-        return "https://www.tst-cfexpress.com/home"
+        return "https://www.tst-cfexpress.com/home";
       case "tforce":
-        return "https://www.tforcefreight.com/ltl/apps/Tracking"
+        return "https://www.tforcefreight.com/ltl/apps/Tracking";
       case "xpo":
-        return "https://www.xpo.com/track"
+        return "https://www.xpo.com/track";
       case "minimax":
-        return "https://tracking.carrierlogistics.com/scripts/mnme.pol/web-login2.htm"
+        return "https://tracking.carrierlogistics.com/scripts/mnme.pol/web-login2.htm";
       default:
-        return "/"
+        return "/";
     }
   };
+  const queryClient = useQueryClient();
+  const cancelShipmentMutation = useMutation({
+    mutationFn: () => cancelShipment(quote.shipment.id),
+    onSuccess: () => {
+      toast.success("Shipment Canceled");
+      queryClient.invalidateQueries({ queryKey: ["trackings"] });
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      // toast.error(error.response?.data.message);
+      toast.error("Unable to cancel the shipment");
+    },
+  });
+  const handleCancelShipment = () => {
+    cancelShipmentMutation.mutate()
+  };
+  const carriersWithCancelShipmentSupport = ["tst","tforce", "fedex"]
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
       <div>
@@ -74,12 +95,12 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
 
       <div className="flex flex-col items-end gap-4 self-stretch md:self-auto justify-between">
         <div className="flex items-center gap-2 text-xl font-semibold text-primary">
-          {quote.status === "DRAFT" ? (
-            "Draft"
+          {quote.status === "UNKNOWN" ? (
+            "Shipment Created"
           ) : (
             <>
-              <CheckCircle2 className="w-6 h-6 fill-primary text-white" />
-              <span>{quote.shipment.currentStatus.replaceAll("_", " ")}</span>
+              {/* <CheckCircle2 className="w-6 h-6 fill-primary text-white" /> */}
+              <span className="capitalize">{quote.shipment.currentStatus.toLowerCase().replaceAll("_", " ")}</span>
             </>
           )}
         </div>
@@ -89,16 +110,14 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
               <CircleDollarSign size={14} /> Add Surcharge
             </Button>
           )}
-          <Button disabled variant="destructive">
+          {carriersWithCancelShipmentSupport.includes(quote.shipment.carrier.toLowerCase()) && <Button onClick={handleCancelShipment} disabled variant="destructive">
             <X className="w-4 h-4" />
             Cancel Shipment
-          </Button>
+          </Button>}
 
           {quote.shipment.carrier && (
             <Button asChild>
-              <Link
-              target="_blank"
-              href={getCarrierLink()}>
+              <Link target="_blank" href={getCarrierLink()}>
                 <ExternalLink />
                 Track Shipment
               </Link>

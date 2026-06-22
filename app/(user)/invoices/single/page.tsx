@@ -562,7 +562,7 @@ export default function SingleInvoicePage() {
                       Service: <strong>{shipment?.serviceName}</strong>
                     </p>
                     <p>
-                      Status: <strong>{shipment?.currentStatus}</strong>
+                      Status: <strong className="capitalize">{shipment?.currentStatus.toLowerCase().replaceAll("_"," ")}</strong>
                     </p>
                   </div>
                 </div>
@@ -657,9 +657,6 @@ export default function SingleInvoicePage() {
                         </td>
 
                         <td className="px-4 py-4">{shipment?.serviceName}</td>
-
-                       
-
                         <td className="px-4 py-4 text-right">
                           ${totalSurchargeAmount.toFixed(2)}
                         </td>

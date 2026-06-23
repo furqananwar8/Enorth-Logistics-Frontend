@@ -30,7 +30,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
     onSuccess: async (data) => {
       // toast("Login Successful", { description: "Welcome back! You are now logged in." })
       console.log("FETCHED", data);
-      setEvents(data.events)
+      setEvents(data.events);
     },
     onError: (error: AxiosError<ApiError>) => {
       console.log(error);
@@ -54,6 +54,27 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
       </div>
     );
   }
+  const getEventTrackingList = (event: any) => {
+    switch (quote.shipment?.carrier.toLowerCase()) {
+      case "fedex":
+        return (
+          <TableRow key={event.occurredAt}>
+            <TableCell className="capitalize">{event.status}</TableCell>
+            <TableCell>
+              {event.occurredAt
+                ? format(new Date(event.occurredAt), "MMM dd, yyyy")
+                : "N/A"}
+              <span>({new Date(event.occurredAt).toISOString().split("T")[1].split(".")[0]})</span>
+            </TableCell>
+          </TableRow>
+        );
+      default:
+        return(
+          <></>
+        )
+    }
+  };
+  const carriersWithDefinedEventTracking = ["fedex"]
   return (
     <Card className="mb-6 pt-0 rounded-sm shadow-sm">
       <CardHeader className="bg-slate-50 dark:bg-gray-900 border-b py-3 px-4">
@@ -107,7 +128,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
           </div>
         </div>
 
-        <Accordion
+        {carriersWithDefinedEventTracking.includes(quote.shipment.carrier.toLowerCase()) && <Accordion
           type="single"
           collapsible
           defaultValue="tracking"
@@ -137,27 +158,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
                     events
                       .slice()
                       .reverse()
-                      .map((event: any) => (
-                        <TableRow key={event.time}>
-                          <TableCell className="capitalize">
-                            {event.description}
-                          </TableCell>
-                          <TableCell>
-                            {event.date
-                              ? format(
-                                  new Date(event.date),
-                                  "MMM dd, yyyy",
-                                )
-                              : "N/A"}
-                              <p>
-                                {event.time}
-                              </p>
-                          </TableCell>
-                          {/* <TableCell className="text-right">
-                            {event.rawPayload.description}
-                          </TableCell> */}
-                        </TableRow>
-                      ))
+                      .map((event: any) => getEventTrackingList(event))
                   ) : (
                     <TableRow>
                       <TableCell className="capitalize">
@@ -176,7 +177,7 @@ export function ShipmentBreakdownCard({ quote }: { quote?: any }) {
               </Table>
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion>}
       </CardContent>
     </Card>
   );

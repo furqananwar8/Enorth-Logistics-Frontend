@@ -95,7 +95,7 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
 
       <div className="flex flex-col items-end gap-4 self-stretch md:self-auto justify-between">
         <div className="flex items-center gap-2 text-xl font-semibold text-primary">
-          {quote.status === "UNKNOWN" ? (
+          {quote.shipment.currentStatus.toLowerCase() === "unknown" ? (
             "Shipment Created"
           ) : (
             <>
@@ -110,7 +110,8 @@ export function ShipmentHeader({ quote }: { quote?: any }) {
               <CircleDollarSign size={14} /> Add Surcharge
             </Button>
           )}
-          {carriersWithCancelShipmentSupport.includes(quote.shipment.carrier.toLowerCase()) && <Button onClick={handleCancelShipment} disabled variant="destructive">
+          {carriersWithCancelShipmentSupport.includes(quote.shipment.carrier.toLowerCase()) && 
+          <Button onClick={handleCancelShipment} variant="destructive">
             <X className="w-4 h-4" />
             Cancel Shipment
           </Button>}

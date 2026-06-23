@@ -44,6 +44,6 @@ export const getShippingLabelDocument = async (id: string) => {
 
 
 export const cancelShipment = async (id: string) => {
-  const response = await apiClient.delete(`/shipments/${id}/cancel`);
+  const response = await apiClient.delete(`/shipment-carriers/${id}/cancel`);
   return response.data;
 };

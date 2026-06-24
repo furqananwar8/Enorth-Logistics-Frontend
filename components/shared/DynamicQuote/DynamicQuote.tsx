@@ -64,9 +64,12 @@ export default function DynamicQuote({
   const [currentStep, setCurrentStep] = useState(1);
   const [openGetRates, setOpenGetRates] = useState("");
   const [selectedCarrier, setSelectedCarrier] = useState<any>(null);
-  const [staticLoading, setStaticLoading] = useState(false)
+  const [staticLoading, setStaticLoading] = useState(false);
   const { user } = useAuth();
   const [inSufficientModal, setInSufficientModal] = useState(false);
+  const [fromAddressLocked, setFromAddressLocked] = useState(false);
+  const [toAddressLocked, setToAddressLocked] = useState(false);
+
   const {
     data: singleQuote,
     isLoading: isSingleQuoteLoading,
@@ -77,7 +80,7 @@ export default function DynamicQuote({
     queryFn: () => (quoteId ? getSingleQuote(quoteId) : null),
     enabled: !!quoteId,
   });
-  const { handleSwapAddress } = useDynamicQuote(fromAddressRef, toAddressRef);
+  const { handleSwapAddress } = useDynamicQuote(fromAddressRef, toAddressRef, fromAddressLocked, setFromAddressLocked, toAddressLocked, setToAddressLocked, );
   const {
     createQuoteMutation,
     updateQuoteMutation,
@@ -89,7 +92,7 @@ export default function DynamicQuote({
     shipmentId: shipmentId!,
     quoteId: quoteId!,
     quoteType: quoteType,
-    setStaticLoading
+    setStaticLoading,
   });
   const { buildPayloads, payloadTransformer, getMergedPayload } =
     useDynamicQuotePayloads({
@@ -220,21 +223,20 @@ export default function DynamicQuote({
     const match = str?.match(/\d+/);
     return match ? parseInt(match[0], 10) : null;
   }
-  
+
   const handleBookShipment = async () => {
-    setStaticLoading(true)
+    setStaticLoading(true);
     // if (!singleQuote?.quote?.id) {
     //     toast.error("Quote not found")
     //     return
     // }
     const valid = await validateAllForms();
 
-    
     if (!valid) setStaticLoading(false);
 
     if (!selectedCarrier) {
       toast.error("Please select a carrier");
-      setStaticLoading(false)
+      setStaticLoading(false);
       return;
     }
 
@@ -354,7 +356,9 @@ export default function DynamicQuote({
           ""
         )}
 
-        <div className={!viewOnly ? "grid grid-cols-1 lg:grid-cols-4 gap-8" : ""}>
+        <div
+          className={!viewOnly ? "grid grid-cols-1 lg:grid-cols-4 gap-8" : ""}
+        >
           <div className="lg:col-span-3">
             <div className="space-y-6">
               <ShippingTypeSelector
@@ -381,6 +385,8 @@ export default function DynamicQuote({
                       selectedCarrier ? selectedCarrier.carrier : ""
                     }
                     viewOnly={viewOnly}
+                    addressLocked={fromAddressLocked}
+                    setAddressLocked={setFromAddressLocked}
                   />
                 </div>
                 <div className="border border-border rounded-md p-4 space-y-4 flex-1 bg-white dark:bg-card shadow-lg">
@@ -398,6 +404,8 @@ export default function DynamicQuote({
                     onChange={syncRealTimeData}
                     onValidityChange={setIsToAddressValid}
                     viewOnly={viewOnly}
+                    addressLocked={toAddressLocked}
+                    setAddressLocked={setToAddressLocked}
                   />
                 </div>
               </div>

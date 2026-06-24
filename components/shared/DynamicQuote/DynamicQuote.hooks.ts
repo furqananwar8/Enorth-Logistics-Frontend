@@ -3,58 +3,66 @@ import { useQuery } from "@tanstack/react-query";
 export function useDynamicQuote(
   fromAddressRef: React.RefObject<any>,
   toAddressRef: React.RefObject<any>,
+  fromAddressLocked: boolean,
+  setFromAddressLocked: (value: boolean) => void,
+  toAddressLocked: boolean,
+  setToAddressLocked: (value: boolean) => void,
 ) {
   const handleSwapAddress = () => {
-      if (!fromAddressRef.current || !toAddressRef.current) return;
+    if (!fromAddressRef.current || !toAddressRef.current) return;
 
-      const fromVals = fromAddressRef.current.getValues();
-      const toVals = toAddressRef.current.getValues();
+    const fromVals = fromAddressRef.current.getValues();
+    const toVals = toAddressRef.current.getValues();
 
-      const fromState = fromVals.address?.state;
-      const toState = toVals.address?.state;
+    const fromState = fromVals.address?.state;
+    const toState = toVals.address?.state;
 
-      // 1. Swap with state cleared first
-      fromAddressRef.current.setValues({
-        ...toVals,
-        type: "FROM",
+    // 1. Swap with state cleared first
+    fromAddressRef.current.setValues({
+      ...toVals,
+      type: "FROM",
+      address: {
+        ...toVals.address,
+        state: "",
+      },
+    });
+
+    toAddressRef.current.setValues({
+      ...fromVals,
+      type: "TO",
+      address: {
+        ...fromVals.address,
+        state: "",
+      },
+    });
+
+    // 2. Reapply state after country-based filtering updates
+    setTimeout(() => {
+      const updatedFrom = fromAddressRef.current?.getValues();
+
+      const updatedTo = toAddressRef.current?.getValues();
+
+      fromAddressRef.current?.setValues({
+        ...updatedFrom,
         address: {
-          ...toVals.address,
-          state: "",
+          ...updatedFrom.address,
+          state: toState || "",
         },
       });
 
-      toAddressRef.current.setValues({
-        ...fromVals,
-        type: "TO",
+      toAddressRef.current?.setValues({
+        ...updatedTo,
         address: {
-          ...fromVals.address,
-          state: "",
+          ...updatedTo.address,
+          state: fromState || "",
         },
       });
+    }, 0);
 
-      // 2. Reapply state after country-based filtering updates
-      setTimeout(() => {
-        const updatedFrom = fromAddressRef.current?.getValues();
-
-        const updatedTo = toAddressRef.current?.getValues();
-
-        fromAddressRef.current?.setValues({
-          ...updatedFrom,
-          address: {
-            ...updatedFrom.address,
-            state: toState || "",
-          },
-        });
-
-        toAddressRef.current?.setValues({
-          ...updatedTo,
-          address: {
-            ...updatedTo.address,
-            state: fromState || "",
-          },
-        });
-      }, 0);
-    };
+    const temp = fromAddressLocked;
+    setFromAddressLocked(toAddressLocked);
+    setToAddressLocked(temp);
+  };
   // const handleSwapAddress = () => {
   //   if (fromAddressRef.current && toAddressRef.current) {
   //     const fromVals = fromAddressRef.current.getValues();
@@ -62,8 +70,6 @@ export function useDynamicQuote(
   //     fromAddressRef.current.setValues({ ...toVals, type: "FROM" });
   //     toAddressRef.current.setValues({ ...fromVals, type: "TO" });
   //   }
-
-    
 
   //   // CONTINUE FROM HERE
 

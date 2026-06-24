@@ -78,6 +78,8 @@ export const ShippingAddressSection = forwardRef(
       onValidityChange,
       selectedCarrierName,
       viewOnly,
+      addressLocked,
+      setAddressLocked,
     }: {
       quoteType: keyof ShipmentOptions;
       shipmentType: ShipmentOptions[keyof ShipmentOptions];
@@ -94,6 +96,8 @@ export const ShippingAddressSection = forwardRef(
       onValidityChange?: (data: any) => void;
       selectedCarrierName?: string;
       viewOnly?: boolean;
+      addressLocked: boolean;
+      setAddressLocked: (value: boolean) => void;
     },
     ref,
   ) => {
@@ -102,7 +106,6 @@ export const ShippingAddressSection = forwardRef(
     const isShipment = pathname.includes("shipment");
     const quoteId = useSearchParams().get("id");
     const markContactAsRecent = useMarkContactAsRecent();
-    const [addressLocked, setAddressLocked] = useState(false);
     // const [finalShipmentType, setFinalShipmentType] = useState(shipmentType)
     // const [showLocationType, setShowLocationType] = useState(quoteType === "SPOT" || finalShipmentType === "PALLET");
     const showLocationType =
@@ -318,8 +321,8 @@ export const ShippingAddressSection = forwardRef(
           address1: contact.address?.address1 || "",
           postalCode: contact.address?.postalCode || "",
           city: contact.address?.city || "",
-          country: contact.address?.country || "",
-          state: contact.address?.state || "",
+          // country: contact.address?.country || "",
+          // state: contact.address?.state || "",
           ...(isShipment && { unit: contact.address?.unit || "" }),
         },
         {
@@ -327,7 +330,15 @@ export const ShippingAddressSection = forwardRef(
           shouldDirty: true,
         },
       );
+      methods.setValue("address.country", contact.address?.country || "", {
+        shouldValidate: true,
+      });
 
+      setTimeout(() => {
+        methods.setValue("address.state", contact.address?.state || "", {
+          shouldValidate: true,
+        });
+      }, 0);
       // if shipment type is STANDARD_FTL
       console.log("shipmentType", shipmentType);
       if (shipmentType === "PACKAGE" || shipmentType === "COURIER_PAK") {
@@ -419,10 +430,10 @@ export const ShippingAddressSection = forwardRef(
       setAddressLocked(false);
       methods.reset({
         address: {
+          postalCode: "",
           address1: "",
           city: "",
           state: "",
-          postalCode: "",
           country: "",
         },
         ...(showLocationType && { locationTypeId: "" }),
@@ -636,7 +647,7 @@ export const ShippingAddressSection = forwardRef(
       type,
       signatures,
       isLoadingSignatures,
-      viewOnly
+      viewOnly,
     });
     const addBillingRef = () => {
       if (billingRefs.length < 3) {

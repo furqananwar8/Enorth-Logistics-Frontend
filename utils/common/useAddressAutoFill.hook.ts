@@ -40,7 +40,7 @@ export const usePostalCodeAutoFill = ({
   cityField,
   stateField,
   countryField,
-  addressLocked = false,
+  addressLocked,
   enabled = true,
 }: UsePostalCodeAutoFillProps) => {
   const postalCode = methods.watch(postalCodeField) || "";
@@ -49,12 +49,17 @@ export const usePostalCodeAutoFill = ({
   const query = useQuery({
     queryKey: ["postalCode", debouncedPostalCode],
     queryFn: () => getAddressByPostalCode(debouncedPostalCode),
-    enabled: enabled && postalCode.length > 0,
+    enabled: enabled && debouncedPostalCode.length > 0,
     retry: false,
   });
 
   useEffect(() => {
     if (!query.data || addressLocked || query.isLoading) return;
+    if (!debouncedPostalCode) return;
+    if (!query.data) return;
+    if (addressLocked) return;
+    const currentPostalCode = methods.getValues(postalCodeField);
+    if (!currentPostalCode) return;
 
     methods.setValue(cityField, query.data.placeName);
 

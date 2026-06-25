@@ -1,8 +1,8 @@
 import { dataTagErrorSymbol } from "@tanstack/react-query";
 import apiClient from "../client";
 
-export const getNotifications = async () => {
-    const response = await apiClient.get("/notifications");
+export const getNotifications = async (params?: { page?: number; limit?: number }) => {
+    const response = await apiClient.get("/notifications", { params });
     return response.data;
 };
 // dismiss notification api

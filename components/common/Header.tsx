@@ -150,7 +150,6 @@ export default function Header() {
                       <Link href={item.href} className="cursor-pointer ">
                         {item.title}
                       </Link>
-                      <ChevronDown className="size-4" />
                     </Button>
                   </NavigationMenuItem>
                 ))}

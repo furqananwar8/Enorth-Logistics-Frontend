@@ -9,7 +9,7 @@ import { DataTable } from "@/components/common/table/DataTable";
 import { DataTablePagination } from "@/components/common/table/DataTablePagination";
 import { Loader } from "@/components/common/Loader";
 import EmptyUI from "@/components/common/empty/Empty";
-import { getAllUnverifiedUsers, getAllUsers } from "@/api/services/auth.api";
+import { getAllUnverifiedUsers } from "@/api/services/auth.api";
 import { columns } from "./ColumnsTableUsers";
 
 interface Props {
@@ -43,28 +43,22 @@ export default function DynamicUsersTable({
 
   // Filter local data based on inputs
   const filteredUsers = usersList.filter((user: any) => {
-    // Search filter
     const fullName = `${user.firstName || ""} ${user.lastName || ""}`.toLowerCase();
     const email = (user.email || "").toLowerCase();
     const phone = (user.phoneNumber || "").toLowerCase();
+
     const matchesSearch =
       search === "" ||
       fullName.includes(search.toLowerCase()) ||
       email.includes(search.toLowerCase()) ||
       phone.includes(search.toLowerCase());
 
-    // Role filter
     const matchesRole =
       roleFilter === "all" ||
       (roleFilter === "admin" && user.role === 1) ||
       (roleFilter === "user" && user.role === 2);
 
-    // Status filter
-    const isApproved =
-      user.isApproved ||
-      user.approved ||
-      user.status === "APPROVED" ||
-      user.role === 1;
+    const isApproved = user.accountIsVerified === true;
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -73,33 +67,23 @@ export default function DynamicUsersTable({
 
     return matchesSearch && matchesRole && matchesStatus;
   });
-  console.log("filteredUsers", filteredUsers)
+
   // Calculate counts for parent tabs
   useEffect(() => {
-    if (usersList) {
+    if (usersList && usersList.length > 0) {
       const pendingCount = usersList.filter(
-        (u: any) =>
-          !(
-            u.isApproved ||
-            u.approved ||
-            u.status === "APPROVED" ||
-            u.role === 1
-          )
+        (u: any) => u.accountIsVerified !== true
       ).length;
 
       const approvedCount = usersList.filter(
-        (u: any) =>
-          u.isApproved ||
-          u.approved ||
-          u.status === "APPROVED" ||
-          u.role === 1
+        (u: any) => u.accountIsVerified === true
       ).length;
 
-      // setCount({
-      //   all: usersList.length,
-      //   pending: pendingCount,
-      //   approved: approvedCount,
-      // });
+      setCount({
+        all: usersList.length,
+        pending: pendingCount,
+        approved: approvedCount,
+      });
     }
   }, [usersList, setCount]);
 

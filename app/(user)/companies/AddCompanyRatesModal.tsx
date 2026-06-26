@@ -31,7 +31,6 @@ import { ApiError } from "next/dist/server/api-utils";
 interface AddRatesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  
   initialValues?: {
     ftlAmount?: number;
     ltlAmount?: number;
@@ -54,11 +53,31 @@ export default function AddRatesModal({
   });
 
   useEffect(() => {
-    methods.reset({
-      ftlAmount: initialValues?.ftlAmount ?? 0,
-      ltlAmount: initialValues?.ltlAmount ?? 0,
-    });
-  }, [initialValues, methods]);
+    if (open) {
+      methods.reset({
+        ftlAmount: initialValues?.ftlAmount ?? 0,
+        ltlAmount: initialValues?.ltlAmount ?? 0,
+      });
+    }
+  }, [open, initialValues, methods]);
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (data: CompanyRatesFormValues) =>
+      addCompanyRates(companyId, { payload: data }),
+    onSuccess: () => {
+      toast.success("Rates updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+      onOpenChange(false);
+      methods.reset();
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      toast.error(
+        error.response?.data?.message || "Failed to update company rates",
+      );
+    },
+  });
 
   const handleFormSubmit = (data: CompanyRatesFormValues) => {
     mutation.mutate(data);
@@ -80,20 +99,6 @@ export default function AddRatesModal({
       wrapperClassName: "w-full mb-4",
     },
   ];
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (data: CompanyRatesFormValues) =>
-      addCompanyRates(companyId, { payload: data }),
-    onSuccess: () => {
-      toast.success("User Status updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["companies"] });
-    },
-    onError: (error: AxiosError<ApiError>) => {
-      toast.error(
-        error.response?.data?.message || "Failed to update company rates",
-      );
-    },
-  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -119,8 +124,10 @@ export default function AddRatesModal({
             <Button variant="outline">Cancel</Button>
           </DialogClose>
 
-          <Button type="submit" form="add-rates-form" 
-          disabled={mutation.isPending}
+          <Button
+            type="submit"
+            form="add-rates-form"
+            disabled={mutation.isPending}
           >
             {mutation.isPending ? "Saving..." : "Add Rates"}
           </Button>

@@ -6,12 +6,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ListTodo,
-  Info,
   Upload,
-  Plus,
   Eye,
   Trash,
-  ChevronDown,
   LoaderCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -33,11 +30,13 @@ const claimDetailsSchema = z.object({
   claimType: z.enum(["MISSING", "DAMAGED"], "Claim Type is required"),
   goodsDescription: z.string().nonempty("Description of goods is required"),
   totalValueOfGoods: z
-    .number("Value is required")
+    .number()
     .positive("Value must be greater than zero"),
   currency: z.enum(["CAD", "USD"]),
 });
+
 type ClaimDetailsFormValues = z.infer<typeof claimDetailsSchema>;
+
 const ClaimDetailsAndDocuments = forwardRef(
   (
     {
@@ -59,6 +58,7 @@ const ClaimDetailsAndDocuments = forwardRef(
 
     const form = useForm<ClaimDetailsFormValues>({
       resolver: zodResolver(claimDetailsSchema),
+      mode: "onChange",
       defaultValues: {
         claimType: "MISSING",
         goodsDescription: "",
@@ -89,6 +89,7 @@ const ClaimDetailsAndDocuments = forwardRef(
       getValues: form.getValues,
       trigger: form.trigger,
     }));
+
     const deleteUserMutation = useMutation({
       mutationFn: (fileName: any) => deleteClaimDocument(fileName),
       onSuccess: () => {
@@ -101,10 +102,10 @@ const ClaimDetailsAndDocuments = forwardRef(
         );
       },
     });
+
     const handleDeleteDocument = (fileUrl: string) => {
       const fileName = fileUrl.split("/").pop();
       if (!fileName) return;
-      // use mutation
       deleteUserMutation.mutate(fileName);
     };
 
@@ -135,18 +136,15 @@ const ClaimDetailsAndDocuments = forwardRef(
                         ],
                         wrapperClassName:
                           "flex flex-col gap-4 col-span-1 sm:col-span-2",
-                        disabled:isAdmin
+                        disabled: isAdmin,
                       },
-                      // shipment Status
-
                       {
                         name: "goodsDescription",
                         label: "Description of Freight *",
                         type: "textarea",
                         placeholder: "Describe the freight...",
                         wrapperClassName: "col-span-1 sm:col-span-4 w-1/2",
-                        disabled:isAdmin
-
+                        disabled: isAdmin,
                       },
                       {
                         name: "totalValueOfGoods",
@@ -154,8 +152,7 @@ const ClaimDetailsAndDocuments = forwardRef(
                         type: "number",
                         placeholder: "Enter the total value...",
                         wrapperClassName: "col-span-1/2",
-                        disabled:isAdmin
-
+                        disabled: isAdmin,
                       },
                       {
                         name: "currency",
@@ -166,8 +163,7 @@ const ClaimDetailsAndDocuments = forwardRef(
                           { value: "USD", label: "USD" },
                         ],
                         wrapperClassName: "flex flex-col gap-4 col-span-1",
-                        disabled:isAdmin
-
+                        disabled: isAdmin,
                       },
                     ]}
                   />
@@ -183,14 +179,11 @@ const ClaimDetailsAndDocuments = forwardRef(
                 </p>
 
                 <div className="border rounded-md overflow-hidden">
-                  {/* Header */}
                   <div className="grid grid-cols-3 bg-white dark:bg-card px-4 py-3 text-sm font-medium border-b">
                     <div>File Name</div>
                     <div>Document Type</div>
                     <div>Actions</div>
                   </div>
-
-                  {/* Row */}
 
                   {uploadedDocument?.length > 0 ? (
                     uploadedDocument?.map((document: any) => (
@@ -255,7 +248,6 @@ const ClaimDetailsAndDocuments = forwardRef(
                   )}
                 </div>
 
-                {/* Add Doc */}
                 <div className="flex justify-end mt-4">
                   <AddDocumentationModal
                     open={isOpen}
@@ -274,5 +266,7 @@ const ClaimDetailsAndDocuments = forwardRef(
     );
   },
 );
+
+ClaimDetailsAndDocuments.displayName = "ClaimDetailsAndDocuments";
 
 export default ClaimDetailsAndDocuments;

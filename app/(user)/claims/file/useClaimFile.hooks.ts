@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { ApiError } from "next/dist/server/api-utils";
 import { getSingleQuote } from "@/api/services/quotes.api";
-import { useAuth } from "@/context/auth.context";
 
 export function useClaimFile({
   action,
@@ -23,6 +22,9 @@ export function useClaimFile({
   claimDetailsRef,
   contactInfoRef,
   setShipmentDetails,
+  shipmentConfirmed,
+  isAdmin,
+  setShipmentConfirmedError,
 }: {
   action: string | null;
   setUploadedDocument: (doc: any) => void;
@@ -34,18 +36,21 @@ export function useClaimFile({
   claimDetailsRef: any;
   contactInfoRef: any;
   setShipmentDetails: (details: any) => void;
+  shipmentConfirmed: boolean;
+  isAdmin: boolean;
+  setShipmentConfirmedError: (value: boolean) => void;
 }) {
   const searchParams = useSearchParams();
   const claimId = action === "edit" ? searchParams.get("claimId") : null;
   const quoteId = Number(searchParams.get("quoteId"))
   const shipmentId = Number(searchParams.get("shipmentId"))
+
   const { data: claimData } = useQuery({
     queryKey: ["claim", claimId],
     queryFn: () => getClaimById(claimId!),
     enabled: action === "edit" && !!claimId,
   });
 
-  // get single quote
   const {
     data: quoteData,
     isLoading: quoteDataLoading,
@@ -58,10 +63,6 @@ export function useClaimFile({
 
   useEffect(() => {
     if (claimData) {
-      
-      // if (claim.quoteId) {
-      //   setquoteId(claim.quoteId);
-      // }
       if (claimData.claim.documents) {
         setUploadedDocument(claimData.claim.documents);
       }
@@ -88,7 +89,6 @@ export function useClaimFile({
   useEffect(() => {
     if (action === "create") {
       if (quoteData) {
-        
         setShipmentDetails(quoteData.quote);
       }
     } else {
@@ -112,26 +112,25 @@ export function useClaimFile({
     mutationFn: (data: any) => updateClaim(claimId!, data),
     onSuccess: () => {
       toast.success("Claim updated successfully");
-      // router.push("/claims");
     },
     onError: (error: AxiosError<ApiError>) => {
       toast.error(error.response?.data.message);
     },
   });
+
   const handleSubmit = async () => {
     try {
+      setShipmentConfirmedError(false);
       const isContactValid = await contactInfoRef.current?.trigger();
       const isClaimDetailsValid = await claimDetailsRef.current?.trigger();
-      
 
       if (
         isContactValid &&
         isClaimDetailsValid &&
+        (isAdmin || shipmentConfirmed) &&
         quoteId &&
         uploadedDocument
       ) {
-        
-
         const payload = {
           ...contactInfoRef.current?.getValues?.(),
           ...claimDetailsRef.current?.getValues?.(),
@@ -141,18 +140,22 @@ export function useClaimFile({
           additionalInsurancePurchased,
         };
 
-        
         if (action === "edit") {
           updateClaimMutation.mutate(payload);
         } else {
           createClaimMutation.mutate(payload);
         }
       } else {
-        console.log("Please fill in all required fields");
+        if (!isAdmin && !shipmentConfirmed) {
+          setShipmentConfirmedError(true);
+        }
+        toast.error("Please fill in all required fields and confirm the shipment");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (error) {
       console.error("Validation error:", error);
       toast.error("Please fill in all required fields");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -184,6 +187,7 @@ export function useClaimFile({
 
   const isPendingMutation =
     createClaimMutation.isPending || updateClaimMutation.isPending;
+
   return {
     handleSubmit,
     initialContactValues,

@@ -176,7 +176,7 @@ const SendClaimRequest = forwardRef(
                       </p>
                     </div>
 
-                    <div>
+                    {/* <div>
                       <p className="text-slate-500">Cost Invoice</p>
                       <Link
                         href={
@@ -190,7 +190,7 @@ const SendClaimRequest = forwardRef(
                         <Check className="w-4 h-4" />
                         {claimDetails?.invoiceName || "N/A"}
                       </Link>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="mt-5 text-sm">

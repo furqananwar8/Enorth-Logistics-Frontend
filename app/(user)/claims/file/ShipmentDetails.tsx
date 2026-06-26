@@ -1,12 +1,12 @@
-"use-client";
+"use client"
+
 import EmptyUI from "@/components/common/empty/Empty";
 import { Loader } from "@/components/common/Loader";
-import { CircleCheck, Info, RotateCcw, Truck } from "lucide-react";
+import { CircleCheck, RotateCcw, Truck } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useEffect } from "react";
 import { useAuth } from "@/context/auth.context";
 
 export function ShipmentDetails({
@@ -14,15 +14,25 @@ export function ShipmentDetails({
   setAdditionalInsurancePurchased,
   quoteDataPending,
   quoteDataLoading,
+  shipmentConfirmed,
+  setShipmentConfirmed,
+  shipmentConfirmedError,
 }: {
   shipmentDetails: any;
   setAdditionalInsurancePurchased: (value: boolean) => void;
   quoteDataPending: boolean;
   quoteDataLoading: boolean;
+  shipmentConfirmed: boolean;
+  setShipmentConfirmed: (value: boolean) => void;
+  shipmentConfirmedError?: boolean;
 }) {
   const { isAdmin } = useAuth();
+  const status = shipmentDetails?.shipment?.currentStatus
+    ?.replaceAll("_", " ")
+    ?.trim() || "Unknown"
 
-  useEffect(() => {}, [shipmentDetails, quoteDataLoading, quoteDataLoading]);
+  const displayStatus = status === "Unknown" ? "Created" : status
+
   if (quoteDataLoading || quoteDataPending) {
     return <Loader />;
   }
@@ -56,7 +66,7 @@ export function ShipmentDetails({
             <div className="mt-4 flex items-center gap-2 text-green-600">
               <CircleCheck className="h-5 w-5 fill-green-600 text-white" />
               <span className="font-semibold">
-                {shipmentDetails?.shipment?.currentStatus?.replaceAll("_", " ")}
+                {displayStatus}
               </span>
             </div>
 
@@ -97,21 +107,45 @@ export function ShipmentDetails({
               </div>
             </div>
 
-            {/* Checkbox */}
             <div className="mt-6 flex items-center gap-3">
-              <Checkbox
-                id="confirm-shipment"
-                className="h-5 w-5 cursor-pointer"
-                disabled={isAdmin}
-              />
+              <div
+                className={`flex items-center justify-center rounded border p-0.5 transition-colors ${
+                  shipmentConfirmedError && !shipmentConfirmed
+                    ? "border-red-500 bg-red-50 dark:bg-red-950"
+                    : "border-transparent"
+                }`}
+              >
+                <Checkbox
+                  id="confirm-shipment"
+                  checked={shipmentConfirmed}
+                  onCheckedChange={(checked) => {
+                    setShipmentConfirmed(checked as boolean);
+                  }}
+                  className={`h-5 w-5 cursor-pointer ${
+                    shipmentConfirmedError && !shipmentConfirmed
+                      ? "data-[state=unchecked]:border-red-500 data-[state=unchecked]:text-red-500"
+                      : ""
+                  }`}
+                  disabled={isAdmin}
+                />
+              </div>
               <Label
                 htmlFor="confirm-shipment"
-                className="text-sm text-gray-700"
+                className={`text-sm ${
+                  shipmentConfirmedError && !shipmentConfirmed
+                    ? "text-red-600 font-medium"
+                    : "text-gray-700"
+                }`}
               >
                 I am confirming that this is the shipment I'd like to file a
                 claim for
               </Label>
             </div>
+            {shipmentConfirmedError && !shipmentConfirmed && (
+              <p className="mt-1 text-sm text-red-600">
+                You must confirm this shipment before submitting.
+              </p>
+            )}
           </div>
         </div>
       ) : (

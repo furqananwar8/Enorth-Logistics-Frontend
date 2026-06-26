@@ -1,42 +1,32 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import ClaimFileContactInformation from "./ClaimFileContactInformation";
 import ClaimDetailsAndDocuments from "./ClaimDocuments/ClaimsDetailAndDocuments";
 import SendClaimRequest from "./ClaimsSendRequest";
 import { Button } from "@/components/ui/button";
 import { ShipmentDetails } from "./ShipmentDetails";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  createClaim,
-  getClaimById,
-  updateClaim,
-} from "@/api/services/claims.api";
-import { toast } from "sonner";
-import { AxiosError } from "axios";
-import { ApiError } from "next/dist/server/api-utils";
+import { useSearchParams } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useClaimFile } from "./useClaimFile.hooks";
 import Comments from "./Comment";
 import { useAuth } from "@/context/auth.context";
 
 export default function FileNewClaim() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const action = searchParams.get("action");
   const [contactData, setContactData] = useState<any>({});
   const [claimDetailsData, setClaimDetailsData] = useState<any>({});
   const [uploadedDocument, setUploadedDocument] = useState<any>(null);
-  // const [shipmentId, setShipmentId] = useState<number | null>(null);
   const [additionalInsurancePurchased, setAdditionalInsurancePurchased] =
     useState<boolean>(false);
+  const [shipmentConfirmed, setShipmentConfirmed] = useState<boolean>(false);
+  const [shipmentConfirmedError, setShipmentConfirmedError] = useState<boolean>(false);
   const [shipmentDetails, setShipmentDetails] = useState<any>(null);
   const contactInfoRef = useRef<any>(null);
   const claimDetailsRef = useRef<any>(null);
-  const shipmentDetailsRef = useRef<any>(null);
+  const { isAdmin } = useAuth();
 
-  // Fetch claim if in edit mode
   const {
     handleSubmit,
     initialContactValues,
@@ -56,20 +46,20 @@ export default function FileNewClaim() {
     claimDetailsRef,
     contactInfoRef,
     setShipmentDetails,
+    shipmentConfirmed,
+    isAdmin,
+    setShipmentConfirmedError,
   });
-  const { isAdmin } = useAuth();
-
+console.log({action})
   return (
     <div className="min-h-screen p-4">
       <div className="mx-auto max-w-6xl rounded border bg-white dark:bg-card shadow-sm">
-        {/* Header */}
         <div className="border-b px-6 py-4">
           <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">
             {action === "edit" ? "Edit Claim" : "File New Claim"}
           </h1>
         </div>
 
-        {/* Contact Details */}
         <div className="border-b bg-white dark:bg-card px-6 py-3">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-gray-800 dark:text-white">
@@ -78,18 +68,17 @@ export default function FileNewClaim() {
           </div>
         </div>
 
-        {/* Shipment Details Section */}
         <div className="px-6 py-5">
-          {/* @ts-ignore */}
           <ShipmentDetails
             shipmentDetails={shipmentDetails}
             quoteDataPending={quoteDataPending}
             quoteDataLoading={quoteDataLoading}
             setAdditionalInsurancePurchased={setAdditionalInsurancePurchased}
-            // claimShipmentId={claim?.shipmentId}
+            shipmentConfirmed={shipmentConfirmed}
+            setShipmentConfirmed={setShipmentConfirmed}
+            shipmentConfirmedError={shipmentConfirmedError}
           />
 
-          {/* Contact Information */}
           <ClaimFileContactInformation
             ref={contactInfoRef}
             onChange={setContactData}
@@ -122,20 +111,21 @@ export default function FileNewClaim() {
             setUploadedDocument={setUploadedDocument}
             shipmentDetails={shipmentDetails}
           />
-          {claimId ? <Comments claimId={claimId} /> : ""}
-          {!isAdmin ? <div className="flex justify-end pt-2">
-            <Button
-              variant="default"
-              onClick={handleSubmit}
-              disabled={isPendingMutation }
-              // className="px-6 py-2 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700"
-            >
-              {isPendingMutation && (
-                <LoaderCircle className="animate-spin mr-2" size={16} />
-              )}
-              {action === "edit" ? "Edit Claim" : "Submit Claim"}
-            </Button>
-          </div> : ""}
+          {claimId ? <Comments claimId={claimId} /> : null}
+          {!isAdmin && (
+            <div className="flex justify-end pt-2">
+              <Button
+                variant="default"
+                onClick={handleSubmit}
+                disabled={isPendingMutation}
+              >
+                {isPendingMutation && (
+                  <LoaderCircle className="animate-spin mr-2" size={16} />
+                )}
+                {action === "edit" ? "Update Claim" : "Submit Claim"}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

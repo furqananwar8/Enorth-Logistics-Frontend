@@ -22,6 +22,8 @@ export function DataTable<TData, TValue>({
     data,
     sorting,
     setSorting,
+    enableMultiRowSelection=false,
+    enableRowSelection=false
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -31,6 +33,8 @@ export function DataTable<TData, TValue>({
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        enableMultiRowSelection: enableMultiRowSelection,
+        enableRowSelection: enableRowSelection
     })
     return (
         <div className="rounded-md border">

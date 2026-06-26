@@ -126,13 +126,7 @@ export default function DynamicInvoicesTable({
           setSorting={setSorting}
         />
       </div>
-      <div className="flex justify-between items-center mb-10">
-        <Button
-          variant="outline"
-          className="text-muted-foreground border-border"
-        >
-          <Trash2 size={16} className="mr-2" /> Delete
-        </Button>
+      <div className="flex justify-end items-center mb-10">
         <DataTablePagination page={page} totalPages={1} setPage={setPage} />
       </div>
     </>

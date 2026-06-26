@@ -3,15 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import { FormProvider, useForm } from "react-hook-form";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { ListTodo, BookUser, X } from "lucide-react";
-import { ChevronUp } from "lucide-react";
-import { useMemo } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SelectAddressBookModal } from "@/components/shared/Shipping/SelectAddressBookModal";
@@ -23,7 +15,7 @@ import { useAuth } from "@/context/auth.context";
 const contactInfoSchema = z.object({
   contactFullName: z.string().min(1, "Contact Name is required"),
   contactPhoneNumber: z.string().min(1, "Phone Number is required"),
-  contactEmailAddress: z.email("Invalid email address"),
+  contactEmailAddress: z.string().email("Invalid email address"),
   claimName: z.string().min(1, "Claim Name is required"),
 });
 
@@ -45,6 +37,7 @@ const ContactInformation = forwardRef(
 
     const form = useForm({
       resolver: zodResolver(contactInfoSchema),
+      mode: "onChange",
       defaultValues: {
         contactFullName: "",
         contactPhoneNumber: "",
@@ -147,7 +140,7 @@ const ContactInformation = forwardRef(
                   type: "text",
                   placeholder: "Contact Name",
                   wrapperClassName: "col-span-1",
-                  disabled:isAdmin
+                  disabled: isAdmin,
                 },
                 {
                   name: "contactPhoneNumber",
@@ -156,8 +149,7 @@ const ContactInformation = forwardRef(
                   placeholder: "Phone Number",
                   wrapperClassName: "col-span-1",
                   flagClassName: "border-none!",
-                  disabled:isAdmin
-
+                  disabled: isAdmin,
                 },
                 {
                   name: "contactEmailAddress",
@@ -165,8 +157,7 @@ const ContactInformation = forwardRef(
                   type: "email",
                   placeholder: "Email Address",
                   wrapperClassName: "col-span-1",
-                  disabled:isAdmin
-
+                  disabled: isAdmin,
                 },
                 {
                   name: "claimName",
@@ -174,7 +165,7 @@ const ContactInformation = forwardRef(
                   type: "text",
                   placeholder: "Claim Name",
                   wrapperClassName: "col-span-1",
-                  disabled:isAdmin
+                  disabled: isAdmin,
                 },
               ]}
             />
@@ -184,5 +175,7 @@ const ContactInformation = forwardRef(
     );
   },
 );
+
+ContactInformation.displayName = "ContactInformation";
 
 export default ContactInformation;

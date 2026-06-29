@@ -40,7 +40,7 @@ export default function NotificationsWidget() {
 
     const { data, isLoading } = useQuery({
         queryKey: ["notifications"],
-        queryFn: getNotifications,
+        queryFn: () => getNotifications(),
         staleTime: 0,
     });
 

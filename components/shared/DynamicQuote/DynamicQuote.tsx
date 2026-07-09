@@ -208,7 +208,6 @@ export default function DynamicQuote({
 
   const handleGetRates = async () => {
     const valid = await validateAllForms();
-
     if (!valid) return;
 
     if (servicesRef.current) await servicesRef.current.trigger();
@@ -216,9 +215,20 @@ export default function DynamicQuote({
     if (signatureRef.current) await signatureRef.current.trigger();
     if (sendRequestRef.current) await sendRequestRef.current.trigger();
 
-    getRatesRef.current?.handleStart();
+    // 1. Open accordion so ShippingRatesStream mounts
+    setOpenGetRates("shippingRates");
     setGetRatesLoading(true);
+
+    // 2. Wait for accordion animation + DOM mount, then start stream and scroll
+    setTimeout(() => {
+      getRatesRef.current?.handleStart();
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 300); // 300ms covers Radix accordion open animation
   };
+
   function extractDays(str: string) {
     const match = str?.match(/\d+/);
     return match ? parseInt(match[0], 10) : null;

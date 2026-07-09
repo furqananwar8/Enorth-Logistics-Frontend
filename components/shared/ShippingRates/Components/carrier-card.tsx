@@ -110,7 +110,7 @@ export function CarrierCard({
               {/* Shipping Rate */}
               <TableCell>
                 {quote?.totalPrice
-                  ? `${quote.currency} ${quote.finalTotalWithAdminCut}`
+                  ? `${quote.currency} ${quote.finalTotalWithAdminCut?.toFixed(2)}`
                   : "—"}
               </TableCell>
 

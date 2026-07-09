@@ -29,7 +29,8 @@ export const calculateClass = (length: number, width: number, height: number, we
         cuFt = (lIn * wIn * hIn) / 1728
     }
 
-    const density = lbs / cuFt
+    const rawDensity = lbs / cuFt;
+    const density = Math.round(rawDensity * 10) / 10;
 
     let estimatedClass = "500"
     if (density >= 50) estimatedClass = "50"

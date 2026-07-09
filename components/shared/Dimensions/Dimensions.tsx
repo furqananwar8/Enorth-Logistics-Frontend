@@ -18,6 +18,7 @@ import { DimensionsFooter } from "./DimensionsFooter";
 import { usePathname } from "next/navigation";
 import { FTLPackageDimensions } from "./FTLPackageDimensions";
 import type { ShipmentOptions } from "../DynamicQuote/DynamicQuote.types";
+import { toast } from "sonner";
 
 const Dimensions = forwardRef(
   (
@@ -86,15 +87,26 @@ const Dimensions = forwardRef(
 
     const handleQuantityChange = (targetCount: number) => {
       const currentCount = fields.length;
+      
+      // Read the current stackable value directly from the form
+      const isStackable = methods.getValues("lineItem.stackable");
+
+      if (shipmentType === "PALLET" && targetCount > 6 && !isStackable) {
+        toast.info("Pallets more than 6 need to be stackable");
+        // Optionally cap it at 6, or just return early to block the change
+        targetCount = 6;
+      }
+
       setValue("lineItem.quantity", targetCount);
+
       if (targetCount > currentCount) {
         append(
           Array(targetCount - currentCount).fill({
             quantity: 1,
-            length: 0,
-            width: 0,
-            height: 0,
-            weight: 0,
+            length: '',
+            width: '',
+            height: '',
+            weight: '',
             description: "",
           }),
         );

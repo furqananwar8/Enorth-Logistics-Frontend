@@ -97,6 +97,7 @@ export function PackageRow({
   // if l,w,h,wg have values call calculate class function and set freight class
   useEffect(() => {
     const { length, width, height, weight } = rowSnapshot;
+
     if (length && width && height && weight) {
       const res = calculateClass(
         length,
@@ -105,6 +106,7 @@ export function PackageRow({
         weight,
         measurementUnit,
       );
+
       setValue(`lineItem.units.${index}.freightClass`, res?.classEstim);
     }
   }, [
@@ -112,6 +114,7 @@ export function PackageRow({
     rowSnapshot.width,
     rowSnapshot.height,
     rowSnapshot.weight,
+    measurementUnit
   ]);
 
   const length = useWatch({
@@ -181,7 +184,7 @@ export function PackageRow({
 
       // Limits
       const maxWeight = isImperial ? 5000 : 2268;
-      const maxLength = isImperial ? 120 : 305; // example
+      const maxLength = isImperial ? 140 : 305; // example
       const maxWidth = isImperial ? 96 : 244;
       const maxHeight = isImperial ? 96 : 244;
 

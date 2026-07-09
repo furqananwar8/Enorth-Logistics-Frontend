@@ -156,9 +156,12 @@ export default function DynamicQuote({
   const validateAllForms = async () => {
     const fromValid = await fromAddressRef.current?.trigger();
     const toValid = await toAddressRef.current?.trigger();
-    const dimValid = await dimensionsRef.current?.trigger();
+    const dimTriggerValid = await dimensionsRef.current?.trigger();
+    
+    // Validate dangerous goods inside its own container
+    const dgValid = dimensionsRef.current?.validateDangerousGoods?.() ?? true;
 
-    let valid = fromValid && toValid && dimValid;
+    let valid = fromValid && toValid && dimTriggerValid && dgValid;
 
     if (quoteType === "SPOT") {
       const contactValid = await contactRef.current?.trigger();
@@ -168,13 +171,12 @@ export default function DynamicQuote({
 
     if (!valid) {
       toast.error("Please fill in all required fields correctly.");
-      if (!dimValid) {
+      if (!dimTriggerValid || !dgValid) {
         scrollToSection(`dimensions`);
       }
       if (!fromValid || !toValid) {
         scrollToSection(`shippingAddressSectionFROM`);
       }
-
       return false;
     }
 

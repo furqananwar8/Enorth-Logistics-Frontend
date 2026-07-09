@@ -122,6 +122,84 @@ const Dimensions = forwardRef(
 
     const isDangerousGood = watch("lineItem.dangerousGood");
 
+    useImperativeHandle(
+      ref,
+      () => ({
+        getValues: methods.getValues,
+        isValid: methods.formState.isValid,
+        setValues: (vals: any) => methods.reset({ ...vals }),
+        trigger: methods.trigger,
+        open: () => setIsOpen(true),
+        validateDangerousGoods: () => {
+          const values = methods.getValues();
+          if (!values?.lineItem?.dangerousGood) return true;
+
+          const dg = values.lineItem.dangerousGoods || {};
+          let valid = true;
+
+          if (!dg.class || dg.class === "") {
+            methods.setError("lineItem.dangerousGoods.class", {
+              type: "manual",
+              message: "Class is required for dangerous goods",
+            });
+            valid = false;
+          } else {
+            methods.clearErrors("lineItem.dangerousGoods.class");
+          }
+
+          if (!dg.un || dg.un === "") {
+            methods.setError("lineItem.dangerousGoods.un", {
+              type: "manual",
+              message: "UN # is required for dangerous goods",
+            });
+            valid = false;
+          } else {
+            methods.clearErrors("lineItem.dangerousGoods.un");
+          }
+
+          if (!dg.type || dg.type === "") {
+            methods.setError("lineItem.dangerousGoods.type", {
+              type: "manual",
+              message: "Type is required for dangerous goods",
+            });
+            valid = false;
+          } else {
+            methods.clearErrors("lineItem.dangerousGoods.type");
+          }
+
+          return valid;
+        },
+      }),
+      [methods],
+    );
+    
+    const dgClass = watch("lineItem.dangerousGoods.class");
+    const dgUn = watch("lineItem.dangerousGoods.un");
+    const dgType = watch("lineItem.dangerousGoods.type");
+
+    useEffect(() => {
+      const requiredFields = [
+        { path: "lineItem.dangerousGoods.class", value: dgClass },
+        { path: "lineItem.dangerousGoods.un", value: dgUn },
+        { path: "lineItem.dangerousGoods.type", value: dgType },
+      ];
+
+      if (isDangerousGood) {
+        requiredFields.forEach(({ path, value }) => {
+          if (!value || value === "") {
+            methods.setError(path, {
+              type: "manual",
+              message: "This field is required for dangerous goods",
+            });
+          } else {
+            methods.clearErrors(path);
+          }
+        });
+      } else {
+        requiredFields.forEach(({ path }) => methods.clearErrors(path));
+      }
+    }, [isDangerousGood, dgClass, dgUn, dgType, methods]);
+
     return (
       <FormProvider {...methods} key={shipmentType}>
         <form id="dimensions" className="space-y-6">

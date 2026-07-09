@@ -8,51 +8,70 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Calculator } from "lucide-react"
 
 import { NmfcCodeRequestModal } from "./NmfcCodeRequestModal"
-export const calculateClass = (length: number, width: number, height: number, weight: number, unit: "IMPERIAL" | "METRIC") => {
+export const calculateClass = (
+  length: number | string,
+  width: number | string,
+  height: number | string,
+  weight: number | string,
+  unit: "IMPERIAL" | "METRIC" | undefined
+) => {
+  const l = Number(length) || 0;
+  const w = Number(width) || 0;
+  const h = Number(height) || 0;
+  const wt = Number(weight) || 0;
 
-    const l = length || 0
-    const w = width || 0
-    const h = height || 0
-    const wt = weight || 0
+  console.log("[calculateClass] inputs:", { l, w, h, wt, unit });
 
-    if (!l || !w || !h || !wt) return
+  if (!l || !w || !h || !wt) {
+    console.log("[calculateClass] early return — missing value");
+    return undefined;
+  }
 
-    let lbs = wt;
-    let cuFt = (l * w * h) / 1728;
+  let lbs = wt;
+  let cuFt = (l * w * h) / 1728;
 
-    if (unit === "METRIC") {
-        // Convert to Imperial for standard US freight class calculation
-        const lIn = l * 0.393701
-        const wIn = w * 0.393701
-        const hIn = h * 0.393701
-        lbs = wt * 2.20462
-        cuFt = (lIn * wIn * hIn) / 1728
-    }
+  if (unit === "METRIC") {
+    const lIn = l * 0.393701;
+    const wIn = w * 0.393701;
+    const hIn = h * 0.393701;
+    lbs = wt * 2.20462;
+    cuFt = (lIn * wIn * hIn) / 1728;
+  }
 
-    const rawDensity = lbs / cuFt;
-    const density = Math.round(rawDensity * 10) / 10;
+  console.log("[calculateClass] cuFt:", cuFt, "lbs:", lbs);
 
-    let estimatedClass = "500"
-    if (density >= 50) estimatedClass = "50"
-    else if (density >= 35) estimatedClass = "55"
-    else if (density >= 30) estimatedClass = "60"
-    else if (density >= 22.5) estimatedClass = "65"
-    else if (density >= 15) estimatedClass = "70"
-    else if (density >= 13.5) estimatedClass = "77.5"
-    else if (density >= 12) estimatedClass = "85"
-    else if (density >= 10.5) estimatedClass = "92.5"
-    else if (density >= 9) estimatedClass = "100"
-    else if (density >= 8) estimatedClass = "110"
-    else if (density >= 7) estimatedClass = "125"
-    else if (density >= 6) estimatedClass = "150"
-    else if (density >= 5) estimatedClass = "175"
-    else if (density >= 4) estimatedClass = "200"
-    else if (density >= 3) estimatedClass = "250"
-    else if (density >= 2) estimatedClass = "300"
-    else if (density >= 1) estimatedClass = "400"
+  if (!isFinite(cuFt) || cuFt <= 0) {
+    console.log("[calculateClass] invalid cuFt");
+    return undefined;
+  }
 
-    return { density: Number(density.toFixed(2)), classEstim: estimatedClass }
-}
+  const rawDensity = lbs / cuFt;
+  const density = Math.round(rawDensity * 10) / 10;
+
+  console.log("[calculateClass] density:", density);
+
+  let estimatedClass = "500";
+  if (density >= 50) estimatedClass = "50";
+  else if (density >= 35) estimatedClass = "55";
+  else if (density >= 30) estimatedClass = "60";
+  else if (density >= 22.5) estimatedClass = "65";
+  else if (density >= 15) estimatedClass = "70";
+  else if (density >= 13.5) estimatedClass = "77.5";
+  else if (density >= 12) estimatedClass = "85";
+  else if (density >= 10.5) estimatedClass = "92.5";
+  else if (density >= 9) estimatedClass = "100";
+  else if (density >= 8) estimatedClass = "110";
+  else if (density >= 7) estimatedClass = "125";
+  else if (density >= 6) estimatedClass = "150";
+  else if (density >= 5) estimatedClass = "175";
+  else if (density >= 4) estimatedClass = "200";
+  else if (density >= 3) estimatedClass = "250";
+  else if (density >= 2) estimatedClass = "300";
+  else if (density >= 1) estimatedClass = "400";
+
+  console.log("[calculateClass] result:", { density, classEstim: estimatedClass });
+  return { density: Number(density.toFixed(2)), classEstim: estimatedClass };
+};
 export const DensityCalculatorModal = () => {
     const [unit, setUnit] = useState<"IMPERIAL" | "METRIC">("IMPERIAL")
     const [length, setLength] = useState<number>(0)

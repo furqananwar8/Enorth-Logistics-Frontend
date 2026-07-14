@@ -1,6 +1,5 @@
-// One row. Knows nothing about the field array or form state above it.
 import { useFormContext, Controller, useWatch } from "react-hook-form";
-import { X, PackageOpen, Save, Trash2, AlertCircle } from "lucide-react";
+import { X, PackageOpen, Save, Trash2, AlertCircle, Copy, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlobalForm } from "@/components/common/form/GlobalForm";
 import AddPackage from "@/app/(user)/packages/AddPackage";
@@ -33,6 +32,20 @@ type Props = {
   viewOnly?: boolean;
 };
 
+const UNIT_FIELDS = [
+  "length",
+  "width",
+  "height",
+  "weight",
+  "freightClass",
+  "nmfc",
+  "shipmentType",
+  "unitsOnPallet",
+  "palletUnitType",
+  "description",
+  "specialHandlingRequired",
+] as const;
+
 export function PackageRow({
   index,
   fieldId,
@@ -57,6 +70,9 @@ export function PackageRow({
   } = useFormContext<any>();
 
   const measurementUnit = useWatch({ name: "lineItem.measurementUnit" });
+  const allUnits = useWatch({ name: "lineItem.units" });
+  const totalCount = Array.isArray(allUnits) ? allUnits.length : 0;
+
   const searchParams = useSearchParams();
   const isSpotEditPage = searchParams.get("isSpotQuote")!;
   const isImperial = measurementUnit === "IMPERIAL";
@@ -95,6 +111,39 @@ export function PackageRow({
       unitsOnPallet: lineItem.unitsOnPallet,
       palletUnitType: lineItem.palletUnitType,
       description: lineItem.description,
+    });
+  };
+
+  const handleAllTheSame = () => {
+    const source = watch(`lineItem.units.0`);
+    if (!source) return;
+
+    for (let i = 1; i < totalCount; i++) {
+      UNIT_FIELDS.forEach((field) => {
+        const value = source[field];
+        if (value !== undefined) {
+          setValue(`lineItem.units.${i}.${field}`, value, {
+            shouldTouch: true,
+            shouldDirty: true,
+          });
+        }
+      });
+    }
+  };
+
+  const handleSameAsAbove = () => {
+    if (index === 0) return;
+    const source = watch(`lineItem.units.${index - 1}`);
+    if (!source) return;
+
+    UNIT_FIELDS.forEach((field) => {
+      const value = source[field];
+      if (value !== undefined) {
+        setValue(`lineItem.units.${index}.${field}`, value, {
+          shouldTouch: true,
+          shouldDirty: true,
+        });
+      }
     });
   };
 
@@ -360,6 +409,28 @@ export function PackageRow({
             ]}
             extra={!viewOnly &&
               <div className="flex items-center gap-4 text-sm mt-6 col-span-full order-11">
+                {index === 0 && totalCount > 1 && (
+                  <Button
+                    variant="link"
+                    type="button"
+                    onClick={handleAllTheSame}
+                    className="whitespace-nowrap text-primary dark:text-accent"
+                  >
+                    <Copy size={16} className="mr-0.5" />
+                    All The Same
+                  </Button>
+                )}
+                {index > 0 && (
+                  <Button
+                    variant="link"
+                    type="button"
+                    onClick={handleSameAsAbove}
+                    className="whitespace-nowrap text-primary dark:text-accent"
+                  >
+                    <ArrowUp size={16} />
+                    Same As Above
+                  </Button>
+                )}
                 <PackageSelectionModal
                   selectedPackage={shipmentType}
                   onSelect={(lineItem: any) =>

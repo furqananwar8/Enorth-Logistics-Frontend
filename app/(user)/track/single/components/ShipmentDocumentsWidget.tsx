@@ -29,6 +29,8 @@ export function ShipmentDocumentsWidget({ quote }: { quote?: any }) {
   const normalizeUrl = (url: string) => {
     if (!url) return url;
 
+    url = url.replace("uslfreight", "ulsfreight");
+
     if (url.startsWith("/uploads")) {
       return `${process.env.NEXT_PUBLIC_BASE_URL}${url}`;
     }

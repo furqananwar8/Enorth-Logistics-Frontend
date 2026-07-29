@@ -223,9 +223,6 @@ export default function ULSWalletSettings() {
           </div>
         </div>
         <div className="flex gap-2">
-          {/* <Button variant="outline" className="text-primary border-primary">
-            Upload New Application
-          </Button> */}
           <TopupModal
             open={isTopupModalOpen}
             onOpenChange={setIsTopupModalOpen}
@@ -256,10 +253,6 @@ export default function ULSWalletSettings() {
           {/* Primary Card Card */}
           {cards && cards.length > 0 ? (
             <div className="w-full md:w-72">
-              {/* <div className="flex items-center gap-2 text-xs text-green-600 font-semibold mb-2">
-              <CheckCircle2 size={14} />
-              Primary Card
-            </div> */}
               <div className="border-2 border-primary bg-blue-50 dark:bg-primary/10 rounded-lg p-4 relative overflow-hidden">
                 {/* <div className="font-bold text-slate-700 text-sm mb-4">ENorth Logistics CARD</div> */}
                 <div className="flex justify-between items-end">
@@ -313,28 +306,9 @@ export default function ULSWalletSettings() {
 
       <Separator />
 
-      {/* Form Section */}
-      {/* <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
-          <GlobalForm
-            fields={fields}
-            extra={
-              <Button
-                type="button"
-                onClick={() => methods.trigger("email")}
-                className="bg-primary hover:bg-primary/90 text-white font-semibold mt-2"
-              >
-                Add Email
-              </Button>
-            }
-          />
-        </form>
-      </FormProvider> */}
-
       <AddCardModal
         open={isAddCardModalOpen}
         onOpenChange={setIsAddCardModalOpen}
-        clientSecret={clientSecret}
       />
     </div>
   );

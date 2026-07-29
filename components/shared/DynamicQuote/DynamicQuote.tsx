@@ -279,17 +279,15 @@ export default function DynamicQuote({
       setNewlyCreatedQuoteId(res?.quote?.id);
     }
     const bookShipmentPayload = {
-      ...(singleQuote?.quote?.id
-        ? {
-            quoteId: singleQuote?.quote?.id,
-            shipDate: singleQuote?.quote?.shipment?.shipDate
-              ? singleQuote?.quote?.shipment?.shipDate
-              : fromAddress?.shipDate,
-          }
-        : {
-            quoteId: res?.quote?.id,
-            shipDate: res?.quote?.shipment?.shipDate,
-          }),
+    ...(singleQuote?.quote?.id
+    ? {
+        quoteId: singleQuote?.quote?.id,
+        shipDate: fromAddress?.shipDate || singleQuote?.quote?.shipment?.shipDate, // ← form first, fallback to old
+      }
+    : {
+        quoteId: res?.quote?.id,
+        shipDate: fromAddress?.shipDate || res?.quote?.shipment?.shipDate,           // ← same fix here
+      }),
       carrier: selectedCarrier.carrier,
       selectedRate: {
         serviceType: selectedCarrier.serviceType,

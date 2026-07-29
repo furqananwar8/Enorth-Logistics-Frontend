@@ -157,7 +157,7 @@ export default function DynamicQuote({
     const fromValid = await fromAddressRef.current?.trigger();
     const toValid = await toAddressRef.current?.trigger();
     const dimTriggerValid = await dimensionsRef.current?.trigger();
-    
+
     // Validate dangerous goods inside its own container
     const dgValid = dimensionsRef.current?.validateDangerousGoods?.() ?? true;
 
@@ -209,6 +209,7 @@ export default function DynamicQuote({
   };
 
   const handleGetRates = async () => {
+    setSelectedCarrier(null);
     const valid = await validateAllForms();
     if (!valid) return;
 
@@ -238,91 +239,90 @@ export default function DynamicQuote({
 
   const handleBookShipment = async () => {
     setStaticLoading(true);
-    // if (!singleQuote?.quote?.id) {
-    //     toast.error("Quote not found")
-    //     return
-    // }
-    const valid = await validateAllForms();
+    try {
+      const valid = await validateAllForms();
 
-    if (!valid) setStaticLoading(false);
+      if (!valid) return;
 
-    if (!selectedCarrier) {
-      toast.error("Please select a carrier");
-      setStaticLoading(false);
-      return;
-    }
-
-    const { finalQuotePayload } = buildPayloads();
-    const newShipmentPayload = {
-      mode: "SHIPMENT",
-      // shipmentType: singleQuote?.quote?.shipmentType ? singleQuote?.quote?.shipmentType : shipmentType,
-      shipmentType: singleQuote?.quote?.shipmentType,
-      shipDate: fromAddress?.shipDate,
-      ...(singleQuote?.quote?.id
-        ? {
-            quote: {
-              shipmentType: singleQuote?.quote?.shipmentType,
-              id: singleQuote?.quote?.id,
-              quoteType: singleQuote?.quote?.quoteType,
-            },
-          }
-        : {
-            quote: { ...finalQuotePayload },
-            shipmentType: shipmentType,
-            quoteType: quoteType,
-          }),
-    };
-
-    let res = null;
-    if (!singleQuote?.quote?.shipment?.id) {
-      res = await createShipmentMutation.mutateAsync(newShipmentPayload);
-      setNewlyCreatedQuoteId(res?.quote?.id);
-    }
-    const bookShipmentPayload = {
-    ...(singleQuote?.quote?.id
-    ? {
-        quoteId: singleQuote?.quote?.id,
-        shipDate: fromAddress?.shipDate || singleQuote?.quote?.shipment?.shipDate, // ← form first, fallback to old
-      }
-    : {
-        quoteId: res?.quote?.id,
-        shipDate: fromAddress?.shipDate || res?.quote?.shipment?.shipDate,           // ← same fix here
-      }),
-      carrier: selectedCarrier.carrier,
-      selectedRate: {
-        serviceType: selectedCarrier.serviceType,
-        serviceName: selectedCarrier.serviceName,
-        totalCharge: selectedCarrier.totalPrice,
-        currency: selectedCarrier.currency,
-        ...(selectedCarrier.carrier === "TST" && {
-          packagingType: selectedCarrier.packagingType || "BOX",
-          transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
-        }),
-
-        ...(selectedCarrier.carrier === "XPO" && {
-          totalSurcharges: selectedCarrier.totalSurcharges,
-          surcharges: selectedCarrier.surcharges || [],
-          confirmationNumber: selectedCarrier.confirmationNumber,
-          totalDiscount: selectedCarrier.totalDiscount,
-        }),
-      },
-    };
-
-    if (
-      selectedCarrier?.carrier?.toUpperCase() === "XPO" &&
-      bookShipmentPayload.shipDate
-    ) {
-      const day = new Date(bookShipmentPayload.shipDate).getDay();
-      if (day === 0 || day === 6) {
-        scrollToSection(`shippingAddressSectionFROM`);
-        toast.error("XPO shipments cannot be scheduled on weekends.");
+      if (!selectedCarrier) {
+        toast.error("Please select a carrier");
         return;
       }
+
+      const { finalQuotePayload } = buildPayloads();
+      const newShipmentPayload = {
+        mode: "SHIPMENT",
+        shipmentType: singleQuote?.quote?.shipmentType,
+        shipDate: fromAddress?.shipDate,
+        ...(singleQuote?.quote?.id
+          ? {
+              quote: {
+                shipmentType: singleQuote?.quote?.shipmentType,
+                id: singleQuote?.quote?.id,
+                quoteType: singleQuote?.quote?.quoteType,
+              },
+            }
+          : {
+              quote: { ...finalQuotePayload },
+              shipmentType: shipmentType,
+              quoteType: quoteType,
+            }),
+      };
+
+      let res = null;
+      if (!singleQuote?.quote?.shipment?.id) {
+        res = await createShipmentMutation.mutateAsync(newShipmentPayload);
+        setNewlyCreatedQuoteId(res?.quote?.id);
+      }
+      const bookShipmentPayload = {
+        ...(singleQuote?.quote?.id
+          ? {
+              quoteId: singleQuote?.quote?.id,
+              shipDate: fromAddress?.shipDate || singleQuote?.quote?.shipment?.shipDate,
+            }
+          : {
+              quoteId: res?.quote?.id,
+              shipDate: fromAddress?.shipDate || res?.quote?.shipment?.shipDate,
+            }),
+        carrier: selectedCarrier.carrier,
+        selectedRate: {
+          serviceType: selectedCarrier.serviceType,
+          serviceName: selectedCarrier.serviceName,
+          totalCharge: selectedCarrier.totalPrice,
+          currency: selectedCarrier.currency,
+          ...(selectedCarrier.carrier === "TST" && {
+            packagingType: selectedCarrier.packagingType || "BOX",
+            transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
+          }),
+
+          ...(selectedCarrier.carrier === "XPO" && {
+            totalSurcharges: selectedCarrier.totalSurcharges,
+            surcharges: selectedCarrier.surcharges || [],
+            confirmationNumber: selectedCarrier.confirmationNumber,
+            totalDiscount: selectedCarrier.totalDiscount,
+          }),
+        },
+      };
+
+      if (
+        selectedCarrier?.carrier?.toUpperCase() === "XPO" &&
+        bookShipmentPayload.shipDate
+      ) {
+        const day = new Date(bookShipmentPayload.shipDate).getDay();
+        if (day === 0 || day === 6) {
+          scrollToSection(`shippingAddressSectionFROM`);
+          toast.error("XPO shipments cannot be scheduled on weekends.");
+          return;
+        }
+      }
+
+      await bookShipmentMutation.mutateAsync(bookShipmentPayload);
+    } catch (err) {
+      // mutation errors are already toasted by useDynamicQuoteMutations
+      console.error("Book shipment error:", err);
+    } finally {
+      setStaticLoading(false);
     }
-
-    if (!valid) return;
-
-    bookShipmentMutation.mutate(bookShipmentPayload);
   };
 
   const handleConvertToShipment = async () => {
@@ -334,13 +334,6 @@ export default function DynamicQuote({
 
     createQuoteAndConvertToShipmentMutation.mutate(finalQuotePayload);
   };
-  //   const selectedCarrierDetails = useMemo(() => {
-  //     return getRatesRef.current?.results.filter(
-  //       (result: any) => result.carrier === selectedCarrier,
-  //     );
-  //   }, [getRatesRef.current?.results, selectedCarrier]);
-  //   // console.log("SELECTED CARRIER:", selectedCarrier);
-  //   // console.log("tForceRates.quote.serviceType", selectedCarrierDetails);
 
   const [step, setStep] = useState(1);
   const { isAdmin } = useAuth();
@@ -419,11 +412,6 @@ export default function DynamicQuote({
                   />
                 </div>
               </div>
-              {/* <Button
-                                onClick={handleFirstStepValidate}
-                            >
-                                Next Step
-                            </Button> */}
               {quoteType === "SPOT" || isSpotEditPage ? (
                 <div className="space-y-6 mt-6">
                   <EquimentTypeSelector
@@ -557,7 +545,6 @@ export default function DynamicQuote({
                   ) : (
                     <Button
                       onClick={() => {
-                        // onSubmit()
                         handleConvertToShipment();
                       }}
                       disabled={

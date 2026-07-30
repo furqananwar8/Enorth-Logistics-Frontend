@@ -25,6 +25,8 @@ import { useDynamicQuote } from "./DynamicQuote.hooks";
 import { ShipmentOptions } from "./DynamicQuote.types";
 import { useDynamicQuoteMutations } from "./DynamicQuote.mutations";
 import { useDynamicQuotePayloads } from "./DynamicQuote.payload";
+import { formatShipDate } from "@/utils/formatShipDate";
+import { getDayFromDateString } from "@/utils/getShipDate";
 
 export const SchemaContext = createContext<z.ZodType<any> | null>(null);
 export default function DynamicQuote({
@@ -139,8 +141,8 @@ export default function DynamicQuote({
     setRealTimeData(getMergedPayload());
   }, []);
 
+  
   const scrollToSection = (id: string, offset = 100) => {
-    console.log(id);
     const element = document.getElementById(id);
 
     if (!element) return;
@@ -192,7 +194,6 @@ export default function DynamicQuote({
 
     if (isEditing) {
       if (isShipment) {
-        // console.log("UPDATING SHIPMENT WITH PAYLOAD:", shipmentPayload);
         updateShipmentMutation.mutate(shipmentPayload);
       } else {
         updateQuoteMutation.mutate(finalQuotePayload);
@@ -200,10 +201,8 @@ export default function DynamicQuote({
     } else {
       if (isShipment) {
         createShipmentMutation.mutate(shipmentPayload);
-        // // console.log(shipmentPayload)
       } else {
         createQuoteMutation.mutate(finalQuotePayload);
-        // // console.log("FINAL QUOTE PAYLOAD:", finalQuotePayload)
       }
     }
   };
@@ -253,7 +252,7 @@ export default function DynamicQuote({
       const newShipmentPayload = {
         mode: "SHIPMENT",
         shipmentType: singleQuote?.quote?.shipmentType,
-        shipDate: fromAddress?.shipDate,
+        shipDate: formatShipDate(fromAddress?.shipDate),
         ...(singleQuote?.quote?.id
           ? {
               quote: {
@@ -278,11 +277,11 @@ export default function DynamicQuote({
         ...(singleQuote?.quote?.id
           ? {
               quoteId: singleQuote?.quote?.id,
-              shipDate: fromAddress?.shipDate || singleQuote?.quote?.shipment?.shipDate,
+              shipDate: formatShipDate(fromAddress?.shipDate) || formatShipDate(singleQuote?.quote?.shipment?.shipDate),
             }
           : {
               quoteId: res?.quote?.id,
-              shipDate: fromAddress?.shipDate || res?.quote?.shipment?.shipDate,
+              shipDate: formatShipDate(fromAddress?.shipDate) || formatShipDate(res?.quote?.shipment?.shipDate),
             }),
         carrier: selectedCarrier.carrier,
         selectedRate: {
@@ -308,13 +307,14 @@ export default function DynamicQuote({
         selectedCarrier?.carrier?.toUpperCase() === "XPO" &&
         bookShipmentPayload.shipDate
       ) {
-        const day = new Date(bookShipmentPayload.shipDate).getDay();
+        const day = getDayFromDateString(bookShipmentPayload.shipDate);
         if (day === 0 || day === 6) {
           scrollToSection(`shippingAddressSectionFROM`);
           toast.error("XPO shipments cannot be scheduled on weekends.");
           return;
         }
       }
+
 
       await bookShipmentMutation.mutateAsync(bookShipmentPayload);
     } catch (err) {

@@ -29,9 +29,39 @@ type PhoneInputProps = Omit<
         onChange?: (value: RPNInput.Value) => void;
     };
 
+/** Convert raw digits to E.164 when we know the default country */
+const normalizePhoneValue = (
+    value: unknown,
+    defaultCountry?: RPNInput.Country,
+): RPNInput.Value | undefined => {
+    if (!value) return undefined;
+    if (typeof value !== "string") return undefined;
+
+    // Already E.164 — pass through
+    if (value.startsWith("+")) return value as RPNInput.Value;
+
+    // Strip non-digits
+    const digits = value.replace(/\D/g, "");
+    if (!digits) return undefined;
+
+    // If we have a default country, prepend its calling code
+    if (defaultCountry) {
+        const code = RPNInput.getCountryCallingCode(defaultCountry);
+        return `+${code}${digits}` as RPNInput.Value;
+    }
+
+    // No country context and no + — safest to start empty
+    return undefined;
+};
+
 const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
     React.forwardRef<React.ElementRef<typeof RPNInput.default>, PhoneInputProps>(
-        ({ className, onChange, value, ...props }, ref) => {
+        ({ className, onChange, value, defaultCountry, ...props }, ref) => {
+            const normalizedValue = React.useMemo(
+                () => normalizePhoneValue(value, defaultCountry),
+                [value, defaultCountry],
+            );
+
             return (
                 <RPNInput.default
                     ref={ref}
@@ -40,17 +70,9 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
                     countrySelectComponent={CountrySelect}
                     inputComponent={InputComponent}
                     smartCaret={false}
-                    value={value || undefined}
-                    /**
-                     * Handles the onChange event.
-                     *
-                     * react-phone-number-input might trigger the onChange event as undefined
-                     * when a valid phone number is not entered. To prevent this,
-                     * the value is coerced to an empty string.
-                     *
-                     * @param {E164Number | undefined} value - The entered value
-                     */
-                    onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
+                    defaultCountry={defaultCountry}
+                    value={normalizedValue}
+                    onChange={(val) => onChange?.(val || ("" as RPNInput.Value))}
                     {...props}
                 />
             );

@@ -141,6 +141,35 @@ export default function DynamicQuote({
     setRealTimeData(getMergedPayload());
   }, []);
 
+  const transformAddress = (values: any, type: "FROM" | "TO") => {
+    const addr = values?.address || values;
+
+    const readyTime = values?.readyTimeHour
+      ? `${values.readyTimeHour}:${values.readyTimeMinute ?? "00"} ${values.readyTimeAmPm ?? "AM"}`
+      : values?.palletShippingReadyTime;
+
+    const closeTime = values?.closeTimeHour
+      ? `${values.closeTimeHour}:${values.closeTimeMinute ?? "00"} ${values.closeTimeAmPm ?? "AM"}`
+      : values?.palletShippingCloseTime;
+
+    return {
+      type,
+      address1: addr.address1,
+      city: addr.city,
+      state: addr.state,
+      postalCode: addr.postalCode,
+      country: addr.country,
+      locationType: addr.locationTypeId ?? addr.locationType,
+      companyName: values.companyName,
+      contactName: values.contactName,
+      phoneNumber: values.phoneNumber,
+      email: values.email,
+      unit: addr.unit ?? values.unit,
+      palletShippingReadyTime: readyTime,
+      palletShippingCloseTime: closeTime,
+      signatureId: values.signatureId,
+    };
+  };
   
   const scrollToSection = (id: string, offset = 100) => {
     const element = document.getElementById(id);
@@ -187,7 +216,6 @@ export default function DynamicQuote({
 
   const onSubmit = async () => {
     const valid = await validateAllForms();
-
     if (!valid) return;
 
     const { finalQuotePayload, shipmentPayload } = buildPayloads();
@@ -200,7 +228,21 @@ export default function DynamicQuote({
       }
     } else {
       if (isShipment) {
-        createShipmentMutation.mutate(shipmentPayload);
+        const fromValues = fromAddressRef.current?.getValues() || {};
+        const toValues = toAddressRef.current?.getValues() || {};
+
+        const enrichedShipmentPayload = {
+          ...shipmentPayload,
+          quote: {
+            ...shipmentPayload?.quote,
+            addresses: [
+              transformAddress(fromValues, "FROM"),
+              transformAddress(toValues, "TO"),
+            ],
+          },
+        };
+
+        createShipmentMutation.mutate(enrichedShipmentPayload);
       } else {
         createQuoteMutation.mutate(finalQuotePayload);
       }
@@ -240,7 +282,6 @@ export default function DynamicQuote({
     setStaticLoading(true);
     try {
       const valid = await validateAllForms();
-
       if (!valid) return;
 
       if (!selectedCarrier) {
@@ -249,23 +290,33 @@ export default function DynamicQuote({
       }
 
       const { finalQuotePayload } = buildPayloads();
+
+      const fromValues = fromAddressRef.current?.getValues() || {};
+      const toValues = toAddressRef.current?.getValues() || {};
+
+      const addresses = [
+        transformAddress(fromValues, "FROM"),
+        transformAddress(toValues, "TO"),
+      ];
+
       const newShipmentPayload = {
         mode: "SHIPMENT",
-        shipmentType: singleQuote?.quote?.shipmentType,
-        shipDate: formatShipDate(fromAddress?.shipDate),
-        ...(singleQuote?.quote?.id
-          ? {
-              quote: {
-                shipmentType: singleQuote?.quote?.shipmentType,
+        shipmentType: singleQuote?.quote?.shipmentType || shipmentType,
+        shipDate: formatShipDate(fromValues?.shipDate),
+        quote: {
+          ...(singleQuote?.quote?.id
+            ? {
                 id: singleQuote?.quote?.id,
                 quoteType: singleQuote?.quote?.quoteType,
-              },
-            }
-          : {
-              quote: { ...finalQuotePayload },
-              shipmentType: shipmentType,
-              quoteType: quoteType,
-            }),
+                shipmentType: singleQuote?.quote?.shipmentType,
+              }
+            : {
+                ...finalQuotePayload,
+                shipmentType,
+                quoteType,
+              }),
+          addresses,
+        },
       };
 
       let res = null;
@@ -273,15 +324,20 @@ export default function DynamicQuote({
         res = await createShipmentMutation.mutateAsync(newShipmentPayload);
         setNewlyCreatedQuoteId(res?.quote?.id);
       }
+
       const bookShipmentPayload = {
         ...(singleQuote?.quote?.id
           ? {
               quoteId: singleQuote?.quote?.id,
-              shipDate: formatShipDate(fromAddress?.shipDate) || formatShipDate(singleQuote?.quote?.shipment?.shipDate),
+              shipDate:
+                formatShipDate(fromValues?.shipDate) ||
+                formatShipDate(singleQuote?.quote?.shipment?.shipDate),
             }
           : {
               quoteId: res?.quote?.id,
-              shipDate: formatShipDate(fromAddress?.shipDate) || formatShipDate(res?.quote?.shipment?.shipDate),
+              shipDate:
+                formatShipDate(fromValues?.shipDate) ||
+                formatShipDate(res?.quote?.shipment?.shipDate),
             }),
         carrier: selectedCarrier.carrier,
         selectedRate: {
@@ -293,7 +349,6 @@ export default function DynamicQuote({
             packagingType: selectedCarrier.packagingType || "BOX",
             transitDays: extractDays(selectedCarrier.estimatedDeliveryDays),
           }),
-
           ...(selectedCarrier.carrier === "XPO" && {
             totalSurcharges: selectedCarrier.totalSurcharges,
             surcharges: selectedCarrier.surcharges || [],
@@ -315,10 +370,8 @@ export default function DynamicQuote({
         }
       }
 
-
       await bookShipmentMutation.mutateAsync(bookShipmentPayload);
     } catch (err) {
-      // mutation errors are already toasted by useDynamicQuoteMutations
       console.error("Book shipment error:", err);
     } finally {
       setStaticLoading(false);
